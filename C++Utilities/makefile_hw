@@ -1,0 +1,81 @@
+# -*- Makefile -*- 
+
+# MACHINE 
+## USE_WORK_64=USE_WORK_64
+#LAPACK_DIR = /usr/lib64
+#LAPACK_LIBS = -lblas -llapack 
+GSL_LIBS_DIR = /usr/local/lib
+GSL_INCLUDE_DIR = /usr/local/include/gsl
+GSL_LIBS = -lgsl -lgslcblas
+ATLAS_DIR = /usr/lib64/atlas
+ATLAS_LIBS = -latlas -lclapack -llapack -lptf77blas -lcblas -lf77blas -lptcblas
+MKL_DIR = /opt/intel/mkl/lib/intel64
+MKL_LIBS = -Wl,--start-group -lmkl_intel_lp64 -lmkl_sequential -lmkl_core -Wl,--end-group
+
+INCLUDE_DIR := $(INCLUDE_DIR) -I$(GSL_INCLUDE_DIR)
+LIBS_DIR := $(LIBS_DIR) -L$(GSL_LIBS_DIR) -L$(ATLAS_DIR) -L$(MKL_DIR) #-L$(LAPACK_DIR)
+LIBS := $(LIBS) $(GSL_LIBS) $(ATLAS_LIBS) $(MKL_LIBS) #$(LAPACK_LIBS)
+
+# LIBRARIES SUPPORTED
+## USE_DW_MATRIX = USE_DW_MATRIX
+DW_UTILITIES_BASE = $(HOME)/DW_TZ_GIT/utilities_dw
+DW_MATRIX_DIR = $(DW_UTILITIES_BASE)/matrix
+DW_STAT_DIR = $(DW_UTILITIES_BASE)/stat
+DW_ARRAY_DIR = $(DW_UTILITIES_BASE)/arrays
+DW_ERROR_DIR = $(DW_UTILITIES_BASE)/error
+VPATH := $(VPATH) $(DW_MATRIX_DIR) $(DW_STAT_DIR) $(DW_ARRAY_DIR) $(DW_ERROR_DIR)
+OBJS := $(OBJS) dw_matrix_rand.o dw_dense_matrix.o dw_matrix.o bmatrix.o dw_matrix_array.o dw_array.o dw_error.o dw_matrix_rand.o dw_rand_gsl.o
+INCLUDE_DIR := $(INCLUDE_DIR) -I$(DW_UTILITIES_BASE)/include
+
+FC = gfortran
+CC = gcc
+CPP = gcc
+CFLAGS = -g -DSTRUCTURED_COLUMN_MAJOR -Wall -msse2
+CCFLAGS = -g -std=c++0x -DSTRUCTURED_COLUMN_MAJOR -Wall
+LIBS := $(LIBS) -lstdc++ -lpthread -DAE_CPU=AE_INTEL
+LIBS := $(LIBS) -lgfortran
+LIBS := $(LIBS) -lm
+
+#################################################################################
+# PROJECT PATHS
+PROJECT_DIR = $(HOME)/KK
+SOURCE_DIR = $(PROJECT_DIR)/C++Utilities
+EXE_DIR = $(PROJECT_DIR)/work
+BUILD_DIR = $(PROJECT_DIR)/work/build
+
+INCLUDE_DIR := $(INCLUDE_DIR) -I$(PROJECT_DIR)
+VPATH := $(VPATH) $(SOURCE_DIR) $(BUILD_DIR)
+
+OBJS:= $(OBJS) addacooper1.o
+
+# TEST_ALL #####################################################################
+ALL_OBJS = $(OBJS) test.o 
+ALL_EFILE = $(EXE_DIR)/test
+
+#################################################################################
+all : $(ALL_EFILE)
+
+$(ALL_EFILE): $(ALL_OBJS)
+	$(CPP) $(CFLAGS) $^ $(LIBS_DIR) $(LIBS) -o $(ALL_EFILE)
+
+%.o : %.c
+	$(CC) $(CFLAGS) $(INCLUDE_DIR) -c $< -o $(BUILD_DIR)/$@
+
+%.o : %.cpp
+	$(CPP) $(CFLAGS) $(INCLUDE_DIR) -c $< -o $(BUILD_DIR)/$@
+
+#################################################################################
+clean:
+	rm -f $(EXE_DIR)/*.o
+	rm -f $(BUILD_DIR)/*.o
+#
+#################################################################################
+test:
+	echo "EXE_DIR: $(EXE_DIR)"
+	echo "BUILD_DIR: $(BUILD_DIR)"
+	echo "VPATH: $(VPATH)"
+	echo "INCLUDE_DIR: $(INCLUDE_DIR)"
+	echo "LIBS_DIR: $(LIBS_DIR)"
+	echo "LIBS: $(LIBS)"
+	echo "OBJS: $(OBJS)"
+	echo "CC: $(CC)"
