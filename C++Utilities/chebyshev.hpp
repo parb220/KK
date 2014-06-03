@@ -1,3 +1,5 @@
+#ifndef _CHEBYSHEV_HEADER_
+#define _CHEBYSHEV_HEADER_
 class TDenseVector; 
 
 // Evaluates the 1st S Cheybshev polynomials at x
@@ -16,3 +18,4 @@ TDenseVector getExtrema(int s);
 
 // Returns the s roots of the of sth Chebyshev polynomial (also called the Gauss-Lobotto nodes)
 TDenseVector getRoots(int s); 
+#endif
