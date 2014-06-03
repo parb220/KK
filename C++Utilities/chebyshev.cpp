@@ -8,8 +8,10 @@ using namespace std;
 // Evaluates the 1st S Cheybshev polynomials at x
 TDenseVector getPhi(double x, int S)
 {
-	TDenseVector phi(S,0.0); 
-	phi[0] = 1.0; 
+	if (S <= 0)
+ 		return TDenseVector(0); 
+
+	TDenseVector phi(S,1.0); 
 	if (S == 1)
 		return phi; 
 	phi[1] = x; 
@@ -25,8 +27,10 @@ TDenseVector getPhi(double x, int S)
 // Evaluates the 1st S Cheybshev polynomials at each point in xvect
 TDenseMatrix getPhi(const TDenseVector &x, int S)
 {
-	TDenseMatrix phi(x.dim, S, 0.0); 
-	phi.InsertColumnMatrix(0,0,Ones(x.dim)); // phi(:,0) = 1.0; 
+	if (x.dim <= 0 || S <= 0)
+		return TDenseMatrix(0,0); 
+
+	TDenseMatrix phi(x.dim, S, 1.0); 
 	if (S == 1)
 		return phi; 
 	phi.InsertColumnMatrix(0,1,x); // phi(:,1) = x; 
@@ -56,7 +60,7 @@ TDenseVector getExtrema(int s)
 {
 	TDenseVector extrema(s,0.0); 
 	for (int j=0; j<s; j++)
-		extrema[j] = cos(PI*(j-1.0)/(s-1.0)); 
+		extrema[j] = -cos(PI*j/(s-1.0)); 
 	return extrema; 
 }
 
@@ -65,6 +69,9 @@ TDenseVector getRoots(int s)
 {
 	TDenseVector roots(s,0.0); 
 	for (int i=0; i<s; i++)
-		roots[i] = -cos( (2.0*i-1.0)*PI/(2.0*s)); 
+		roots[i] = -cos( (2.0*i+1.0)*PI/(2.0*s)); 
 	return roots; 
 }
+
+TDenseVector getPhiScalar(double x, int S) { return getPhi(x,S); }
+TDenseMatrix getPhiVect(const TDenseVector &x, int S) { return getPhi(x,S); }
