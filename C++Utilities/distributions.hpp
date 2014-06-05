@@ -5,7 +5,7 @@ class TDenseVector;
 class TDenseMatrix; 
 
 double erfcc(double x); 
-double erfcc_s(double x) { return erfcc(x); }
+double erfcc_s(double x); 
 
 TDenseVector erfcc(const TDenseVector &x); 
 TDenseVector erfcc_v(const TDenseVector &x); 
@@ -17,7 +17,7 @@ TDenseVector poly(const TDenseVector &x, const TDenseVector &coeffs);
 TDenseVector poly_rrv(const TDenseVector &x, const TDenseVector &coeffs); 
 
 double enordf(double x); 
-double enordf_s(double x) { return enordf(x); }
+double enordf_s(double x); 
 
 TDenseVector enordf(const TDenseVector &x); 
 TDenseVector enordf_v(const TDenseVector &x); 

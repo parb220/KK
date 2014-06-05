@@ -28,6 +28,8 @@ double erfcc(double x)
 	return value; 
 }
 
+double erfcc_s(double x) { return erfcc(x); }
+
 TDenseVector erfcc(const TDenseVector &x)
 {
 	TDenseVector coef(10,0.0);
@@ -121,6 +123,7 @@ TDenseVector poly(const TDenseVector &x, const TDenseVector &coeffs)
 TDenseVector poly_rrv(const TDenseVector &x, const TDenseVector &coeffs) { return poly(x,coeffs); }
 
 double enordf(double x) { return erfcc(-x/sqrt(2.0))/2.0; }
+double enordf_s(double x) { return enordf(x); }
 
 TDenseVector enordf(const TDenseVector &x) { return 0.5*erfcc(-1.0/sqrt(2.0)*x); }
 

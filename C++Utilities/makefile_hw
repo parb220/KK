@@ -46,7 +46,7 @@ BUILD_DIR = $(PROJECT_DIR)/work/build
 INCLUDE_DIR := $(INCLUDE_DIR) -I$(PROJECT_DIR)
 VPATH := $(VPATH) $(SOURCE_DIR) $(BUILD_DIR)
 
-OBJS:= $(OBJS) addacooper1.o chebyshev.o mathutils.o toms462.o distributions.o mherzo.o
+OBJS:= $(OBJS) addacooper1.o chebyshev.o mathutils.o toms462.o distributions.o mherzo.o discretizeAR1.o
 
 # TEST_ALL #####################################################################
 ALL_OBJS = $(OBJS) test.o 
