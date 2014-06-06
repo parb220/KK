@@ -1,4 +1,5 @@
 #include <cmath>
+#include "prcsn.h"
 #include "dw_dense_matrix.hpp"
 #include "kk_constant.hpp"
 #include "mherzo.hpp"
@@ -51,7 +52,7 @@ int herzo(int N, TDenseVector &x, TDenseVector &w)
 			}
 			double gD = (hD - q * fD) /p; 
 			z = z - fD/gD; 
-		} while (it < 40 && fabs(z-z0)/z>1.0e-15);  
+		} while (it < 40 && fabs(z-z0)/z>MACHINE_EPSILON);  
 		x[nR] = z; 
 		x[N-1-nR] = -z; 
 		double r = 1.0; 
