@@ -13,8 +13,8 @@ MKL_DIR = /opt/intel/mkl/lib/intel64
 MKL_LIBS = -Wl,--start-group -lmkl_intel_lp64 -lmkl_sequential -lmkl_core -Wl,--end-group
 
 INCLUDE_DIR := $(INCLUDE_DIR) -I$(GSL_INCLUDE_DIR)
-LIBS_DIR := $(LIBS_DIR) -L$(GSL_LIBS_DIR) -L$(ATLAS_DIR) -L$(MKL_DIR) #-L$(LAPACK_DIR)
-LIBS := $(LIBS) $(GSL_LIBS) $(ATLAS_LIBS) $(MKL_LIBS) #$(LAPACK_LIBS)
+LIBS_DIR := $(LIBS_DIR) -L$(GSL_LIBS_DIR) -L$(ATLAS_DIR) -L$(MKL_DIR) #-L$(LAPACK_DIR)#
+LIBS := $(LIBS) $(GSL_LIBS) $(ATLAS_LIBS) $(MKL_LIBS) #$(LAPACK_LIBS)#
 
 # LIBRARIES SUPPORTED
 ## USE_DW_MATRIX = USE_DW_MATRIX
