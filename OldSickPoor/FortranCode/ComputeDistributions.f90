@@ -6,8 +6,10 @@ module ComputeDistributions
     contains
     
     subroutine ComputeStationaryDistributions()   
-        real(dbl) AveEarningsF, eta, eta2, eta3, check, probs, tempx, totalAlive
-        integer loc, loc2, loc3, i, ti, jf, jm, j, zf, zm, z, vf, vm, s, s1, eh, ef, em, h , h1, hf, hm, hm1, hf1, pm, tm, pz, pj, tj 
+        real(dbl) AveEarningsF, eta, eta2, eta3, check, probs
+        real(dbl) tempx, totalAlive
+        integer loc, loc2, loc3, i, ti, jf, jm, j, zf, zm, z, vf, vm, s, s1, eh, ef, em, h , h1, hf, hm
+        integer hm1, hf1, pm, tm, pz, pj, tj 
            
         !compute stationary distribution for working agents
         print '(a)', "     Computing stationary distribution for working agents..."
@@ -57,14 +59,22 @@ module ComputeDistributions
                     do jm=1,nem
                     do jf=1,nef
                         tempx = Puefmat(jf,zf) * Puemmat(jm,zm) * psiW(i,zf,zm,vf,vm,eh,ti-1)            
-                        psiW(loc2,jf,jm,loc,loc3,eh,ti)     = psiW(loc2,jf,jm,loc,loc3,eh,ti)     +  eta * eta2 * eta3* tempx
-                        psiW(loc2,jf,jm,loc+1,loc3,eh,ti)   = psiW(loc2,jf,jm,loc+1,loc3,eh,ti)   + (1-eta) * eta2 * eta3* tempx
-                        psiW(loc2+1,jf,jm,loc,loc3,eh,ti)   = psiW(loc2+1,jf,jm,loc,loc3,eh,ti)   +  eta * (1-eta2) * eta3* tempx
-                        psiW(loc2+1,jf,jm,loc+1,loc3,eh,ti) = psiW(loc2+1,jf,jm,loc+1,loc3,eh,ti) + (1-eta) * (1-eta2) * eta3* tempx
-                        psiW(loc2,jf,jm,loc,loc3+1,eh,ti)     = psiW(loc2,jf,jm,loc,loc3+1,eh,ti)     +  eta * eta2 * (1-eta3)* tempx
-                        psiW(loc2,jf,jm,loc+1,loc3+1,eh,ti)   = psiW(loc2,jf,jm,loc+1,loc3+1,eh,ti)   + (1-eta) * eta2 * (1-eta3)* tempx
-                        psiW(loc2+1,jf,jm,loc,loc3+1,eh,ti)   = psiW(loc2+1,jf,jm,loc,loc3+1,eh,ti)   +  eta * (1-eta2) * (1-eta3)* tempx
-                        psiW(loc2+1,jf,jm,loc+1,loc3+1,eh,ti) = psiW(loc2+1,jf,jm,loc+1,loc3+1,eh,ti) + (1-eta) * (1-eta2) * (1-eta3)* tempx
+                        psiW(loc2,jf,jm,loc,loc3,eh,ti)     = psiW(loc2,jf,jm,loc,loc3,eh,ti)     + &
+ eta * eta2 * eta3* tempx
+                        psiW(loc2,jf,jm,loc+1,loc3,eh,ti)   = psiW(loc2,jf,jm,loc+1,loc3,eh,ti)   + & 
+(1-eta) * eta2 * eta3* tempx
+                        psiW(loc2+1,jf,jm,loc,loc3,eh,ti)   = psiW(loc2+1,jf,jm,loc,loc3,eh,ti)   + &
+ eta * (1-eta2) * eta3* tempx
+                        psiW(loc2+1,jf,jm,loc+1,loc3,eh,ti) = psiW(loc2+1,jf,jm,loc+1,loc3,eh,ti) + &
+ (1-eta) * (1-eta2) * eta3* tempx
+                        psiW(loc2,jf,jm,loc,loc3+1,eh,ti)     = psiW(loc2,jf,jm,loc,loc3+1,eh,ti)     +  & 
+eta * eta2 * (1-eta3)* tempx
+                        psiW(loc2,jf,jm,loc+1,loc3+1,eh,ti)   = psiW(loc2,jf,jm,loc+1,loc3+1,eh,ti)   + & 
+(1-eta) * eta2 * (1-eta3)* tempx
+                        psiW(loc2+1,jf,jm,loc,loc3+1,eh,ti)   = psiW(loc2+1,jf,jm,loc,loc3+1,eh,ti)   + & 
+ eta * (1-eta2) * (1-eta3)* tempx
+                        psiW(loc2+1,jf,jm,loc+1,loc3+1,eh,ti) = psiW(loc2+1,jf,jm,loc+1,loc3+1,eh,ti) + &
+ (1-eta) * (1-eta2) * (1-eta3)* tempx
                     end do
                     end do
                 end if                
@@ -129,20 +139,32 @@ module ComputeDistributions
             end if
             tempx = hinitH(h,eh) * minit(pm,eh) * Ptmvect(tm) * sinitH(1,vm) * probs * psiW(j,zf,zm,vf,vm,eh,nw)
             if (loc2 == na) then 
-                psiRMarried(loc2 , i,loc, loc3, h,s, 1)     = psiRMarried(loc2 , i,loc, loc3, h,s, 1) + eta*eta3 * tempx
-                psiRMarried(loc2 , i,loc+1, loc3, h,s, 1)   = psiRMarried(loc2 , i,loc+1, loc3, h,s, 1) + (1-eta)*eta3 * tempx
-                psiRMarried(loc2 , i,loc, loc3+1, h,s, 1)    = psiRMarried(loc2 , i,loc, loc3+1, h,s, 1) + eta*(1-eta3) * tempx
-                psiRMarried(loc2 , i,loc+1, loc3+1, h,s, 1)   = psiRMarried(loc2 , i,loc+1, loc3+1, h,s, 1) + (1-eta)*(1-eta3) * tempx                                 
+                psiRMarried(loc2 , i,loc, loc3, h,s, 1)     = psiRMarried(loc2 , i,loc, loc3, h,s, 1) + & 
+eta*eta3 * tempx
+                psiRMarried(loc2 , i,loc+1, loc3, h,s, 1)   = psiRMarried(loc2 , i,loc+1, loc3, h,s, 1) + & 
+(1-eta)*eta3 * tempx
+                psiRMarried(loc2 , i,loc, loc3+1, h,s, 1)    = psiRMarried(loc2 , i,loc, loc3+1, h,s, 1) + & 
+eta*(1-eta3) * tempx
+                psiRMarried(loc2 , i,loc+1, loc3+1, h,s, 1)   = psiRMarried(loc2 , i,loc+1, loc3+1, h,s, 1) + & 
+(1-eta)*(1-eta3) * tempx                                 
             else    
                 eta2 = ( avect(loc2+1) - aPolicyWCube(j,zf,zm,vf,vm,eh,nw) )/( avect(loc2+1) - avect(loc2) )
-                psiRMarried(loc2 , i,loc,loc3, h,s, 1) = psiRMarried(loc2 , i,loc,loc3, h,s, 1) + eta * eta2 *eta3  * tempx
-                psiRMarried(loc2+1, i,loc,loc3, h,s, 1) = psiRMarried(loc2+1, i,loc,loc3, h,s, 1) + eta * (1-eta2)*eta3  * tempx
-                psiRMarried(loc2 , i,loc+1,loc3, h,s, 1) = psiRMarried(loc2 , i,loc+1,loc3, h,s, 1) + (1-eta) * eta2 *eta3* tempx
-                psiRMarried(loc2+1, i,loc+1,loc3, h,s, 1) = psiRMarried(loc2+1, i,loc+1,loc3,h,s, 1) + (1-eta) * (1-eta2) *eta3  * tempx
-                psiRMarried(loc2 , i,loc,loc3+1, h,s, 1) = psiRMarried(loc2 , i,loc,loc3+1, h,s, 1) + eta * eta2 *(1-eta3) * tempx
-                psiRMarried(loc2+1, i,loc,loc3+1, h,s, 1) = psiRMarried(loc2+1, i,loc,loc3+1, h,s, 1) + eta * (1-eta2) *(1-eta3) * tempx
-                psiRMarried(loc2 , i,loc+1,loc3+1, h,s, 1) = psiRMarried(loc2 , i,loc+1,loc3+1, h,s, 1) + (1-eta) * eta2*(1-eta3)  * tempx
-                psiRMarried(loc2+1, i,loc+1,loc3+1, h,s, 1) = psiRMarried(loc2+1, i,loc+1,loc3+1, h,s, 1) + (1-eta) * (1-eta2) *(1-eta3) * tempx
+                psiRMarried(loc2 , i,loc,loc3, h,s, 1) = psiRMarried(loc2 , i,loc,loc3, h,s, 1) + & 
+ eta * eta2 *eta3  * tempx
+                psiRMarried(loc2+1, i,loc,loc3, h,s, 1) = psiRMarried(loc2+1, i,loc,loc3, h,s, 1) + &
+ eta * (1-eta2)*eta3  * tempx
+                psiRMarried(loc2 , i,loc+1,loc3, h,s, 1) = psiRMarried(loc2 , i,loc+1,loc3, h,s, 1) + &
+ (1-eta) * eta2 *eta3* tempx
+                psiRMarried(loc2+1, i,loc+1,loc3, h,s, 1) = psiRMarried(loc2+1, i,loc+1,loc3,h,s, 1) + &
+ (1-eta) * (1-eta2) *eta3  * tempx
+                psiRMarried(loc2 , i,loc,loc3+1, h,s, 1) = psiRMarried(loc2 , i,loc,loc3+1, h,s, 1) + & 
+ eta * eta2 *(1-eta3) * tempx
+                psiRMarried(loc2+1, i,loc,loc3+1, h,s, 1) = psiRMarried(loc2+1, i,loc,loc3+1, h,s, 1) + &
+ eta * (1-eta2) *(1-eta3) * tempx
+                psiRMarried(loc2 , i,loc+1,loc3+1, h,s, 1) = psiRMarried(loc2 , i,loc+1,loc3+1, h,s, 1) + &
+ (1-eta) * eta2*(1-eta3)  * tempx
+                psiRMarried(loc2+1, i,loc+1,loc3+1, h,s, 1) = psiRMarried(loc2+1, i,loc+1,loc3+1, h,s, 1) + &
+ (1-eta) * (1-eta2) *(1-eta3) * tempx
                 !s,a,m,ebar
             end if
         end do        
@@ -190,33 +212,51 @@ module ComputeDistributions
             tempx = hinitF(h,ef) * minit(pm,eh) * Ptmvect(tm) * sinitH(2,vm) * probs * psiW(j,zf,zm,vf,vm,eh,nw)   
                        
             if (loc2 == na) then 
-                psiRWidow(loc2 , i,loc, loc3, h,s, 1)     = psiRWidow(loc2 , i,loc, loc3, h,s, 1) + eta*eta3  * tempx * (1-probHusband0)
-                psiRWidow(loc2 , i,loc+1, loc3, h,s, 1)   = psiRWidow(loc2 , i,loc+1, loc3, h,s, 1) + (1-eta)*eta3  * tempx * (1-probHusband0)
-                psiRWidow(loc2 , i,loc, loc3+1, h,s, 1)    = psiRWidow(loc2 , i,loc, loc3+1, h,s, 1) + eta*(1-eta3)   * tempx * (1-probHusband0)
-                psiRWidow(loc2 , i,loc+1, loc3+1, h,s, 1)   = psiRWidow(loc2 , i,loc+1, loc3+1, h,s, 1) + (1-eta)*(1-eta3) * tempx * (1-probHusband0)                                        
+                psiRWidow(loc2 , i,loc, loc3, h,s, 1)     = psiRWidow(loc2 , i,loc, loc3, h,s, 1) + & 
+ eta*eta3  * tempx * (1-probHusband0)
+                psiRWidow(loc2 , i,loc+1, loc3, h,s, 1)   = psiRWidow(loc2 , i,loc+1, loc3, h,s, 1) + &
+ (1-eta)*eta3  * tempx * (1-probHusband0)
+                psiRWidow(loc2 , i,loc, loc3+1, h,s, 1)    = psiRWidow(loc2 , i,loc, loc3+1, h,s, 1) + &
+ eta*(1-eta3)   * tempx * (1-probHusband0)
+                psiRWidow(loc2 , i,loc+1, loc3+1, h,s, 1)   = psiRWidow(loc2 , i,loc+1, loc3+1, h,s, 1) + &
+ (1-eta)*(1-eta3) * tempx * (1-probHusband0)                                        
             else    
                 eta2 = ( avect(loc2+1) - aPolicyWCube(j,zf,zm,vf,vm,eh,nw) )/( avect(loc2+1) - avect(loc2) )
-                psiRWidow(loc2 , i,loc,loc3, h,s, 1) = psiRWidow(loc2 , i,loc,loc3, h,s, 1) + eta * eta2 *eta3  * tempx * (1-probHusband0)
-                psiRWidow(loc2+1, i,loc,loc3, h,s, 1) = psiRWidow(loc2+1, i,loc,loc3, h,s, 1) + eta * (1-eta2)*eta3  * tempx * (1-probHusband0)
-                psiRWidow(loc2 , i,loc+1,loc3, h,s, 1) = psiRWidow(loc2 , i,loc+1,loc3, h,s, 1) + (1-eta) * eta2 *eta3* tempx * (1-probHusband0)
-                psiRWidow(loc2+1, i,loc+1,loc3, h,s, 1) = psiRWidow(loc2+1, i,loc+1,loc3,h,s, 1) + (1-eta) * (1-eta2) *eta3  * tempx * (1-probHusband0)      
-                psiRWidow(loc2 , i,loc,loc3+1, h,s, 1) = psiRWidow(loc2 , i,loc,loc3+1, h,s, 1) + eta * eta2 *(1-eta3) * tempx * (1-probHusband0)
-                psiRWidow(loc2+1, i,loc,loc3+1, h,s, 1) = psiRWidow(loc2+1, i,loc,loc3+1, h,s, 1) + eta * (1-eta2) *(1-eta3) * tempx * (1-probHusband0)
-                psiRWidow(loc2 , i,loc+1,loc3+1, h,s, 1) = psiRWidow(loc2 , i,loc+1,loc3+1, h,s, 1) + (1-eta) * eta2*(1-eta3)  * tempx * (1-probHusband0)
-                psiRWidow(loc2+1, i,loc+1,loc3+1, h,s, 1) = psiRWidow(loc2+1, i,loc+1,loc3+1, h,s, 1) + (1-eta) * (1-eta2) *(1-eta3) * tempx * (1-probHusband0)
+                psiRWidow(loc2 , i,loc,loc3, h,s, 1) = psiRWidow(loc2 , i,loc,loc3, h,s, 1) + & 
+eta * eta2 *eta3  * tempx * (1-probHusband0)
+                psiRWidow(loc2+1, i,loc,loc3, h,s, 1) = psiRWidow(loc2+1, i,loc,loc3, h,s, 1) + &
+ eta * (1-eta2)*eta3  * tempx * (1-probHusband0)
+                psiRWidow(loc2 , i,loc+1,loc3, h,s, 1) = psiRWidow(loc2 , i,loc+1,loc3, h,s, 1) + &
+ (1-eta) * eta2 *eta3* tempx * (1-probHusband0)
+                psiRWidow(loc2+1, i,loc+1,loc3, h,s, 1) = psiRWidow(loc2+1, i,loc+1,loc3,h,s, 1) + & 
+(1-eta) * (1-eta2) *eta3  * tempx * (1-probHusband0)      
+                psiRWidow(loc2 , i,loc,loc3+1, h,s, 1) = psiRWidow(loc2 , i,loc,loc3+1, h,s, 1) + &
+ eta * eta2 *(1-eta3) * tempx * (1-probHusband0)
+                psiRWidow(loc2+1, i,loc,loc3+1, h,s, 1) = psiRWidow(loc2+1, i,loc,loc3+1, h,s, 1) + & 
+eta * (1-eta2) *(1-eta3) * tempx * (1-probHusband0)
+                psiRWidow(loc2 , i,loc+1,loc3+1, h,s, 1) = psiRWidow(loc2 , i,loc+1,loc3+1, h,s, 1) + &
+ (1-eta) * eta2*(1-eta3)  * tempx * (1-probHusband0)
+                psiRWidow(loc2+1, i,loc+1,loc3+1, h,s, 1) = psiRWidow(loc2+1, i,loc+1,loc3+1, h,s, 1) + &
+ (1-eta) * (1-eta2) *(1-eta3) * tempx * (1-probHusband0)
                 !s,a,m,ebar
             end if
             
             if (loc2 == na) then 
-                psiRWidow(loc2 , i,loc, 1, h,s, 1)     = psiRWidow(loc2 , i,loc, 1, h,s, 1) + eta*  tempx * probHusband0
-                psiRWidow(loc2 , i,loc+1, 1, h,s, 1)   = psiRWidow(loc2 , i,loc+1, 1, h,s, 1) + (1-eta)  * tempx * probHusband0
+                psiRWidow(loc2 , i,loc, 1, h,s, 1)     = psiRWidow(loc2 , i,loc, 1, h,s, 1) + &
+ eta*  tempx * probHusband0
+                psiRWidow(loc2 , i,loc+1, 1, h,s, 1)   = psiRWidow(loc2 , i,loc+1, 1, h,s, 1) + &
+ (1-eta)  * tempx * probHusband0
                                                    
             else    
                 eta2 = ( avect(loc2+1) - aPolicyWCube(j,zf,zm,vf,vm,eh,nw) )/( avect(loc2+1) - avect(loc2) )
-                psiRWidow(loc2 , i,loc,1, h,s, 1) = psiRWidow(loc2 , i,loc,1, h,s, 1) + eta * eta2 * tempx * probHusband0
-                psiRWidow(loc2+1, i,loc,1, h,s, 1) = psiRWidow(loc2+1, i,loc,1, h,s, 1) + eta * (1-eta2) * tempx * probHusband0
-                psiRWidow(loc2 , i,loc+1,1, h,s, 1) = psiRWidow(loc2 , i,loc+1,1, h,s, 1) + (1-eta) * eta2 * tempx * probHusband0
-                psiRWidow(loc2+1, i,loc+1,1, h,s, 1) = psiRWidow(loc2+1, i,loc+1,1,h,s, 1) + (1-eta) * (1-eta2) * tempx * probHusband0     
+                psiRWidow(loc2 , i,loc,1, h,s, 1) = psiRWidow(loc2 , i,loc,1, h,s, 1) + &
+ eta * eta2 * tempx * probHusband0
+                psiRWidow(loc2+1, i,loc,1, h,s, 1) = psiRWidow(loc2+1, i,loc,1, h,s, 1) + &
+ eta * (1-eta2) * tempx * probHusband0
+                psiRWidow(loc2 , i,loc+1,1, h,s, 1) = psiRWidow(loc2 , i,loc+1,1, h,s, 1) + &
+ (1-eta) * eta2 * tempx * probHusband0
+                psiRWidow(loc2+1, i,loc+1,1, h,s, 1) = psiRWidow(loc2+1, i,loc+1,1,h,s, 1) + & 
+(1-eta) * (1-eta2) * tempx * probHusband0     
                 !s,a,m,ebar
             end if            
         end do        
@@ -263,20 +303,32 @@ module ComputeDistributions
             end if 
             tempx = hinitM(h,em) * minit(pm,eh) * Ptmvect(tm) * sinitH(3,vm) * probs * psiW(j,zf,zm,vf,vm,eh,nw)       
             if (loc2 == na) then 
-                psiRWidower(loc2 , i,loc, loc3, h,s, 1)     = psiRWidower(loc2 , i,loc, loc3, h,s, 1) + eta*eta3  * tempx
-                psiRWidower(loc2 , i,loc+1, loc3, h,s, 1)   = psiRWidower(loc2 , i,loc+1, loc3, h,s, 1) + (1-eta)*eta3  * tempx
-                psiRWidower(loc2 , i,loc, loc3+1, h,s, 1)    = psiRWidower(loc2 , i,loc, loc3+1, h,s, 1) + eta*(1-eta3) * tempx
-                psiRWidower(loc2 , i,loc+1, loc3+1, h,s, 1)   = psiRWidower(loc2 , i,loc+1, loc3+1, h,s, 1) + (1-eta)*(1-eta3) * tempx            
+                psiRWidower(loc2 , i,loc, loc3, h,s, 1)     = psiRWidower(loc2 , i,loc, loc3, h,s, 1) + & 
+eta*eta3  * tempx
+                psiRWidower(loc2 , i,loc+1, loc3, h,s, 1)   = psiRWidower(loc2 , i,loc+1, loc3, h,s, 1) + &
+ (1-eta)*eta3  * tempx
+                psiRWidower(loc2 , i,loc, loc3+1, h,s, 1)    = psiRWidower(loc2 , i,loc, loc3+1, h,s, 1) + &
+ eta*(1-eta3) * tempx
+                psiRWidower(loc2 , i,loc+1, loc3+1, h,s, 1)   = psiRWidower(loc2 , i,loc+1, loc3+1, h,s, 1) + & 
+(1-eta)*(1-eta3) * tempx            
             else    
                 eta2 = ( avect(loc2+1) - aPolicyWCube(j,zf,zm,vf,vm,eh,nw) )/( avect(loc2+1) - avect(loc2) )
-                psiRWidower(loc2 , i,loc,loc3, h,s, 1) = psiRWidower(loc2 , i,loc,loc3, h,s, 1) + eta * eta2 *eta3  * tempx
-                psiRWidower(loc2+1, i,loc,loc3, h,s, 1) = psiRWidower(loc2+1, i,loc,loc3, h,s, 1) + eta * (1-eta2)*eta3  * tempx
-                psiRWidower(loc2 , i,loc+1,loc3, h,s, 1) = psiRWidower(loc2 , i,loc+1,loc3, h,s, 1) + (1-eta) * eta2 *eta3* tempx
-                psiRWidower(loc2+1, i,loc+1,loc3, h,s, 1) = psiRWidower(loc2+1, i,loc+1,loc3,h,s, 1) + (1-eta) * (1-eta2) *eta3  * tempx       
-                psiRWidower(loc2 , i,loc,loc3+1, h,s, 1) = psiRWidower(loc2 , i,loc,loc3+1, h,s, 1) + eta * eta2 *(1-eta3) * tempx
-                psiRWidower(loc2+1, i,loc,loc3+1, h,s, 1) = psiRWidower(loc2+1, i,loc,loc3+1, h,s, 1) + eta * (1-eta2) *(1-eta3) * tempx
-                psiRWidower(loc2 , i,loc+1,loc3+1, h,s, 1) = psiRWidower(loc2 , i,loc+1,loc3+1, h,s, 1) + (1-eta) * eta2*(1-eta3)  * tempx
-                psiRWidower(loc2+1, i,loc+1,loc3+1, h,s, 1) = psiRWidower(loc2+1, i,loc+1,loc3+1, h,s, 1) + (1-eta) * (1-eta2) *(1-eta3) * tempx                           
+                psiRWidower(loc2 , i,loc,loc3, h,s, 1) = psiRWidower(loc2 , i,loc,loc3, h,s, 1) + & 
+ eta * eta2 *eta3  * tempx
+                psiRWidower(loc2+1, i,loc,loc3, h,s, 1) = psiRWidower(loc2+1, i,loc,loc3, h,s, 1) + & 
+eta * (1-eta2)*eta3  * tempx
+                psiRWidower(loc2 , i,loc+1,loc3, h,s, 1) = psiRWidower(loc2 , i,loc+1,loc3, h,s, 1) + &
+ (1-eta) * eta2 *eta3* tempx
+                psiRWidower(loc2+1, i,loc+1,loc3, h,s, 1) = psiRWidower(loc2+1, i,loc+1,loc3,h,s, 1) + &
+ (1-eta) * (1-eta2) *eta3  * tempx       
+                psiRWidower(loc2 , i,loc,loc3+1, h,s, 1) = psiRWidower(loc2 , i,loc,loc3+1, h,s, 1) + &
+eta * eta2 *(1-eta3) * tempx
+                psiRWidower(loc2+1, i,loc,loc3+1, h,s, 1) = psiRWidower(loc2+1, i,loc,loc3+1, h,s, 1) + & 
+eta * (1-eta2) *(1-eta3) * tempx
+                psiRWidower(loc2 , i,loc+1,loc3+1, h,s, 1) = psiRWidower(loc2 , i,loc+1,loc3+1, h,s, 1) + & 
+(1-eta) * eta2*(1-eta3)  * tempx
+                psiRWidower(loc2+1, i,loc+1,loc3+1, h,s, 1) = psiRWidower(loc2+1, i,loc+1,loc3+1, h,s, 1) + &
+ (1-eta) * (1-eta2) *(1-eta3) * tempx                           
                 !s,a,m,ebar
             end if
         end do        
@@ -307,7 +359,8 @@ module ComputeDistributions
             !totalAliveMarried = sum(psiRMarried(:,:,:,:,:,1:3,ti-1))
             !totalAliveWidow = sum(psiRWidow(:,:,:,:,:,1,ti-1))
             !totalAliveWidower = sum(psiRWidower(:,:,:,:,:,1,ti-1)) 
-            totalAlive = sum(psiRMarried(:,:,:,:,:,1:3,ti-1)) + sum(psiRWidow(:,:,:,:,:,1,ti-1)) + sum(psiRWidower(:,:,:,:,:,1,ti-1))        
+            totalAlive = sum(psiRMarried(:,:,:,:,:,1:3,ti-1)) + sum(psiRWidow(:,:,:,:,:,1,ti-1)) + & 
+ sum(psiRWidower(:,:,:,:,:,1,ti-1))        
             do s=1,3
             
                 if (s==1) then !currently married, next period married
@@ -346,7 +399,8 @@ module ComputeDistributions
                                 probs = (1-survivalprobVectF(hf1,1,ti))*(1-survivalprobVectM(hm1,1,ti))
                             end if
                         end if
-                        tempx = PumMat(pj,pz,ti-1)*Ptmvect(tj)*PhmatF(hf1, hf, 1, ti-1)*PhmatM(hm1, hm, 1, ti-1)*probs*psiRMarried(i,z,vf,vm,h,s,ti-1)/totalAlive 
+                        tempx = PumMat(pj,pz,ti-1)*Ptmvect(tj)*PhmatF(hf1, hf, 1, ti-1)* &
+PhmatM(hm1, hm, 1, ti-1)*probs*psiRMarried(i,z,vf,vm,h,s,ti-1)/totalAlive 
                         if (loc2 == na) then                                                          
                             psiRMarried(loc2,j,vf,vm,h1,s1,ti) = psiRMarried(loc2,j,vf,vm,h1,s1,ti) + tempx                                                                                                                        
                         else    
@@ -395,7 +449,8 @@ module ComputeDistributions
                                 probs = 1-survivalprobVectF(hf1,2,ti)
                             end if                        
                         end if                        
-                        tempx = PumMat(pj,pz,ti-1)*Ptmvect(tj)*PhmatF(hf1, hf, 1, ti-1)*probs*psiRMarried(i,z,vf,vm,h,s,ti-1)/totalAlive 
+                        tempx = PumMat(pj,pz,ti-1)*Ptmvect(tj)*PhmatF(hf1, hf, 1, ti-1) & 
+*probs*psiRMarried(i,z,vf,vm,h,s,ti-1)/totalAlive 
                         if (loc2 == na) then                                                          
                             psiRWidow(loc2,j,vf,vm,hf1,s1,ti) = psiRWidow(loc2,j,vf,vm,hf1,s1,ti) + tempx                                                                                                                        
                         else    
@@ -443,7 +498,8 @@ module ComputeDistributions
                             end if
                         end if
                         
-                        tempx = PumMat(pj,pz,ti-1)*Ptmvect(tj)*PhmatM(hm1, hm, 1, ti-1)*probs*psiRMarried(i,z,vf,vm,h,s,ti-1)/totalAlive  
+                        tempx = PumMat(pj,pz,ti-1)*Ptmvect(tj)*PhmatM(hm1, hm, 1, ti-1)*probs* &
+psiRMarried(i,z,vf,vm,h,s,ti-1)/totalAlive  
                         if (loc2 == na) then                                                          
                             psiRWidower(loc2,j,vf,vm,hm1,s1,ti) = psiRWidower(loc2,j,vf,vm,hm1,s1,ti) + tempx                                                                                                                        
                         else    

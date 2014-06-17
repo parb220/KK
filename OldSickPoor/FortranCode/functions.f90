@@ -52,9 +52,11 @@ module functions
                         Uscalar = 2*((cscalar/(1+lambda))**gamma)**(1-sigma)/(1-sigma)
                     else if (hhtype == 4) then
                         if (labscalar > 0) then
-                            Uscalar = ((cscalar/(1+lambda))**gamma*(1-labscalar)**(1-gamma))**(1-sigma)/(1-sigma) + ((cscalar/(1+lambda))**gamma*(1-hbar)**(1-gamma))**(1-sigma)/(1-sigma) - phi1(het) !- phi(het)*labscalar**2 
+                            Uscalar = ((cscalar/(1+lambda))**gamma*(1-labscalar)**(1-gamma))**(1-sigma)/(1-sigma) + & 
+ ((cscalar/(1+lambda))**gamma*(1-hbar)**(1-gamma))**(1-sigma)/(1-sigma) - phi1(het) !- phi(het)*labscalar**2 
                         else
-                            Uscalar = ((cscalar/(1+lambda))**gamma*(1-labscalar)**(1-gamma))**(1-sigma)/(1-sigma) + ((cscalar/(1+lambda))**gamma*(1-hbar)**(1-gamma))**(1-sigma)/(1-sigma)
+                            Uscalar = ((cscalar/(1+lambda))**gamma*(1-labscalar)**(1-gamma))**(1-sigma)/(1-sigma) + & 
+((cscalar/(1+lambda))**gamma*(1-hbar)**(1-gamma))**(1-sigma)/(1-sigma)
                         end if
                     else
                         Uscalar = (cscalar**gamma)**(1-sigma)/(1-sigma)
@@ -78,7 +80,8 @@ module functions
                         Uscalar = 2*(cscalar/(1+lambda))**(1-sigma)/(1-sigma)+ psiR/(1-gamma)
                     else if (hhtype == 4) then
                         if (labscalar > 0) then
-                            Uscalar = 2*(cscalar/(1+lambda))**(1-sigma)/(1-sigma)+ psi(het)*(1-labscalar)**(1-gamma)/(1-gamma) - phi1(het)!*labscalar**upsilon 
+                            Uscalar = 2*(cscalar/(1+lambda))**(1-sigma)/(1-sigma)+ psi(het)* &
+(1-labscalar)**(1-gamma)/(1-gamma) - phi1(het)!*labscalar**upsilon 
                         else
                             Uscalar = 2*(cscalar/(1+lambda))**(1-sigma)/(1-sigma)+ psi(het)/(1-gamma)
                         end if
@@ -504,19 +507,21 @@ module functions
             llower = 0.0d0
             lupper = 0.7d0
             lvect = linspace(llower, lupper, nl)
-            preTaxIncomeM = w*emmat(lzf,lzm,leducm,age)*hbar - SocSecTax(w*emmat(lzf,lzm,leducm,age)*hbar) + 0.5d0*r* avect(la) &
-                - EarnsTaxFn(w*emmat(lzf,lzm,leducm,age)*hbar)
+            preTaxIncomeM = w*emmat(lzf,lzm,leducm,age)*hbar - SocSecTax(w*emmat(lzf,lzm,leducm,age)*hbar) + & 
+0.5d0*r* avect(la) - EarnsTaxFn(w*emmat(lzf,lzm,leducm,age)*hbar)
             call get_interps(avect,a1, loca1, mxa1)
             do i=1,nl
-                preTaxIncomeF = w*lvect(i)*efmat(lzf,lzm,leducf,age) - SocSecTax(w*lvect(i)*efmat(lzf,lzm,leducf,age)) + 0.5d0*r* avect(la) &
-                    - EarnsTaxFn(w*lvect(i)*efmat(lzf,lzm,leducf,age))
-                postTaxWealth = preTaxIncomeF + preTaxIncomeM - max(0.0d0,capTax*r*avect(la))  + avect(la) - IncomeTax(preTaxIncomeF+preTaxIncomeM- max(0.0d0,capTax*r*avect(la)))          
+                preTaxIncomeF = w*lvect(i)*efmat(lzf,lzm,leducf,age) - SocSecTax(w*lvect(i)*& 
+efmat(lzf,lzm,leducf,age)) + 0.5d0*r* avect(la) - EarnsTaxFn(w*lvect(i)*efmat(lzf,lzm,leducf,age))
+                postTaxWealth = preTaxIncomeF + preTaxIncomeM - max(0.0d0,capTax*r*avect(la))  + & 
+avect(la) - IncomeTax(preTaxIncomeF+preTaxIncomeM- max(0.0d0,capTax*r*avect(la)))          
                 !if (age == 1) postTaxWealth = postTaxWealth + btran(leduch)
                 cons = postTaxWealth + transfers(postTaxWealth) - a1   
                 if (cons .le. 0.0d0) then
                     Vvect(i) = -1.d10
                 else            
-                    Vvect(i) = PhiHatl(lvect(i), la, lzf, lzm, lebarf, lebarm, leduch, leducm, leducf, mxa1, loca1, age,cons,ConsUtil)  
+                    Vvect(i) = PhiHatl(lvect(i), la, lzf, lzm, lebarf, lebarm, & 
+leduch, leducm, leducf, mxa1, loca1, age,cons,ConsUtil)  
                 end if
             end do
                     
@@ -535,7 +540,8 @@ module functions
            
             preTaxIncomeF = w*lab*efmat(lzf,lzm,leducf,age) - SocSecTax(w*lab*efmat(lzf,lzm,leducf,age)) + 0.5d0*r* avect(la) &
                  - EarnsTaxFn(w*lab*efmat(lzf,lzm,leducf,age))
-            postTaxWealth = preTaxIncomeF + preTaxIncomeM + avect(la) - IncomeTax(preTaxIncomeF+preTaxIncomeM- max(0.0d0,capTax*r*avect(la))) - max(0.0d0,capTax*r*avect(la))          
+            postTaxWealth = preTaxIncomeF + preTaxIncomeM + avect(la) - IncomeTax(preTaxIncomeF+preTaxIncomeM- & 
+max(0.0d0,capTax*r*avect(la))) - max(0.0d0,capTax*r*avect(la))          
             !if (age == 1) postTaxWealth = postTaxWealth + btran(leduch)
             cons = postTaxWealth + transfers(postTaxWealth) - a1   
             if (cons .le. 0.0d0) then
@@ -566,7 +572,8 @@ module functions
                 do s=1,4
                 do hh =1,nhht
                 do i=1,nm !over h1vect           
-                    call Interpolate(avect, VnewRCubeMarried(:,i,CurEbarFLoc, CurEbarMLoc, hh, s, CurAge+1), a1, V1vectMarried(i,hh,s))                  
+                    call Interpolate(avect, VnewRCubeMarried(:,i,CurEbarFLoc, CurEbarMLoc, hh, s, CurAge+1), & 
+a1, V1vectMarried(i,hh,s))                  
                 end do  
                 end do
                 end do
@@ -578,12 +585,21 @@ module functions
                     pm = i-npm*((i-1)/npm)
                     tm = (i-1)/npm + 1             
                     if (CurAge == 17) then
-                        Vprime = Vprime + PhmatF(hf1,hf,CurStatus,CurAge)*PhmatM(hm1,hm,CurStatus,CurAge)*Pummat(pm,pm0,CurAge)*Ptmvect(tm)*V1vectMarried(i,hh,4)                    
+                        Vprime = Vprime + PhmatF(hf1,hf,CurStatus,CurAge)*PhmatM(hm1,hm,CurStatus,CurAge)* &
+Pummat(pm,pm0,CurAge)*Ptmvect(tm)*V1vectMarried(i,hh,4)                    
                     else
-                        Vprime = Vprime + PhmatF(hf1,hf,CurStatus,CurAge)*PhmatM(hm1,hm,CurStatus,CurAge)*Pummat(pm,pm0,CurAge)*Ptmvect(tm)*survivalprobVectF(hf1,FutStatus,CurAge+1)* survivalprobVectM(hm1,FutStatus,CurAge+1)*V1vectMarried(i,hh,1)
-                        Vprime = Vprime + PhmatF(hf1,hf,CurStatus,CurAge)*PhmatM(hm1,hm,CurStatus,CurAge)*Pummat(pm,pm0,CurAge)*Ptmvect(tm)*survivalprobVectF(hf1,FutStatus,CurAge+1)* (1-survivalprobVectM(hm1,FutStatus,CurAge+1))*V1vectMarried(i,hh,2)
-                        Vprime = Vprime + PhmatF(hf1,hf,CurStatus,CurAge)*PhmatM(hm1,hm,CurStatus,CurAge)*Pummat(pm,pm0,CurAge)*Ptmvect(tm)*(1-survivalprobVectF(hf1,FutStatus,CurAge+1))* survivalprobVectM(hm1,FutStatus,CurAge+1)*V1vectMarried(i,hh,3)
-                        Vprime = Vprime + PhmatF(hf1,hf,CurStatus,CurAge)*PhmatM(hm1,hm,CurStatus,CurAge)*Pummat(pm,pm0,CurAge)*Ptmvect(tm)*(1-survivalprobVectF(hf1,FutStatus,CurAge+1))*(1-survivalprobVectM(hm1,FutStatus,CurAge+1))*V1vectMarried(i,hh,4)
+                        Vprime = Vprime + PhmatF(hf1,hf,CurStatus,CurAge)*PhmatM(hm1,hm,CurStatus,CurAge)* & 
+Pummat(pm,pm0,CurAge)*Ptmvect(tm)*survivalprobVectF(hf1,FutStatus,CurAge+1)* &
+survivalprobVectM(hm1,FutStatus,CurAge+1)*V1vectMarried(i,hh,1)
+                        Vprime = Vprime + PhmatF(hf1,hf,CurStatus,CurAge)*PhmatM(hm1,hm,CurStatus,CurAge)* & 
+Pummat(pm,pm0,CurAge)*Ptmvect(tm)*survivalprobVectF(hf1,FutStatus,CurAge+1)* & 
+(1-survivalprobVectM(hm1,FutStatus,CurAge+1))*V1vectMarried(i,hh,2)
+                        Vprime = Vprime + PhmatF(hf1,hf,CurStatus,CurAge)*PhmatM(hm1,hm,CurStatus,CurAge)* & 
+Pummat(pm,pm0,CurAge)*Ptmvect(tm)*(1-survivalprobVectF(hf1,FutStatus,CurAge+1))* &
+survivalprobVectM(hm1,FutStatus,CurAge+1)*V1vectMarried(i,hh,3)
+                        Vprime = Vprime + PhmatF(hf1,hf,CurStatus,CurAge)*PhmatM(hm1,hm,CurStatus,CurAge)* & 
+Pummat(pm,pm0,CurAge)*Ptmvect(tm)*(1-survivalprobVectF(hf1,FutStatus,CurAge+1))* & 
+(1-survivalprobVectM(hm1,FutStatus,CurAge+1))*V1vectMarried(i,hh,4)
                     end if
                 end do
                 end do            
@@ -591,7 +607,8 @@ module functions
                 do s=1,2
                 do hh =1,nsht
                 do i=1,nm !over h1vect             
-                    call Interpolate(avect, VnewRCubeWidow(:,i,CurEbarFLoc, CurEbarMLoc, hh, s, CurAge+1), a1, V1vectWidow(i,hh,s))                       
+                    call Interpolate(avect, VnewRCubeWidow(:,i,CurEbarFLoc, CurEbarMLoc, hh, s, CurAge+1), & 
+a1, V1vectWidow(i,hh,s))                       
                 end do  
                 end do
                 end do 
@@ -601,10 +618,13 @@ module functions
                     pm = i-npm*((i-1)/npm)
                     tm = (i-1)/npm + 1
                     if (CurAge == 17) then                        
-                        Vprime = Vprime + PhmatF(hf1,hf,CurStatus,CurAge)*Pummat(pm,pm0,CurAge)*Ptmvect(tm)*V1vectWidow(i,hf1,2)                    
+                        Vprime = Vprime + PhmatF(hf1,hf,CurStatus,CurAge)*Pummat(pm,pm0,CurAge)* & 
+Ptmvect(tm)*V1vectWidow(i,hf1,2)                    
                     else            
-                        Vprime = Vprime + PhmatF(hf1,hf,CurStatus,CurAge)*Pummat(pm,pm0,CurAge)*Ptmvect(tm)*survivalprobVectF(hf1,FutStatus,CurAge+1)*V1vectWidow(i,hf1,1)
-                        Vprime = Vprime + PhmatF(hf1,hf,CurStatus,CurAge)*Pummat(pm,pm0,CurAge)*Ptmvect(tm)*(1-survivalprobVectF(hf1,FutStatus,CurAge+1))*V1vectWidow(i,hf1,2)
+                        Vprime = Vprime + PhmatF(hf1,hf,CurStatus,CurAge)*Pummat(pm,pm0,CurAge)* & 
+Ptmvect(tm)*survivalprobVectF(hf1,FutStatus,CurAge+1)*V1vectWidow(i,hf1,1)
+                        Vprime = Vprime + PhmatF(hf1,hf,CurStatus,CurAge)*Pummat(pm,pm0,CurAge)* & 
+Ptmvect(tm)*(1-survivalprobVectF(hf1,FutStatus,CurAge+1))*V1vectWidow(i,hf1,2)
                     end if
                 end do
                 end do                   
@@ -613,7 +633,8 @@ module functions
                 do s=1,2
                 do hh =1,nsht
                 do i=1,nm !over h1vect           
-                    call Interpolate(avect, VnewRCubeWidower(:,i,CurEbarFLoc, CurEbarMLoc, hh, s, CurAge+1), a1, V1vectWidower(i,hh,s))               
+                    call Interpolate(avect, VnewRCubeWidower(:,i,CurEbarFLoc, CurEbarMLoc, hh, s, CurAge+1), &
+ a1, V1vectWidower(i,hh,s))               
                 end do  
                 end do
                 end do 
@@ -623,10 +644,13 @@ module functions
                     pm = i-npm*((i-1)/npm)
                     tm = (i-1)/npm + 1 
                     if (CurAge == 17) then                        
-                        Vprime = Vprime + PhmatM(hm1,hm,CurStatus,CurAge)*Pummat(pm,pm0,CurAge)*Ptmvect(tm)*V1vectWidower(i,hm1,2)                    
+                        Vprime = Vprime + PhmatM(hm1,hm,CurStatus,CurAge)*Pummat(pm,pm0,CurAge)* & 
+Ptmvect(tm)*V1vectWidower(i,hm1,2)                    
                     else            
-                        Vprime = Vprime + PhmatM(hm1,hm,CurStatus,CurAge)*Pummat(pm,pm0,CurAge)*Ptmvect(tm)*survivalprobVectM(hm1,FutStatus,CurAge+1)*V1vectWidower(i,hm1,1)
-                        Vprime = Vprime + PhmatM(hm1,hm,CurStatus,CurAge)*Pummat(pm,pm0,CurAge)*Ptmvect(tm)*(1-survivalprobVectM(hm1,FutStatus,CurAge+1))*V1vectWidower(i,hm1,2)
+                        Vprime = Vprime + PhmatM(hm1,hm,CurStatus,CurAge)*Pummat(pm,pm0,CurAge)* & 
+Ptmvect(tm)*survivalprobVectM(hm1,FutStatus,CurAge+1)*V1vectWidower(i,hm1,1)
+                        Vprime = Vprime + PhmatM(hm1,hm,CurStatus,CurAge)*Pummat(pm,pm0,CurAge)* & 
+Ptmvect(tm)*(1-survivalprobVectM(hm1,FutStatus,CurAge+1))*V1vectWidower(i,hm1,2)
                     end if    
                 end do
                 end do                   
@@ -657,10 +681,13 @@ module functions
                 pm = i-npm*((i-1)/npm)
                 tm = (i-1)/npm + 1 
                 if (CurAge == 17) then                        
-                    Vprime = Vprime + PhmatF(hf1,hf,CurStatus,CurAge)*Pummat(pm,pm0,CurAge)*Ptmvect(tm)*V1vectWidow(i,hf1,2)                                                          
+                    Vprime = Vprime + PhmatF(hf1,hf,CurStatus,CurAge)*Pummat(pm,pm0,CurAge)* & 
+Ptmvect(tm)*V1vectWidow(i,hf1,2)                                                          
                 else                        
-                    Vprime = Vprime + PhmatF(hf1,hf,CurStatus,CurAge)*Pummat(pm,pm0,CurAge)*Ptmvect(tm)*survivalprobVectF(hf1,FutStatus+1,CurAge+1)*V1vectWidow(i,hf1,1)                                                          
-                    Vprime = Vprime + PhmatF(hf1,hf,CurStatus,CurAge)*Pummat(pm,pm0,CurAge)*Ptmvect(tm)*(1-survivalprobVectF(hf1,FutStatus+1,CurAge+1))*V1vectWidow(i,hf1,2)                                                          
+                    Vprime = Vprime + PhmatF(hf1,hf,CurStatus,CurAge)*Pummat(pm,pm0,CurAge)* & 
+Ptmvect(tm)*survivalprobVectF(hf1,FutStatus+1,CurAge+1)*V1vectWidow(i,hf1,1)                                                          
+                    Vprime = Vprime + PhmatF(hf1,hf,CurStatus,CurAge)*Pummat(pm,pm0,CurAge)* & 
+Ptmvect(tm)*(1-survivalprobVectF(hf1,FutStatus+1,CurAge+1))*V1vectWidow(i,hf1,2)                                                          
                 end if
             end do
             end do
@@ -689,10 +716,13 @@ module functions
                 pm = i-npm*((i-1)/npm)
                 tm = (i-1)/npm + 1    
                 if (CurAge == 17) then                        
-                    Vprime = Vprime + PhmatM(hm1,hm,CurStatus,CurAge)*Pummat(pm,pm0,CurAge)*Ptmvect(tm)*V1vectWidower(i,hm1,2)                                                          
+                    Vprime = Vprime + PhmatM(hm1,hm,CurStatus,CurAge)*Pummat(pm,pm0,CurAge)* & 
+Ptmvect(tm)*V1vectWidower(i,hm1,2)                                                          
                 else                  
-                    Vprime = Vprime + PhmatM(hm1,hm,CurStatus,CurAge)*Pummat(pm,pm0,CurAge)*Ptmvect(tm)*survivalprobVectM(hm1,FutStatus+2,CurAge+1)*V1vectWidower(i,hm1,1)  
-                    Vprime = Vprime + PhmatM(hm1,hm,CurStatus,CurAge)*Pummat(pm,pm0,CurAge)*Ptmvect(tm)*(1-survivalprobVectM(hm1,FutStatus+2,CurAge+1))*V1vectWidower(i,hm1,2)                                                          
+                    Vprime = Vprime + PhmatM(hm1,hm,CurStatus,CurAge)*Pummat(pm,pm0,CurAge)* & 
+Ptmvect(tm)*survivalprobVectM(hm1,FutStatus+2,CurAge+1)*V1vectWidower(i,hm1,1)  
+                    Vprime = Vprime + PhmatM(hm1,hm,CurStatus,CurAge)*Pummat(pm,pm0,CurAge)* & 
+Ptmvect(tm)*(1-survivalprobVectM(hm1,FutStatus+2,CurAge+1))*V1vectWidower(i,hm1,2)                                                          
                 end if    
             end do
             end do         
@@ -725,7 +755,8 @@ module functions
                 do s=1,4
                 do hh =1,nhht
                 do i=1,nm !over h1vect           
-                    call Interpolate(avect, UtilConsRCubeMarried(:,i,CurEbarFLoc, CurEbarMLoc, hh, s, CurAge+1), a1, V1vectMarried(i,hh,s))                  
+                    call Interpolate(avect, UtilConsRCubeMarried(:,i,CurEbarFLoc, CurEbarMLoc, hh, s, CurAge+1), & 
+a1, V1vectMarried(i,hh,s))                  
                 end do  
                 end do
                 end do
@@ -737,12 +768,21 @@ module functions
                     pm = i-npm*((i-1)/npm)
                     tm = (i-1)/npm + 1   
                     if (CurAge == 17) then                        
-                        Vprime = Vprime + PhmatF(hf1,hf,CurStatus,CurAge)*PhmatM(hm1,hm,CurStatus,CurAge)*Pummat(pm,pm0,CurAge)*Ptmvect(tm)*V1vectMarried(i,hh,4)
+                        Vprime = Vprime + PhmatF(hf1,hf,CurStatus,CurAge)*PhmatM(hm1,hm,CurStatus,CurAge)* & 
+Pummat(pm,pm0,CurAge)*Ptmvect(tm)*V1vectMarried(i,hh,4)
                     else           
-                        Vprime = Vprime + PhmatF(hf1,hf,CurStatus,CurAge)*PhmatM(hm1,hm,CurStatus,CurAge)*Pummat(pm,pm0,CurAge)*Ptmvect(tm)*survivalprobVectF(hf1,FutStatus,CurAge+1)* survivalprobVectM(hm1,FutStatus,CurAge+1)*V1vectMarried(i,hh,1)
-                        Vprime = Vprime + PhmatF(hf1,hf,CurStatus,CurAge)*PhmatM(hm1,hm,CurStatus,CurAge)*Pummat(pm,pm0,CurAge)*Ptmvect(tm)*survivalprobVectF(hf1,FutStatus,CurAge+1)* (1-survivalprobVectM(hm1,FutStatus,CurAge+1))*V1vectMarried(i,hh,2)
-                        Vprime = Vprime + PhmatF(hf1,hf,CurStatus,CurAge)*PhmatM(hm1,hm,CurStatus,CurAge)*Pummat(pm,pm0,CurAge)*Ptmvect(tm)*(1-survivalprobVectF(hf1,FutStatus,CurAge+1))* survivalprobVectM(hm1,FutStatus,CurAge+1)*V1vectMarried(i,hh,3)
-                        Vprime = Vprime + PhmatF(hf1,hf,CurStatus,CurAge)*PhmatM(hm1,hm,CurStatus,CurAge)*Pummat(pm,pm0,CurAge)*Ptmvect(tm)*(1-survivalprobVectF(hf1,FutStatus,CurAge+1))*(1-survivalprobVectM(hm1,FutStatus,CurAge+1))*V1vectMarried(i,hh,4)
+                        Vprime = Vprime + PhmatF(hf1,hf,CurStatus,CurAge)*PhmatM(hm1,hm,CurStatus,CurAge)* & 
+Pummat(pm,pm0,CurAge)*Ptmvect(tm)*survivalprobVectF(hf1,FutStatus,CurAge+1)* & 
+survivalprobVectM(hm1,FutStatus,CurAge+1)*V1vectMarried(i,hh,1)
+                        Vprime = Vprime + PhmatF(hf1,hf,CurStatus,CurAge)*PhmatM(hm1,hm,CurStatus,CurAge)* & 
+Pummat(pm,pm0,CurAge)*Ptmvect(tm)*survivalprobVectF(hf1,FutStatus,CurAge+1)* & 
+(1-survivalprobVectM(hm1,FutStatus,CurAge+1))*V1vectMarried(i,hh,2)
+                        Vprime = Vprime + PhmatF(hf1,hf,CurStatus,CurAge)*PhmatM(hm1,hm,CurStatus,CurAge)* & 
+Pummat(pm,pm0,CurAge)*Ptmvect(tm)*(1-survivalprobVectF(hf1,FutStatus,CurAge+1))* & 
+survivalprobVectM(hm1,FutStatus,CurAge+1)*V1vectMarried(i,hh,3)
+                        Vprime = Vprime + PhmatF(hf1,hf,CurStatus,CurAge)*PhmatM(hm1,hm,CurStatus,CurAge)* & 
+Pummat(pm,pm0,CurAge)*Ptmvect(tm)*(1-survivalprobVectF(hf1,FutStatus,CurAge+1))* &
+(1-survivalprobVectM(hm1,FutStatus,CurAge+1))*V1vectMarried(i,hh,4)
                     end if
                 end do
                 end do            
@@ -750,7 +790,8 @@ module functions
                 do s=1,2
                 do hh =1,nsht
                 do i=1,nm !over h1vect             
-                    call Interpolate(avect, UtilConsRCubeWidow(:,i,CurEbarFLoc, CurEbarMLoc, hh, s, CurAge+1), a1, V1vectWidow(i,hh,s))                       
+                    call Interpolate(avect, UtilConsRCubeWidow(:,i,CurEbarFLoc, CurEbarMLoc, hh, s, CurAge+1), & 
+a1, V1vectWidow(i,hh,s))                       
                 end do  
                 end do
                 end do 
@@ -760,10 +801,13 @@ module functions
                     pm = i-npm*((i-1)/npm)
                     tm = (i-1)/npm + 1    
                     if (CurAge == 17) then                        
-                        Vprime = Vprime + PhmatF(hf1,hf,CurStatus,CurAge)*Pummat(pm,pm0,CurAge)*Ptmvect(tm)*V1vectWidow(i,hf1,2)
+                        Vprime = Vprime + PhmatF(hf1,hf,CurStatus,CurAge)*Pummat(pm,pm0,CurAge)*Ptmvect(tm)* & 
+V1vectWidow(i,hf1,2)
                     else          
-                        Vprime = Vprime + PhmatF(hf1,hf,CurStatus,CurAge)*Pummat(pm,pm0,CurAge)*Ptmvect(tm)*survivalprobVectF(hf1,FutStatus,CurAge+1)*V1vectWidow(i,hf1,1)
-                        Vprime = Vprime + PhmatF(hf1,hf,CurStatus,CurAge)*Pummat(pm,pm0,CurAge)*Ptmvect(tm)*(1-survivalprobVectF(hf1,FutStatus,CurAge+1))*V1vectWidow(i,hf1,2)
+                        Vprime = Vprime + PhmatF(hf1,hf,CurStatus,CurAge)*Pummat(pm,pm0,CurAge)*Ptmvect(tm)* & 
+survivalprobVectF(hf1,FutStatus,CurAge+1)*V1vectWidow(i,hf1,1)
+                        Vprime = Vprime + PhmatF(hf1,hf,CurStatus,CurAge)*Pummat(pm,pm0,CurAge)*Ptmvect(tm)* & 
+(1-survivalprobVectF(hf1,FutStatus,CurAge+1))*V1vectWidow(i,hf1,2)
                     end if
                 end do
                 end do                   
@@ -772,7 +816,8 @@ module functions
                 do s=1,2
                 do hh =1,nsht
                 do i=1,nm !over h1vect           
-                    call Interpolate(avect, UtilConsRCubeWidower(:,i,CurEbarFLoc, CurEbarMLoc, hh, s, CurAge+1), a1, V1vectWidower(i,hh,s))               
+                    call Interpolate(avect, UtilConsRCubeWidower(:,i,CurEbarFLoc, CurEbarMLoc, hh, s, CurAge+1), & 
+a1, V1vectWidower(i,hh,s))               
                 end do  
                 end do
                 end do 
@@ -782,10 +827,13 @@ module functions
                     pm = i-npm*((i-1)/npm)
                     tm = (i-1)/npm + 1 
                     if (CurAge == 17) then                        
-                        Vprime = Vprime + PhmatM(hm1,hm,CurStatus,CurAge)*Pummat(pm,pm0,CurAge)*Ptmvect(tm)*V1vectWidower(i,hm1,2)
+                        Vprime = Vprime + PhmatM(hm1,hm,CurStatus,CurAge)*Pummat(pm,pm0,CurAge)*Ptmvect(tm)* & 
+V1vectWidower(i,hm1,2)
                     else            
-                        Vprime = Vprime + PhmatM(hm1,hm,CurStatus,CurAge)*Pummat(pm,pm0,CurAge)*Ptmvect(tm)*survivalprobVectM(hm1,FutStatus,CurAge+1)*V1vectWidower(i,hm1,1)
-                        Vprime = Vprime + PhmatM(hm1,hm,CurStatus,CurAge)*Pummat(pm,pm0,CurAge)*Ptmvect(tm)*(1-survivalprobVectM(hm1,FutStatus,CurAge+1))*V1vectWidower(i,hm1,2)
+                        Vprime = Vprime + PhmatM(hm1,hm,CurStatus,CurAge)*Pummat(pm,pm0,CurAge)*Ptmvect(tm)* & 
+survivalprobVectM(hm1,FutStatus,CurAge+1)*V1vectWidower(i,hm1,1)
+                        Vprime = Vprime + PhmatM(hm1,hm,CurStatus,CurAge)*Pummat(pm,pm0,CurAge)*Ptmvect(tm)* & 
+(1-survivalprobVectM(hm1,FutStatus,CurAge+1))*V1vectWidower(i,hm1,2)
                     end if
                 end do
                 end do                   
@@ -816,10 +864,13 @@ module functions
                 pm = i-npm*((i-1)/npm)
                 tm = (i-1)/npm + 1 
                 if (CurAge == 17) then                        
-                    Vprime = Vprime + PhmatF(hf1,hf,CurStatus,CurAge)*Pummat(pm,pm0,CurAge)*Ptmvect(tm)*V1vectWidow(i,hf1,2)                                                          
+                    Vprime = Vprime + PhmatF(hf1,hf,CurStatus,CurAge)*Pummat(pm,pm0,CurAge)*Ptmvect(tm)* & 
+V1vectWidow(i,hf1,2)                                                          
                 else                                        
-                    Vprime = Vprime + PhmatF(hf1,hf,CurStatus,CurAge)*Pummat(pm,pm0,CurAge)*Ptmvect(tm)*survivalprobVectF(hf1,FutStatus+1,CurAge+1)*V1vectWidow(i,hf1,1)                                                          
-                    Vprime = Vprime + PhmatF(hf1,hf,CurStatus,CurAge)*Pummat(pm,pm0,CurAge)*Ptmvect(tm)*(1-survivalprobVectF(hf1,FutStatus+1,CurAge+1))*V1vectWidow(i,hf1,2)                                                          
+                    Vprime = Vprime + PhmatF(hf1,hf,CurStatus,CurAge)*Pummat(pm,pm0,CurAge)*Ptmvect(tm)* & 
+survivalprobVectF(hf1,FutStatus+1,CurAge+1)*V1vectWidow(i,hf1,1)                                                          
+                    Vprime = Vprime + PhmatF(hf1,hf,CurStatus,CurAge)*Pummat(pm,pm0,CurAge)*Ptmvect(tm)* & 
+(1-survivalprobVectF(hf1,FutStatus+1,CurAge+1))*V1vectWidow(i,hf1,2)                                                          
                 end if
             end do
             end do
@@ -838,7 +889,8 @@ module functions
             do s=1,2
             do hh =1,nsht
             do i=1,nm !over h1vect           
-                call Interpolate(avect, UtilConsRCubeWidower(:,i,CurEbarFLoc, CurEbarMLoc, hh, s, CurAge+1), a1, V1vectWidower(i,hh,s))               
+                call Interpolate(avect, UtilConsRCubeWidower(:,i,CurEbarFLoc, CurEbarMLoc, hh, s, CurAge+1), & 
+a1, V1vectWidower(i,hh,s))               
             end do  
             end do
             end do              
@@ -848,10 +900,13 @@ module functions
                 pm = i-npm*((i-1)/npm)
                 tm = (i-1)/npm + 1  
                 if (CurAge == 17) then                        
-                    Vprime = Vprime + PhmatM(hm1,hm,CurStatus,CurAge)*Pummat(pm,pm0,CurAge)*Ptmvect(tm)*V1vectWidower(i,hm1,2)                                                          
+                    Vprime = Vprime + PhmatM(hm1,hm,CurStatus,CurAge)*Pummat(pm,pm0,CurAge)* & 
+Ptmvect(tm)*V1vectWidower(i,hm1,2)                                                          
                 else                    
-                    Vprime = Vprime + PhmatM(hm1,hm,CurStatus,CurAge)*Pummat(pm,pm0,CurAge)*Ptmvect(tm)*survivalprobVectM(hm1,FutStatus+2,CurAge+1)*V1vectWidower(i,hm1,1)  
-                    Vprime = Vprime + PhmatM(hm1,hm,CurStatus,CurAge)*Pummat(pm,pm0,CurAge)*Ptmvect(tm)*(1-survivalprobVectM(hm1,FutStatus+2,CurAge+1))*V1vectWidower(i,hm1,2)                                                          
+                    Vprime = Vprime + PhmatM(hm1,hm,CurStatus,CurAge)*Pummat(pm,pm0,CurAge)* & 
+Ptmvect(tm)*survivalprobVectM(hm1,FutStatus+2,CurAge+1)*V1vectWidower(i,hm1,1)  
+                    Vprime = Vprime + PhmatM(hm1,hm,CurStatus,CurAge)*Pummat(pm,pm0,CurAge)* & 
+Ptmvect(tm)*(1-survivalprobVectM(hm1,FutStatus+2,CurAge+1))*V1vectWidower(i,hm1,2)                                                          
                 end if
             end do
             end do         
@@ -973,8 +1028,10 @@ module functions
                     probs = 1-survivalprobVectF(h,2,1)
                  end if
                                          
-                Vprime = Vprime + minit(pm,leduch)*Ptmvect(tm)*hinitF(h,leducf)*sinitH(2,lebarm)*probs*(1-probHusband0)*V1vect(i,h,s) 
-                Vprime = Vprime + minit(pm,leduch)*Ptmvect(tm)*hinitF(h,leducf)*sinitH(2,lebarm)*probs*probHusband0*V1vect0(i,h,s)                         
+                Vprime = Vprime + minit(pm,leduch)*Ptmvect(tm)*hinitF(h,leducf)* & 
+sinitH(2,lebarm)*probs*(1-probHusband0)*V1vect(i,h,s) 
+                Vprime = Vprime + minit(pm,leduch)*Ptmvect(tm)*hinitF(h,leducf)* & 
+sinitH(2,lebarm)*probs*probHusband0*V1vect0(i,h,s)                         
             end do
             end do 
             end do   
@@ -1096,8 +1153,10 @@ module functions
                         probs = 1-survivalprobVectF(h,2,1)
                      end if                            
                             
-                    Vprime = Vprime + minit(pm,leduch)*Ptmvect(tm)*hinitF(h,leducf)*sinitH(2,lebarm)*probs*(1-probHusband0)*V1vect(i,h,s)   
-                    Vprime = Vprime + minit(pm,leduch)*Ptmvect(tm)*hinitF(h,leducf)*sinitH(2,lebarm)*probs*probHusband0*V1vect0(i,h,s)                           
+                    Vprime = Vprime + minit(pm,leduch)*Ptmvect(tm)*hinitF(h,leducf)* & 
+sinitH(2,lebarm)*probs*(1-probHusband0)*V1vect(i,h,s)   
+                    Vprime = Vprime + minit(pm,leduch)*Ptmvect(tm)*hinitF(h,leducf)* & 
+sinitH(2,lebarm)*probs*probHusband0*V1vect0(i,h,s)                           
                 end do
                 end do 
                 end do    
@@ -1247,11 +1306,14 @@ module functions
         MaxValfx = PhiHatW(lab, la, lzf, lzm, lebarf, lebarm, leduch, MaxValx, age, ConsUtil,1)                
 	 end subroutine GoldenSectionSearchW    
 
-     subroutine GoldenSectionSearchR(lower, upper, c1, CurAge, CurMedLoc, CurEbarFLoc, CurEbarMLoc, CurHealth, CurStatus, FutStatus, MaxValx, MaxValfx,ConsUtil)
+     subroutine GoldenSectionSearchR(lower, upper, c1, CurAge, CurMedLoc, CurEbarFLoc, CurEbarMLoc, CurHealth, &
+ CurStatus, FutStatus, MaxValx, MaxValfx,ConsUtil)
         implicit none
 
-        real(dbl), intent(in):: upper, lower, c1
-        integer, intent(in):: CurAge, CurMedLoc, CurEbarFLoc, CurEbarMLoc, CurStatus, CurHealth, FutStatus
+        real(dbl), intent(in):: upper, lower
+        real(dbl), intent(in):: c1
+        integer, intent(in):: CurAge, CurMedLoc, CurEbarFLoc, CurEbarMLoc, CurStatus
+        integer, intent(in):: CurHealth, FutStatus
         real(dbl), intent(out):: MaxValx, MaxValfx, ConsUtil
         real(dbl) a1, a2, a3, a4, fa2, fa3, p 
         

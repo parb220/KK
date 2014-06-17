@@ -62,7 +62,8 @@ module results2
         end do
         
         !OOP Health Expense Distribution for 65-68 Year-olds
-        OOPgrid = linspace(0.0d0, maxval((/maxval(OOPExpArrayMarried(:,:,:,:,:,:,:2)),maxval(OOPExpArrayWidow(:,:,:,:,:,:,:2)),maxval(OOPExpArrayWidower(:,:,:,:,:,:,:2))/)), GSm)
+        OOPgrid = linspace(0.0d0, maxval((/maxval(OOPExpArrayMarried(:,:,:,:,:,:,:2)), & 
+maxval(OOPExpArrayWidow(:,:,:,:,:,:,:2)),maxval(OOPExpArrayWidower(:,:,:,:,:,:,:2))/)), GSm)
         AggOOPExpTemp = sum(MeanOOPExpByAge(:2)*CohortWeights(nw+1:nw+2))             
         Xoop = 0.0d0
         Yoop = 0.0d0
@@ -379,7 +380,8 @@ module results2
         end do         
         
         !OOP Health Expense Distribution for 65-74 Year-olds
-        OOPgrid = linspace(0.0d0, maxval((/maxval(OOPExpArrayMarried(:,:,:,:,:,:,:5)),maxval(OOPExpArrayWidow(:,:,:,:,:,:,:5)),maxval(OOPExpArrayWidower(:,:,:,:,:,:,:5))/)), GSm)
+        OOPgrid = linspace(0.0d0, maxval((/maxval(OOPExpArrayMarried(:,:,:,:,:,:,:5)), & 
+maxval(OOPExpArrayWidow(:,:,:,:,:,:,:5)),maxval(OOPExpArrayWidower(:,:,:,:,:,:,:5))/)), GSm)
         AggOOPExpTemp = sum(MeanOOPExpByAge(:5)*CohortWeights(nw+1:nw+5))             
         Xoop = 0.0d0
         Yoop = 0.0d0
@@ -512,7 +514,8 @@ module results2
         end do   
         
         !OOP Health Expense Distribution for 75-84 Year-olds
-        OOPgrid = linspace(0.0d0, maxval((/maxval(OOPExpArrayMarried(:,:,:,:,:,:,6:10)),maxval(OOPExpArrayWidow(:,:,:,:,:,:,6:10)),maxval(OOPExpArrayWidower(:,:,:,:,:,:,6:10))/)), GSm)
+        OOPgrid = linspace(0.0d0, maxval((/maxval(OOPExpArrayMarried(:,:,:,:,:,:,6:10)), & 
+maxval(OOPExpArrayWidow(:,:,:,:,:,:,6:10)),maxval(OOPExpArrayWidower(:,:,:,:,:,:,6:10))/)), GSm)
         AggOOPExpTemp = sum(MeanOOPExpByAge(6:10)*CohortWeights(nw+6:nw+10))             
         Xoop = 0.0d0
         Yoop = 0.0d0
@@ -645,7 +648,8 @@ module results2
         end do  
         
         !OOP Health Expense Distribution for 85+ Year-olds
-        OOPgrid = linspace(0.0d0, maxval((/maxval(OOPExpArrayMarried(:,:,:,:,:,:,11:)),maxval(OOPExpArrayWidow(:,:,:,:,:,:,11:)),maxval(OOPExpArrayWidower(:,:,:,:,:,:,11:))/)), GSm)
+        OOPgrid = linspace(0.0d0, maxval((/maxval(OOPExpArrayMarried(:,:,:,:,:,:,11:)), &
+maxval(OOPExpArrayWidow(:,:,:,:,:,:,11:)),maxval(OOPExpArrayWidower(:,:,:,:,:,:,11:))/)), GSm)
         AggOOPExpTemp = sum(MeanOOPExpByAge(11:)*CohortWeights(nw+11:))             
         Xoop = 0.0d0
         Yoop = 0.0d0
@@ -793,9 +797,12 @@ module results2
         !Ginis and Distributions
         !Calculate wealth ginis and shares
         TotalWealth = sum(sum( spread(avect,2,nw)* sum(sum(sum(sum(sum(psiW,6),5),4),3),2)  ,1)*CohortWeights(:nw))
-        TotalWealth = TotalWealth + sum(sum(spread(avect,2,nr)*sum(sum(sum(sum(sum(psiRMarried,6),5),4),3),2) ,1)*CohortWeights(nw+1:)) &
-                                  + sum(sum(spread(avect,2,nr)*sum(sum(sum(sum(sum(psiRWidow,6),5),4),3),2) ,1)*CohortWeights(nw+1:)) &
-                                  + sum(sum(spread(avect,2,nr)*sum(sum(sum(sum(sum(psiRWidower,6),5),4),3),2) ,1)*CohortWeights(nw+1:))
+        TotalWealth = TotalWealth + sum(sum(spread(avect,2,nr)*sum(sum(sum(sum(sum(psiRMarried,6),5),4),3),2) ,1)* &
+CohortWeights(nw+1:)) &
+                                  + sum(sum(spread(avect,2,nr)*sum(sum(sum(sum(sum(psiRWidow,6),5),4),3),2) ,1)* &
+CohortWeights(nw+1:)) &
+                                  + sum(sum(spread(avect,2,nr)*sum(sum(sum(sum(sum(psiRWidower,6),5),4),3),2) ,1)* &
+CohortWeights(nw+1:))
         XtotWealth = 0.0d0
         YtotWealth = 0.0d0       
         WealthShares = 0.0d0        
@@ -804,18 +811,26 @@ module results2
         j = 1
         do i=1,na
             
-            XwealthVect(i) = sum ( sum(sum(sum(sum(sum(avect(i)*psiW(i,:,:,:,:,:,:),5),4),3),2),1)* CohortWeights(:nw) ,1) + &
-             sum ( sum(sum(sum(sum(sum(avect(i)*psiRMarried(i,:,:,:,:,:,:),5),4),3),2),1)* CohortWeights(nw+1:) ,1) + &
-             sum ( sum(sum(sum(sum(sum(avect(i)*psiRWidow(i,:,:,:,:,:,:),5),4),3),2),1)* CohortWeights(nw+1:) ,1) + &
-             sum ( sum(sum(sum(sum(sum(avect(i)*psiRWidower(i,:,:,:,:,:,:),5),4),3),2),1)* CohortWeights(nw+1:) ,1)                     
-            XtotWealth(i+1) = XtotWealth(i) + sum ( sum(sum(sum(sum(sum(psiW(i,:,:,:,:,:,:),5),4),3),2),1) * CohortWeights(:nw) ,1) + &
+            XwealthVect(i) = sum ( sum(sum(sum(sum(sum(avect(i)*psiW(i,:,:,:,:,:,:),5),4),3),2),1)* &
+CohortWeights(:nw) ,1) + &
+             sum ( sum(sum(sum(sum(sum(avect(i)*psiRMarried(i,:,:,:,:,:,:),5),4),3),2),1)* &
+CohortWeights(nw+1:) ,1) + &
+             sum ( sum(sum(sum(sum(sum(avect(i)*psiRWidow(i,:,:,:,:,:,:),5),4),3),2),1)* &
+CohortWeights(nw+1:) ,1) + &
+             sum ( sum(sum(sum(sum(sum(avect(i)*psiRWidower(i,:,:,:,:,:,:),5),4),3),2),1)* &
+CohortWeights(nw+1:) ,1)                     
+            XtotWealth(i+1) = XtotWealth(i) + sum ( sum(sum(sum(sum(sum(psiW(i,:,:,:,:,:,:),5),4),3),2),1) * &
+CohortWeights(:nw) ,1) + &
              sum ( sum(sum(sum(sum(sum(psiRMarried(i,:,:,:,:,:,:),5),4),3),2),1) * CohortWeights(nw+1:) ,1) +&
              sum ( sum(sum(sum(sum(sum(psiRWidow(i,:,:,:,:,:,:),5),4),3),2),1) * CohortWeights(nw+1:) ,1) + &
              sum ( sum(sum(sum(sum(sum(psiRWidower(i,:,:,:,:,:,:),5),4),3),2),1) * CohortWeights(nw+1:) ,1)
             YtotWealth(i+1) = YtotWealth(i) + XwealthVect(i)/TotalWealth                                                                                                            
-            Frac65plusVect(i) = sum ( sum(sum(sum(sum(sum(psiRMarried(i,:,:,:,:,:,:),5),4),3),2),1)* CohortWeights(nw+1:) ,1) + &
-                                sum ( sum(sum(sum(sum(sum(psiRWidow(i,:,:,:,:,:,:),5),4),3),2),1)* CohortWeights(nw+1:) ,1) + &
-                                sum ( sum(sum(sum(sum(sum(psiRWidower(i,:,:,:,:,:,:),5),4),3),2),1)* CohortWeights(nw+1:) ,1)
+            Frac65plusVect(i) = sum ( sum(sum(sum(sum(sum(psiRMarried(i,:,:,:,:,:,:),5),4),3),2),1)* &
+CohortWeights(nw+1:) ,1) + &
+                                sum ( sum(sum(sum(sum(sum(psiRWidow(i,:,:,:,:,:,:),5),4),3),2),1)* &
+CohortWeights(nw+1:) ,1) + &
+                                sum ( sum(sum(sum(sum(sum(psiRWidower(i,:,:,:,:,:,:),5),4),3),2),1)* &
+CohortWeights(nw+1:) ,1)
              
             if (XtotWealth(i+1) > 0.2d0*j .and. j < 5) then
                 if (XtotWealth(i+1) > 0.2d0*(j+1) .and. j < 4) then
@@ -837,7 +852,8 @@ module results2
                             WealthShares(j) = WealthShares(j) + XwealthVect(i)*weight4/TotalWealth                           
                             Frac65plusShares(j) = Frac65plusShares(j) + Frac65plusVect(i)*weight4
                             WealthShares(j+1) = XwealthVect(i)*(1-weight4-weight3-weight2-weight)/TotalWealth                           
-                            Frac65plusShares(j+1) = Frac65plusShares(j+1) + Frac65plusVect(i)*(1-weight4-weight3-weight2-weight)
+                            Frac65plusShares(j+1) = Frac65plusShares(j+1) + Frac65plusVect(i)* & 
+(1-weight4-weight3-weight2-weight)
                             j = j + 1   
                         else                                                 
                             weight = (0.2d0*j - XtotWealth(i))/(XtotWealth(i+1) - XtotWealth(i))
@@ -915,25 +931,32 @@ module results2
         YtotWealth = 0.0d0        
         j = 1
         do i=1,na            
-            XwealthVect(i) = sum ( sum(sum(sum(sum(sum(avect(i)*psiW(i,:,:,:,:,:,:),5),4),3),2),1)* CohortWeights(:nw) ,1)             
-            XtotWealth(i+1) = XtotWealth(i) + sum ( sum(sum(sum(sum(sum(psiW(i,:,:,:,:,:,:),5),4),3),2),1) * CohortWeights(:nw) ,1)
+            XwealthVect(i) = sum ( sum(sum(sum(sum(sum(avect(i)*psiW(i,:,:,:,:,:,:),5),4),3),2),1)* & 
+CohortWeights(:nw) ,1)             
+            XtotWealth(i+1) = XtotWealth(i) + sum ( sum(sum(sum(sum(sum(psiW(i,:,:,:,:,:,:),5),4),3),2),1) * & 
+CohortWeights(:nw) ,1)
             YtotWealth(i+1) = YtotWealth(i) + XwealthVect(i)/TotalWealth                                                                                                                                                                                      
         end do        
         WealthGiniWorkingHHs = 1-sum( (XtotWealth(2:) - XtotWealth(:na))*(YtotWealth(2:) + YtotWealth(:na)) ,1)
         
         !Wealth Gini 65-66 year-olds        
-        TotalWealth = sum(avect*sum(sum(sum(sum(sum(psiRMarried(:,:,:,:,:,:,1),6),5),4),3),2),1)*CohortWeights(nw+1) &
-                                  + sum(avect*sum(sum(sum(sum(sum(psiRWidow(:,:,:,:,:,:,1),6),5),4),3),2) ,1)*CohortWeights(nw+1) &
-                                  + sum(avect*sum(sum(sum(sum(sum(psiRWidower(:,:,:,:,:,:,1),6),5),4),3),2) ,1)*CohortWeights(nw+1)
+        TotalWealth = sum(avect*sum(sum(sum(sum(sum(psiRMarried(:,:,:,:,:,:,1),6),5),4),3),2),1)* & 
+CohortWeights(nw+1) &
+                                  + sum(avect*sum(sum(sum(sum(sum(psiRWidow(:,:,:,:,:,:,1),6),5),4),3),2) ,1)* & 
+CohortWeights(nw+1) &
+                                  + sum(avect*sum(sum(sum(sum(sum(psiRWidower(:,:,:,:,:,:,1),6),5),4),3),2) ,1)* &
+CohortWeights(nw+1)
         XtotWealth = 0.0d0
         YtotWealth = 0.0d0                
         j = 1
         do i=1,na
             
-            XwealthVect(i) =  sum(sum(sum(sum(sum(avect(i)*psiRMarried(i,:,:,:,:,:,1),5),4),3),2),1)* CohortWeights(nw+1) + &
+            XwealthVect(i) =  sum(sum(sum(sum(sum(avect(i)*psiRMarried(i,:,:,:,:,:,1),5),4),3),2),1)* &
+ CohortWeights(nw+1) + &
               sum(sum(sum(sum(sum(avect(i)*psiRWidow(i,:,:,:,:,:,1),5),4),3),2),1)* CohortWeights(nw+1)  + &
               sum(sum(sum(sum(sum(avect(i)*psiRWidower(i,:,:,:,:,:,1),5),4),3),2),1)* CohortWeights(nw+1)                     
-            XtotWealth(i+1) = XtotWealth(i) +  sum(sum(sum(sum(sum(psiRMarried(i,:,:,:,:,:,1),5),4),3),2),1) * CohortWeights(nw+1)  +&
+            XtotWealth(i+1) = XtotWealth(i) +  sum(sum(sum(sum(sum(psiRMarried(i,:,:,:,:,:,1),5),4),3),2),1) * &
+CohortWeights(nw+1)  +&
               sum(sum(sum(sum(sum(psiRWidow(i,:,:,:,:,:,1),5),4),3),2),1) * CohortWeights(nw+1) + &
               sum(sum(sum(sum(sum(psiRWidower(i,:,:,:,:,:,1),5),4),3),2),1) * CohortWeights(nw+1) 
             YtotWealth(i+1) = YtotWealth(i) + XwealthVect(i)/TotalWealth                                                                                                                       
@@ -958,9 +981,12 @@ module results2
         do i=1,na  
            s = 1
            do 
-                if (w*(efmat(ef,em,fet,ti)*labWcube(i,ef,em,vf,vm,het,ti)+emmat(ef,em,met,ti)*hbar) <= EarnsGrid(s) .or. s==GSe) then
+                if (w*(efmat(ef,em,fet,ti)*labWcube(i,ef,em,vf,vm,het,ti)+ & 
+emmat(ef,em,met,ti)*hbar) <= EarnsGrid(s) .or. s==GSe) then
                     XtotEarns(s+1) = XtotEarns(s+1) + psiW(i,ef,em,vf,vm,het,ti)*CohortWeights(ti)
-                    YtotEarns(s+1) = YtotEarns(s+1) + w*(efmat(ef,em,fet,ti)*labWcube(i,ef,em,vf,vm,het,ti)+emmat(ef,em,met,ti)*hbar)/TotalEarns*psiW(i,ef,em,vf,vm,het,ti)*CohortWeights(ti)
+                    YtotEarns(s+1) = YtotEarns(s+1) + w*(efmat(ef,em,fet,ti)* &
+labWcube(i,ef,em,vf,vm,het,ti)+emmat(ef,em,met,ti)*hbar)/ &
+TotalEarns*psiW(i,ef,em,vf,vm,het,ti)*CohortWeights(ti)
                     exit
                 else
                     s = s + 1
@@ -1077,8 +1103,10 @@ module results2
            s = 1
            do 
             if (aveEarnFvect(vf)+aveEarnMvect(vm) <= EarnsGrid(s) .or. s==GSe) then
-                XtotEarns(s+1) = XtotEarns(s+1) + sum(psiRMarried(:,:,vf,vm,:,:,1))+sum(psiRWidow(:,:,vf,vm,:,:,1))+sum(psiRWidower(:,:,vf,vm,:,:,1))
-                YtotEarns(s+1) = YtotEarns(s+1) + (aveEarnFvect(vf)+aveEarnMvect(vm))/TotalLifeEarns*(sum(psiRMarried(:,:,vf,vm,:,:,1)) &
+                XtotEarns(s+1) = XtotEarns(s+1) + sum(psiRMarried(:,:,vf,vm,:,:,1))+ & 
+sum(psiRWidow(:,:,vf,vm,:,:,1))+sum(psiRWidower(:,:,vf,vm,:,:,1))
+                YtotEarns(s+1) = YtotEarns(s+1) + (aveEarnFvect(vf)+aveEarnMvect(vm))/ & 
+TotalLifeEarns*(sum(psiRMarried(:,:,vf,vm,:,:,1)) &
                                 + sum(psiRWidow(:,:,vf,vm,:,:,1)) + sum(psiRWidower(:,:,vf,vm,:,:,1)) )
                 exit
             else
@@ -1177,7 +1205,8 @@ module results2
         TotalSocSecIncome = 0.0d0
         do vf =1,naef
         do vm =1,naem
-            TotalSocSecIncome = TotalSocSecIncome + sum( socsec(aveEarnFvect(vf),aveEarnMvect(vm),1)*psiRMarried(:,:,vf,vm,:,:,1) ) + &
+            TotalSocSecIncome = TotalSocSecIncome + sum( socsec(aveEarnFvect(vf),aveEarnMvect(vm),1)* & 
+psiRMarried(:,:,vf,vm,:,:,1) ) + &
               sum( socsec(aveEarnFvect(vf),aveEarnMvect(vm),2)*psiRWidow(:,:,vf,vm,:,:,1))  + &
               sum(socsec(aveEarnFvect(vf),aveEarnMvect(vm),3)*psiRWidower(:,:,vf,vm,:,:,1))
         end do
@@ -1194,14 +1223,17 @@ module results2
             if (socsec(aveEarnFvect(vf),aveEarnMvect(vm),i) <= EarnsGrid(s) .or. s==GSe) then
                 if (i==1) then
                     XtotEarns(s+1) = XtotEarns(s+1) + sum(psiRMarried(:,:,vf,vm,:,:,1))
-                    YtotEarns(s+1) = YtotEarns(s+1) + socsec(aveEarnFvect(vf),aveEarnMvect(vm),i)/TotalSocSecIncome*sum(psiRMarried(:,:,vf,vm,:,:,1)) 
+                    YtotEarns(s+1) = YtotEarns(s+1) + socsec(aveEarnFvect(vf),aveEarnMvect(vm),i)/ & 
+TotalSocSecIncome*sum(psiRMarried(:,:,vf,vm,:,:,1)) 
                           
                 else if (i==2) then
                     XtotEarns(s+1) = XtotEarns(s+1) + sum(psiRWidow(:,:,vf,vm,:,:,1))
-                    YtotEarns(s+1) = YtotEarns(s+1) + socsec(aveEarnFvect(vf),aveEarnMvect(vm),i)/TotalSocSecIncome*sum(psiRWidow(:,:,vf,vm,:,:,1))
+                    YtotEarns(s+1) = YtotEarns(s+1) + socsec(aveEarnFvect(vf),aveEarnMvect(vm),i)/ & 
+TotalSocSecIncome*sum(psiRWidow(:,:,vf,vm,:,:,1))
                 else
                     XtotEarns(s+1) = XtotEarns(s+1) + sum(psiRWidower(:,:,vf,vm,:,:,1))
-                    YtotEarns(s+1) = YtotEarns(s+1) + socsec(aveEarnFvect(vf),aveEarnMvect(vm),i)/TotalSocSecIncome*sum(psiRWidower(:,:,vf,vm,:,:,1))                               
+                    YtotEarns(s+1) = YtotEarns(s+1) + socsec(aveEarnFvect(vf),aveEarnMvect(vm),i)/ & 
+TotalSocSecIncome*sum(psiRWidower(:,:,vf,vm,:,:,1))                               
                 end if
                 exit
             else
@@ -1300,9 +1332,12 @@ module results2
         TotalSocSecIncome = 0.0d0
         do vf =1,naef
         do vm =1,naem
-            TotalSocSecIncome = TotalSocSecIncome + socsec(aveEarnFvect(vf),aveEarnMvect(vm),1)*sum(sum(sum(sum(sum(psiRMarried(:,:,vf,vm,:,:,:),4),3),2),1)*CohortWeights(nw+1:)) &
-                + socsec(aveEarnFvect(vf),aveEarnMvect(vm),2)*sum(sum(sum(sum(sum(psiRWidow(:,:,vf,vm,:,:,:),4),3),2) ,1)*CohortWeights(nw+1:)) &
-                + socsec(aveEarnFvect(vf),aveEarnMvect(vm),3)*sum(sum(sum(sum(sum(psiRWidower(:,:,vf,vm,:,:,:),4),3),2) ,1)*CohortWeights(nw+1:))              
+            TotalSocSecIncome = TotalSocSecIncome + socsec(aveEarnFvect(vf),aveEarnMvect(vm),1)* & 
+sum(sum(sum(sum(sum(psiRMarried(:,:,vf,vm,:,:,:),4),3),2),1)*CohortWeights(nw+1:)) &
+                + socsec(aveEarnFvect(vf),aveEarnMvect(vm),2)*sum(sum(sum(sum(sum(psiRWidow(:,:,vf,vm,:,:,:),4),3),2) ,1)* & 
+CohortWeights(nw+1:)) &
+                + socsec(aveEarnFvect(vf),aveEarnMvect(vm),3)*sum(sum(sum(sum(sum(psiRWidower(:,:,vf,vm,:,:,:),4),3),2) ,1)* & 
+CohortWeights(nw+1:))              
               
         end do
         end do
@@ -1317,15 +1352,21 @@ module results2
            do 
             if (socsec(aveEarnFvect(vf),aveEarnMvect(vm),i) <= EarnsGrid(s) .or. s==GSe) then
                 if (i==1) then
-                    XtotEarns(s+1) = XtotEarns(s+1) + sum(sum(sum(sum(sum(psiRMarried(:,:,vf,vm,:,:,:),4),3),2),1)*CohortWeights(nw+1:))/sum(CohortWeights(nw+1:))
-                    YtotEarns(s+1) = YtotEarns(s+1) + socsec(aveEarnFvect(vf),aveEarnMvect(vm),i)/TotalSocSecIncome*sum(sum(sum(sum(sum(psiRMarried(:,:,vf,vm,:,:,:),4),3),2),1)*CohortWeights(nw+1:))
+                    XtotEarns(s+1) = XtotEarns(s+1) + sum(sum(sum(sum(sum(psiRMarried(:,:,vf,vm,:,:,:),4),3),2),1)* & 
+CohortWeights(nw+1:))/sum(CohortWeights(nw+1:))
+                    YtotEarns(s+1) = YtotEarns(s+1) + socsec(aveEarnFvect(vf),aveEarnMvect(vm),i)/ & 
+TotalSocSecIncome*sum(sum(sum(sum(sum(psiRMarried(:,:,vf,vm,:,:,:),4),3),2),1)*CohortWeights(nw+1:))
                           
                 else if (i==2) then
-                    XtotEarns(s+1) = XtotEarns(s+1) + sum(sum(sum(sum(sum(psiRWidow(:,:,vf,vm,:,:,:),4),3),2) ,1)*CohortWeights(nw+1:))/sum(CohortWeights(nw+1:))
-                    YtotEarns(s+1) = YtotEarns(s+1) + socsec(aveEarnFvect(vf),aveEarnMvect(vm),i)/TotalSocSecIncome* sum(sum(sum(sum(sum(psiRWidow(:,:,vf,vm,:,:,:),4),3),2) ,1)*CohortWeights(nw+1:))
+                    XtotEarns(s+1) = XtotEarns(s+1) + sum(sum(sum(sum(sum(psiRWidow(:,:,vf,vm,:,:,:),4),3),2) ,1)* & 
+CohortWeights(nw+1:))/sum(CohortWeights(nw+1:))
+                    YtotEarns(s+1) = YtotEarns(s+1) + socsec(aveEarnFvect(vf),aveEarnMvect(vm),i)/ & 
+TotalSocSecIncome* sum(sum(sum(sum(sum(psiRWidow(:,:,vf,vm,:,:,:),4),3),2) ,1)*CohortWeights(nw+1:))
                 else
-                    XtotEarns(s+1) = XtotEarns(s+1) + sum(sum(sum(sum(sum(psiRWidower(:,:,vf,vm,:,:,:),4),3),2) ,1)*CohortWeights(nw+1:))/sum(CohortWeights(nw+1:))
-                    YtotEarns(s+1) = YtotEarns(s+1) + socsec(aveEarnFvect(vf),aveEarnMvect(vm),i)/TotalSocSecIncome*sum(sum(sum(sum(sum(psiRWidower(:,:,vf,vm,:,:,:),4),3),2) ,1)*CohortWeights(nw+1:))                           
+                    XtotEarns(s+1) = XtotEarns(s+1) + sum(sum(sum(sum(sum(psiRWidower(:,:,vf,vm,:,:,:),4),3),2) ,1)* & 
+CohortWeights(nw+1:))/sum(CohortWeights(nw+1:))
+                    YtotEarns(s+1) = YtotEarns(s+1) + socsec(aveEarnFvect(vf),aveEarnMvect(vm),i)/TotalSocSecIncome* & 
+sum(sum(sum(sum(sum(psiRWidower(:,:,vf,vm,:,:,:),4),3),2) ,1)*CohortWeights(nw+1:))                           
                 end if
                 exit
             else

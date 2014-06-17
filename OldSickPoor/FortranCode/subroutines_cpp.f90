@@ -14,7 +14,7 @@ module subroutines
     implicit none
     contains
     
-subroutine master
+subroutine master(gbtype, getype)
     use Results
     use Results2
     use parameters
@@ -28,7 +28,7 @@ subroutine master
     implicit none
     include 'mpif.h'
    
-    !integer, intent(in) :: gbtype, getype 
+    integer, intent(in) :: gbtype, getype 
     real(dbl) SumSquareMoments
     integer count1, count2, rate, i, j, ti, jm, married, s, h, jf, zf, zm
     real(dbl) ExpAveLifetimeProdfnorm
@@ -96,10 +96,8 @@ subroutine master
     !start with above. if lie outside 2/3 to .90 interval for ratio of initial to lifetime earnings variance of males
     !then deviate. Otherwise ok. closer to 2/3?? variance of lifetime earnings for males. 
     sigmaInitial(1) = sqrt(2.0d0)*sigma_0/Cmat(1,1)
-    sigmaInitial(2) = sqrt(2.0d0*sigma_0**2*(Cmat(2,1)**2+Cmat(1,1)**2)- & 
-2*Cmat(1,1)*Cmat(2,1)*2.0d0*corr_epse0*sigma_0**2)/Cmat(1,1)/Cmat(2,2)
-    corrInitial = (2.0d0*corr_epse0*sigma_0**2*Cmat(1,1)*Cmat(2,2)- & 
-2.0d0*sigma_0**2*Cmat(2,1)*Cmat(2,2))/Cmat(1,1)**2/Cmat(2,2)**2/sigmaInitial(1)/sigmaInitial(2)
+    sigmaInitial(2) = sqrt(2.0d0*sigma_0**2*(Cmat(2,1)**2+Cmat(1,1)**2)-2*Cmat(1,1)*Cmat(2,1)*2.0d0*corr_epse0*sigma_0**2)/Cmat(1,1)/Cmat(2,2)
+    corrInitial = (2.0d0*corr_epse0*sigma_0**2*Cmat(1,1)*Cmat(2,2)-2.0d0*sigma_0**2*Cmat(2,1)*Cmat(2,2))/Cmat(1,1)**2/Cmat(2,2)**2/sigmaInitial(1)/sigmaInitial(2)
     
     !call Out(0,"Cmat", Cmat)
     !call Out(0,"sigmaInitial", sigmaInitial, ret)
@@ -133,22 +131,18 @@ subroutine master
       
     do i=1,nw
         efmat(:,:,1,i) = &
-           log(sum((/(exp(betae0 + betae1*(4+j)+betae2*(4+j)**2+betae3*(4+j)**3),j=(i-1)*2,(i-1)*2+1)/),1)) + &
- Cmat(1,1)*spread(uefgrid,2,nem)+Cmat(1,2)*spread(uemgrid,1,nef)
+           log(sum((/(exp(betae0 + betae1*(4+j)+betae2*(4+j)**2+betae3*(4+j)**3),j=(i-1)*2,(i-1)*2+1)/),1)) + Cmat(1,1)*spread(uefgrid,2,nem)+Cmat(1,2)*spread(uemgrid,1,nef)
         efmat(:,:,2,i) =  &
-           log(sum((/(exp(betae0 + betae4 + betae1*(j)+betae2*(j)**2+betae3*(j)**3),j=(i-1)*2,(i-1)*2+1)/),1)) + &
-Cmat(1,1)*spread(uefgrid,2,nem)+Cmat(1,2)*spread(uemgrid,1,nef)
+           log(sum((/(exp(betae0 + betae4 + betae1*(j)+betae2*(j)**2+betae3*(j)**3),j=(i-1)*2,(i-1)*2+1)/),1)) + Cmat(1,1)*spread(uefgrid,2,nem)+Cmat(1,2)*spread(uemgrid,1,nef)
     end do    
     efmat = exp(efmat)    
     Puefmat = transpose(Puefmat) 
 
     do i=1,nw
         emmat(:,:,1,i) = &
-           log(sum((/(exp(betae0 + betae1*(4+j)+betae2*(4+j)**2+betae3*(4+j)**3),j=(i-1)*2,(i-1)*2+1)/),1)) + &
-Cmat(2,1)*spread(uefgrid,2,nem)+Cmat(2,2)*spread(uemgrid,1,nef)
+           log(sum((/(exp(betae0 + betae1*(4+j)+betae2*(4+j)**2+betae3*(4+j)**3),j=(i-1)*2,(i-1)*2+1)/),1)) + Cmat(2,1)*spread(uefgrid,2,nem)+Cmat(2,2)*spread(uemgrid,1,nef)
         emmat(:,:,2,i) =  &
-           log(sum((/(exp(betae0 + betae4 + betae1*(j)+betae2*(j)**2+betae3*(j)**3),j=(i-1)*2,(i-1)*2+1)/),1)) + &
-Cmat(2,1)*spread(uefgrid,2,nem)+Cmat(2,2)*spread(uemgrid,1,nef)
+           log(sum((/(exp(betae0 + betae4 + betae1*(j)+betae2*(j)**2+betae3*(j)**3),j=(i-1)*2,(i-1)*2+1)/),1)) + Cmat(2,1)*spread(uefgrid,2,nem)+Cmat(2,2)*spread(uemgrid,1,nef)
     end do    
     emmat = exp(emmat)        
     Puemmat = transpose(Puemmat)  
@@ -327,13 +321,10 @@ Cmat(2,1)*spread(uefgrid,2,nem)+Cmat(2,2)*spread(uemgrid,1,nef)
             married = 0
         end if   
     do h=1,nsht          
-        survivalprobVectF(h,s,ti) = 1/( 1+exp(-( betasF(1)+betasF(2)*(65.5+2*(ti-1))+ &
-betasF(3)*(65.5+2*(ti-1))**2+betasF(4)*married + &
+        survivalprobVectF(h,s,ti) = 1/( 1+exp(-( betasF(1)+betasF(2)*(65.5+2*(ti-1))+betasF(3)*(65.5+2*(ti-1))**2+betasF(4)*married + &
                 betasF(5)*married*(65.5+2*(ti-1)) + betasF(6)*(h-1) +betasF(7)*(h-1)*(65.5+2*(ti-1)) )) )
-        survivalprobVectM(h,s,ti) = 1/( 1+exp(-( betasM(1)+betasM(2)*(65.5+2*(ti-1))+ &
-betasM(3)*(65.5+2*(ti-1))**2+betasM(4)*married + &
-                betasM(5)*married*(65.5+2*(ti-1)) + betasM(6)*(h-1) + &
-betasM(7)*(h-1)*(65.5+2*(ti-1)) )) )            
+        survivalprobVectM(h,s,ti) = 1/( 1+exp(-( betasM(1)+betasM(2)*(65.5+2*(ti-1))+betasM(3)*(65.5+2*(ti-1))**2+betasM(4)*married + &
+                betasM(5)*married*(65.5+2*(ti-1)) + betasM(6)*(h-1) +betasM(7)*(h-1)*(65.5+2*(ti-1)) )) )            
     end do
     end do
     end do
@@ -354,7 +345,7 @@ betasM(7)*(h-1)*(65.5+2*(ti-1)) )) )
     avect(2:) = exp(lnavect)
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!   
                    
-    call SSM(SumSquareMoments)
+    call SSM(SumSquareMoments, gbtype, getype)
     
     !call bcpol(SSM, ibtype, xlb, xub, params, xguess = paramsGuess, ftol = ftol, fvalue = fvalue, maxfcn = maxfcn)
     !call Out(0,"params", params,tab)
@@ -373,15 +364,14 @@ end subroutine master
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-subroutine worker(rank)
-    use globals 
+subroutine worker(my_rank, gbtype, getype)
     implicit none
     include 'mpif.h'
     
     real(dbl) postTaxWealth, preTaxIncomeF, preTaxIncomeM, c1R, alower, preTaxIncome, socsecIncome
     integer i, jf, jm, vf, vm, h, s, j, eh, em, ef, status(mpi_status_size), tag, ti, idef, idaef, idem, idaem, ideh, ides, idemed
-    integer rank, wind(10), mStatus
-    !integer, intent(in):: gbtype, getype
+    integer my_rank, wind(10), mStatus
+    integer, intent(in):: gbtype, getype
     !print *, "my_rank =", my_rank
     
     !receive constant globals from master
@@ -438,10 +428,8 @@ subroutine worker(rank)
                     idemed = j - ind(9) + 1                
                 do i = 1,na
                     preTaxIncome = socsecIncome + avect(i) * r   
-                    postTaxWealth = preTaxIncome + avect(i) - IncomeTax(avect(i)*r-  & 
-max(0.0d0,avect(i)*r*capTax),socsecIncome,mmat(j,h,s,mStatus,ti),mStatus) - max(0.0d0,avect(i)*r*capTax)
-                    c1R = postTaxWealth + transfersRetired(postTaxWealth, ti, j,h,s,mStatus,i) - & 
-mmat(j,h,s,mStatus,ti)                                                           
+                    postTaxWealth = preTaxIncome + avect(i) - IncomeTax(avect(i)*r- max(0.0d0,avect(i)*r*capTax),socsecIncome,mmat(j,h,s,mStatus,ti),mStatus) - max(0.0d0,avect(i)*r*capTax)
+                    c1R = postTaxWealth + transfersRetired(postTaxWealth, ti, j,h,s,mStatus,i) - mmat(j,h,s,mStatus,ti)                                                           
                     if (c1R < 1.e-8) then
                         print *, "neg here"
                         part_VRcube(i,idemed,idef,idem,ideh,ides) = -1d10
@@ -458,8 +446,7 @@ mmat(j,h,s,mStatus,ti)
                             alower = avect(1)
                         end if                     
                         call GoldenSectionSearchR(alower, minval((/avect(Na),c1R/)), c1R, ti, j, vf, vm, h, mStatus, s, &
-                            part_aPolicyRCube(i,idemed,idef,idem,ideh,ides), &
-part_VRcube(i,idemed,idef,idem,ideh,ides),part_CURcube(i,idemed,idef,idem,ideh,ides))                             
+                            part_aPolicyRCube(i,idemed,idef,idem,ideh,ides), part_VRcube(i,idemed,idef,idem,ideh,ides),part_CURcube(i,idemed,idef,idem,ideh,ides))                             
                         part_consRCube(i,idemed,idef,idem,ideh,ides) = c1R - part_aPolicyRCube(i,idemed,idef,idem,ideh,ides)   
                     end if                       
                                
@@ -477,15 +464,15 @@ part_VRcube(i,idemed,idef,idem,ideh,ides),part_CURcube(i,idemed,idef,idem,ideh,i
                 !    print *, "wind subroutines", wind
                 !    print *, "--------------------------"
                 !end if
-                call mpi_send(wind,10,mpi_integer, 0, rank, mpi_comm_world, ier)              
+                call mpi_send(wind,10,mpi_integer, 0, my_rank, mpi_comm_world, ier)              
                 call mpi_send(part_aPolicyRCube,na*count_rm*count_raef*count_raem*count_rh*count_rs,mpi_double_precision, &
-                   0, rank, mpi_comm_world, ier)
+                   0, my_rank, mpi_comm_world, ier)
                 call mpi_send(part_consRCube,na*count_rm*count_raef*count_raem*count_rh*count_rs,mpi_double_precision, &
-                   0, rank, mpi_comm_world, ier)
+                   0, my_rank, mpi_comm_world, ier)
                 call mpi_send(part_VRcube,na*count_rm*count_raef*count_raem*count_rh*count_rs,mpi_double_precision, &
-                   0, rank, mpi_comm_world, ier)     
+                   0, my_rank, mpi_comm_world, ier)     
                 call mpi_send(part_CURcube,na*count_rm*count_raef*count_raem*count_rh*count_rs,mpi_double_precision, &
-                   0, rank, mpi_comm_world, ier)                                                                                                                                                                         
+                   0, my_rank, mpi_comm_world, ier)                                                                                                                                                                         
             end if
         end do
         
@@ -548,12 +535,9 @@ part_VRcube(i,idemed,idef,idem,ideh,ides),part_CURcube(i,idemed,idef,idem,ideh,i
             do jm = ind(7),ind(8) !male earnings shock                     
                 idem = jm - ind(7) + 1
                 !compute for case of labor supply = 0.7d0
-                preTaxIncomeF = w*efmat(jf,jm,ef,ti)*0.7d0 - SocSecTax(w*efmat(jf,jm,ef,ti)*0.7d0) + & 
-0.5d0*r* avect(i) - EarnsTaxFn(w*efmat(jf,jm,ef,ti)*0.7d0)
-                preTaxIncomeM = w*emmat(jf,jm,em,ti)*hbar - SocSecTax(w*emmat(jf,jm,em,ti)*hbar) + & 
-0.5d0*r* avect(i) - EarnsTaxFn(w*emmat(jf,jm,em,ti)*hbar)
-                postTaxWealth = preTaxIncomeF + preTaxIncomeM + avect(i) -& 
- IncomeTax(preTaxIncomeF+preTaxIncomeM- max(0.0d0,r*avect(i)*capTax)) - max(0.0d0,r*avect(i)*capTax)
+                preTaxIncomeF = w*efmat(jf,jm,ef,ti)*0.7d0 - SocSecTax(w*efmat(jf,jm,ef,ti)*0.7d0) + 0.5d0*r* avect(i) - EarnsTaxFn(w*efmat(jf,jm,ef,ti)*0.7d0)
+                preTaxIncomeM = w*emmat(jf,jm,em,ti)*hbar - SocSecTax(w*emmat(jf,jm,em,ti)*hbar) + 0.5d0*r* avect(i) - EarnsTaxFn(w*emmat(jf,jm,em,ti)*hbar)
+                postTaxWealth = preTaxIncomeF + preTaxIncomeM + avect(i) - IncomeTax(preTaxIncomeF+preTaxIncomeM- max(0.0d0,r*avect(i)*capTax)) - max(0.0d0,r*avect(i)*capTax)
                 !if (ti == 1) postTaxWealth = postTaxWealth + btran(eh)
                 c1R = postTaxWealth + transfers(postTaxWealth)   
             do vf = ind(5),ind(6)  !female average earnings   
@@ -567,17 +551,13 @@ part_VRcube(i,idemed,idef,idem,ideh,ides),part_CURcube(i,idemed,idef,idem,ideh,i
                     alower = avect(1)
                 end if                                   
                 call GoldenSectionSearchW(alower, minval((/avect(Na), c1R/)), part_aPolicyCube(i,idef,idem,idaef,idaem,ideh), &
-                    part_Vcube(i,idef,idem,idaef,idaem,ideh), part_labCube(i,idef,idem,idaef,idaem,ideh), &
-i,jf,jm,vf,vm,eh,ti,part_CUcube(i,idef,idem,idaef,idaem,ideh))
+                    part_Vcube(i,idef,idem,idaef,idaem,ideh), part_labCube(i,idef,idem,idaef,idaem,ideh),i,jf,jm,vf,vm,eh,ti,part_CUcube(i,idef,idem,idaef,idaem,ideh))
                 preTaxIncomeF = w*efmat(jf,jm,ef,ti)*part_labCube(i,idef,idem,idaef,idaem,ideh) &
                     - SocSecTax(w*efmat(jf,jm,ef,ti)*part_labCube(i,idef,idem,idaef,idaem,ideh)) + 0.5d0*r* avect(i) &
                     - EarnsTaxFn(w*efmat(jf,jm,ef,ti)*part_labCube(i,idef,idem,idaef,idaem,ideh))                           
-                postTaxWealth = preTaxIncomeF + preTaxIncomeM + avect(i) - IncomeTax(preTaxIncomeF+ &
-preTaxIncomeM- max(0.0d0,r*avect(i)*capTax)) - &
-max(0.0d0,r*avect(i)*capTax)
+                postTaxWealth = preTaxIncomeF + preTaxIncomeM + avect(i) - IncomeTax(preTaxIncomeF+preTaxIncomeM- max(0.0d0,r*avect(i)*capTax)) - max(0.0d0,r*avect(i)*capTax)
                 !if (ti == 1) postTaxWealth = postTaxWealth + btran(eh)            
-                part_consCube(i,idef,idem,idaef,idaem,ideh) = postTaxWealth + transfers(postTaxWealth) - & 
-part_aPolicyCube(i,idef,idem,idaef,idaem,ideh)     
+                part_consCube(i,idef,idem,idaef,idaem,ideh) = postTaxWealth + transfers(postTaxWealth) - part_aPolicyCube(i,idef,idem,idaef,idaem,ideh)     
             end do                     
             end do  
             end do  
@@ -586,17 +566,17 @@ part_aPolicyCube(i,idef,idem,idaef,idaem,ideh)
             end do
             !send policies and value function back to master 
             wind = ind
-            call mpi_send(wind,10,mpi_integer, 0, rank, mpi_comm_world, ier)              
+            call mpi_send(wind,10,mpi_integer, 0, my_rank, mpi_comm_world, ier)              
             call mpi_send(part_aPolicyCube,na*count_wef*count_wem*count_waef*count_waem*count_wet,mpi_double_precision, &
-               0, rank, mpi_comm_world, ier)
+               0, my_rank, mpi_comm_world, ier)
             call mpi_send(part_consCube,na*count_wef*count_wem*count_waef*count_waem*count_wet,mpi_double_precision, &
-               0, rank, mpi_comm_world, ier)
+               0, my_rank, mpi_comm_world, ier)
             call mpi_send(part_labCube,na*count_wef*count_wem*count_waef*count_waem*count_wet,mpi_double_precision, &
-               0, rank, mpi_comm_world, ier)
+               0, my_rank, mpi_comm_world, ier)
             call mpi_send(part_Vcube,na*count_wef*count_wem*count_waef*count_waem*count_wet,mpi_double_precision, &
-               0, rank, mpi_comm_world, ier)
+               0, my_rank, mpi_comm_world, ier)
             call mpi_send(part_CUcube,na*count_wef*count_wem*count_waef*count_waem*count_wet,mpi_double_precision, &
-               0, rank, mpi_comm_world, ier)                    
+               0, my_rank, mpi_comm_world, ier)                    
          end do   
     
      end do
@@ -606,20 +586,19 @@ end module subroutines
 
 !%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 !%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-subroutine SSM(SumSquareMoments)
+subroutine SSM(SumSquareMoments, gbtype, getype)
     use ComputeDistributions
     use Policies
     use Results
     use Results2
     !use eqsolver
     use mathutils
-    use globals
     !use neqnf_int
     implicit none
     include 'mpif.h'
 
 	interface
-        subroutine EqmConds(Np, in, eqs, iflag)  !for Powell
+        subroutine EqmConds(Np, in, eqs, iflag, getype)  !for Powell
 	        use ComputeDistributions
 	        use Policies
 	        use mathutils
@@ -630,29 +609,29 @@ subroutine SSM(SumSquareMoments)
             real(dbl), intent(in) :: in(Np)
             real(dbl), intent(out):: eqs(Np) 
             integer iflag
-            !integer, intent(in) :: getype                   
+            integer, intent(in) :: getype                   
         end subroutine EqmConds      
  	end interface  
  	
 	interface
-         subroutine BaseConds(N,input,consts,iflag)       
+         subroutine BaseConds(N,input,consts,iflag, getype)       
             use globals
             implicit none
             integer N
             real(dbl), intent(in) :: input(2)
             real(dbl)  consts(2), input2(3), output(3)   
             integer iflag                
-            !integer, intent(in) :: getype
+            integer, intent(in) :: getype
          end subroutine BaseConds   
          
-         subroutine BaseCondsCapIter(N,input,consts,iflag)       
+         subroutine BaseCondsCapIter(N,input,consts,iflag, getype)       
             use globals
             implicit none
             integer N
             real(dbl), intent(in) :: input
             real(dbl)  consts(1), input2(2), output(2)   
             integer iflag              
-            !integer, intent(in) :: getype
+            integer, intent(in) :: getype
          end subroutine BaseCondsCapIter                  
  	end interface 	
     
@@ -664,7 +643,7 @@ subroutine SSM(SumSquareMoments)
     integer pj, tj, h1, hm1, hf1, pz, d, df, dm, em, ef, et
     integer, parameter:: Np = 3   
     real(dbl) aggvars(Np), eqs(Np), fnorm, denorm
-    !integer, intent(in): gbtype, getype
+    integer, intent(in): gbtype, getype
     
     integer iopt, nprint, info
     integer, parameter:: LWA = 100
@@ -687,49 +666,37 @@ subroutine SSM(SumSquareMoments)
     do pm = 1,npm   
     
         !widows, bad health, not deathyear
-        lnmmat((tm-1)*npm+pm,1,1,2,i) = log(sum((/(exp(betam(1)+betam(2)*(65+j)+ &
-betam(3)*(65+j)**2 + betam(4)*(65+j)**3 + betam(5)*(65+j)**4  &
+        lnmmat((tm-1)*npm+pm,1,1,2,i) = log(sum((/(exp(betam(1)+betam(2)*(65+j)+ betam(3)*(65+j)**2 + betam(4)*(65+j)**3 + betam(5)*(65+j)**4  &
              ),j=(i-1)*2,(i-1)*2+1)/),1)) + umgrid(pm,2) + utmgrid(tm)   
         lnmmat((tm-1)*npm+pm,3,1,2,i) = lnmmat((tm-1)*npm+pm,1,1,2,i)
         !widows, good health, not deathyear
-        lnmmat((tm-1)*npm+pm,2,1,2,i) = log(sum((/(exp(betam(1)+betam(6)+(betam(2)+ & 
-betam(7))*(65+j)+ betam(3)*(65+j)**2 + betam(4)*(65+j)**3 & 
+        lnmmat((tm-1)*npm+pm,2,1,2,i) = log(sum((/(exp(betam(1)+betam(6)+(betam(2)+betam(7))*(65+j)+ betam(3)*(65+j)**2 + betam(4)*(65+j)**3 & 
             + betam(5)*(65+j)**4),j=(i-1)*2,(i-1)*2+1)/),1)) + umgrid(pm,2) + utmgrid(tm)              
         lnmmat((tm-1)*npm+pm,4,1,2,i) = lnmmat((tm-1)*npm+pm,2,1,2,i)       
         !widowers, bad health, not deathyear
-        lnmmat((tm-1)*npm+pm,1,1,3,i) = log(sum((/(exp(betam(1)+betam(8)+(betam(2)+ & 
-betam(9))*(65+j)+ (betam(3)+betam(10))*(65+j)**2 &
-            + (betam(4)+betam(11))*(65+j)**3 + (betam(5)+betam(12))*(65+j)**4),j=(i-1)*2,(i-1)*2+1)/),1)) &
-+ umgrid(pm,3) + utmgrid(tm) 
+        lnmmat((tm-1)*npm+pm,1,1,3,i) = log(sum((/(exp(betam(1)+betam(8)+(betam(2)+betam(9))*(65+j)+ (betam(3)+betam(10))*(65+j)**2 &
+            + (betam(4)+betam(11))*(65+j)**3 + (betam(5)+betam(12))*(65+j)**4),j=(i-1)*2,(i-1)*2+1)/),1)) + umgrid(pm,3) + utmgrid(tm) 
         lnmmat((tm-1)*npm+pm,3,1,3,i) = lnmmat((tm-1)*npm+pm,1,1,3,i)        
         !widowers, good health, not deathyear
-        lnmmat((tm-1)*npm+pm,2,1,3,i) = log(sum((/(exp(betam(1)+betam(6)+betam(8)+ & 
-(betam(2)+betam(7)+betam(9))*(65+j)+ (betam(3)+betam(10))*(65+j)**2 &
-            + (betam(4)+betam(11))*(65+j)**3 + (betam(5)+betam(12))*(65+j)**4),j=(i-1)*2,(i-1)*2+1)/),1))  + & 
-umgrid(pm,3) + utmgrid(tm)                   
+        lnmmat((tm-1)*npm+pm,2,1,3,i) = log(sum((/(exp(betam(1)+betam(6)+betam(8)+(betam(2)+betam(7)+betam(9))*(65+j)+ (betam(3)+betam(10))*(65+j)**2 &
+            + (betam(4)+betam(11))*(65+j)**3 + (betam(5)+betam(12))*(65+j)**4),j=(i-1)*2,(i-1)*2+1)/),1))  + umgrid(pm,3) + utmgrid(tm)                   
         lnmmat((tm-1)*npm+pm,4,1,3,i) = lnmmat((tm-1)*npm+pm,2,1,3,i) 
         
         !widows, bad health, deathyear
-        lnmmat((tm-1)*npm+pm,1,2,2,i) = log(sum((/(exp(betam(1)+betam(18)+(betam(2)+ & 
-betam(19))*(65+j)+ betam(3)*(65+j)**2 + betam(4)*(65+j)**3 + betam(5)*(65+j)**4  &
+        lnmmat((tm-1)*npm+pm,1,2,2,i) = log(sum((/(exp(betam(1)+betam(18)+(betam(2)+betam(19))*(65+j)+ betam(3)*(65+j)**2 + betam(4)*(65+j)**3 + betam(5)*(65+j)**4  &
              ),j=(i-1)*2,(i-1)*2+1)/),1)) + umgrid(pm,2) + utmgrid(tm)   
         lnmmat((tm-1)*npm+pm,3,2,2,i) = lnmmat((tm-1)*npm+pm,1,2,2,i)
         !widows, good health, deathyear
-        lnmmat((tm-1)*npm+pm,2,2,2,i) = log(sum((/(exp(betam(1)+betam(6)+betam(18)+ & 
-(betam(2)+betam(7)+betam(19))*(65+j)+ betam(3)*(65+j)**2 + betam(4)*(65+j)**3 & 
+        lnmmat((tm-1)*npm+pm,2,2,2,i) = log(sum((/(exp(betam(1)+betam(6)+betam(18)+(betam(2)+betam(7)+betam(19))*(65+j)+ betam(3)*(65+j)**2 + betam(4)*(65+j)**3 & 
             + betam(5)*(65+j)**4),j=(i-1)*2,(i-1)*2+1)/),1)) + umgrid(pm,2) + utmgrid(tm)              
         lnmmat((tm-1)*npm+pm,4,2,2,i) = lnmmat((tm-1)*npm+pm,2,2,2,i)       
         !widowers, bad health, deathyear
-        lnmmat((tm-1)*npm+pm,1,2,3,i) = log(sum((/(exp(betam(1)+betam(8)+betam(18)+ & 
-(betam(2)+betam(9)+betam(19))*(65+j)+ (betam(3)+betam(10))*(65+j)**2 &
-            + (betam(4)+betam(11))*(65+j)**3 + (betam(5)+betam(12))*(65+j)**4),j=(i-1)*2,(i-1)*2+1)/),1)) + &
- umgrid(pm,3) + utmgrid(tm) 
+        lnmmat((tm-1)*npm+pm,1,2,3,i) = log(sum((/(exp(betam(1)+betam(8)+betam(18)+(betam(2)+betam(9)+betam(19))*(65+j)+ (betam(3)+betam(10))*(65+j)**2 &
+            + (betam(4)+betam(11))*(65+j)**3 + (betam(5)+betam(12))*(65+j)**4),j=(i-1)*2,(i-1)*2+1)/),1)) + umgrid(pm,3) + utmgrid(tm) 
         lnmmat((tm-1)*npm+pm,3,2,3,i) = lnmmat((tm-1)*npm+pm,1,2,3,i)        
         !widowers, good health, deathyear
-        lnmmat((tm-1)*npm+pm,2,2,3,i) = log(sum((/(exp(betam(1)+betam(6)+betam(8)+ & 
-betam(18)+(betam(2)+betam(7)+betam(9)+betam(19))*(65+j)+ (betam(3)+betam(10))*(65+j)**2 &
-            + (betam(4)+betam(11))*(65+j)**3 + (betam(5)+betam(12))*(65+j)**4),j=(i-1)*2,(i-1)*2+1)/),1)) + & 
-umgrid(pm,3) + utmgrid(tm)                   
+        lnmmat((tm-1)*npm+pm,2,2,3,i) = log(sum((/(exp(betam(1)+betam(6)+betam(8)+betam(18)+(betam(2)+betam(7)+betam(9)+betam(19))*(65+j)+ (betam(3)+betam(10))*(65+j)**2 &
+            + (betam(4)+betam(11))*(65+j)**3 + (betam(5)+betam(12))*(65+j)**4),j=(i-1)*2,(i-1)*2+1)/),1)) + umgrid(pm,3) + utmgrid(tm)                   
         lnmmat((tm-1)*npm+pm,4,2,3,i) = lnmmat((tm-1)*npm+pm,2,2,3,i)                
         
         do d=1,4 
@@ -740,14 +707,10 @@ umgrid(pm,3) + utmgrid(tm)
             hm = mod(h+1,2)
           
             !married: BB, BG, GB, GG
-            lnmmat((tm-1)*npm+pm,h,d,1,i) = log(sum((/(exp(betam(1)+betam(6)*hf+betam(13)+ & 
-betam(18)*df+betam(20)*df+(betam(2)+betam(7)*hf+betam(14)+betam(19)*df)*(65+j) &
-                 + (betam(3)+betam(15))*(65+j)**2 + (betam(4)+betam(16))*(65+j)**3 + (betam(5)+ & 
-betam(17))*(65+j)**4) &
-                 + exp(betam(1)+betam(6)*hm+betam(8)+betam(13)+betam(18)*dm+betam(20)*dm+(betam(2)+ & 
-betam(7)*hm+betam(9)+betam(14)+betam(19)*dm)*(65+j) &
-                 + (betam(3)+betam(10)+betam(15))*(65+j)**2 + (betam(4)+betam(11)+betam(16))*(65+j)**3 + & 
-(betam(5)+betam(12)+betam(17))*(65+j)**4) &            
+            lnmmat((tm-1)*npm+pm,h,d,1,i) = log(sum((/(exp(betam(1)+betam(6)*hf+betam(13)+betam(18)*df+betam(20)*df+(betam(2)+betam(7)*hf+betam(14)+betam(19)*df)*(65+j) &
+                 + (betam(3)+betam(15))*(65+j)**2 + (betam(4)+betam(16))*(65+j)**3 + (betam(5)+betam(17))*(65+j)**4) &
+                 + exp(betam(1)+betam(6)*hm+betam(8)+betam(13)+betam(18)*dm+betam(20)*dm+(betam(2)+betam(7)*hm+betam(9)+betam(14)+betam(19)*dm)*(65+j) &
+                 + (betam(3)+betam(10)+betam(15))*(65+j)**2 + (betam(4)+betam(11)+betam(16))*(65+j)**3 + (betam(5)+betam(12)+betam(17))*(65+j)**4) &            
                   ,j=(i-1)*2,(i-1)*2+1)/),1)) + umgrid(pm,1) + utmgrid(tm)        
         end do  
         end do
@@ -877,10 +840,8 @@ betam(7)*hm+betam(9)+betam(14)+betam(19)*dm)*(65+j) &
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 
     AveMaleEarnings = 0.0d0
     do ti=1,nw    
-        AveMaleEarnings = AveMaleEarnings + sum(hbar*emmat(:,:,1,ti)*ProdDist(:,:,ti))* & 
-(educDist(1)+educDist(3))/(1+ng)**(ti-1)
-        AveMaleEarnings = AveMaleEarnings + sum(hbar*emmat(:,:,2,ti)*ProdDist(:,:,ti))* & 
-(educDist(2)+educDist(4))/(1+ng)**(ti-1)
+        AveMaleEarnings = AveMaleEarnings + sum(hbar*emmat(:,:,1,ti)*ProdDist(:,:,ti))*(educDist(1)+educDist(3))/(1+ng)**(ti-1)
+        AveMaleEarnings = AveMaleEarnings + sum(hbar*emmat(:,:,2,ti)*ProdDist(:,:,ti))*(educDist(2)+educDist(4))/(1+ng)**(ti-1)
     end do
     
     AveMaleEarnings = AveMaleEarnings/sum((/(1.0d0/(1+ng)**j,j=0,nw-1)/))
@@ -888,10 +849,8 @@ betam(7)*hm+betam(9)+betam(14)+betam(19)*dm)*(65+j) &
     efmat = efmat*gendergap/AveMaleEarnings
     AveMaleEarnings = 0.0d0
     do ti=1,nw    
-        AveMaleEarnings = AveMaleEarnings + sum(hbar*emmat(:,:,1,ti)*ProdDist(:,:,ti))* & 
-(educDist(1)+educDist(3))/(1+ng)**(ti-1)
-        AveMaleEarnings = AveMaleEarnings + sum(hbar*emmat(:,:,2,ti)*ProdDist(:,:,ti))* & 
-(educDist(2)+educDist(4))/(1+ng)**(ti-1)
+        AveMaleEarnings = AveMaleEarnings + sum(hbar*emmat(:,:,1,ti)*ProdDist(:,:,ti))*(educDist(1)+educDist(3))/(1+ng)**(ti-1)
+        AveMaleEarnings = AveMaleEarnings + sum(hbar*emmat(:,:,2,ti)*ProdDist(:,:,ti))*(educDist(2)+educDist(4))/(1+ng)**(ti-1)
         AveMaleWagesByAgeEduc(ti,1) = sum(emmat(:,:,1,ti)*ProdDist(:,:,ti))
         AveMaleWagesByAgeEduc(ti,2) = sum(emmat(:,:,2,ti)*ProdDist(:,:,ti))
         AveFemaleWagesByAgeEduc(ti,1) = sum(efmat(:,:,1,ti)*ProdDist(:,:,ti))
@@ -1043,7 +1002,7 @@ betam(7)*hm+betam(9)+betam(14)+betam(19)*dm)*(65+j) &
                     aggvars(1) = PropTax           
                 end if
                 if (RunOnce == 1) then            
-                    call EqmConds(Np, aggvars, eqs, 0)   
+                    call EqmConds(Np, aggvars, eqs, 0, getype)   
                 else if (PartialEqm == 1) then  
                     iopt = 2   
                     nprint = 0 
@@ -1074,7 +1033,7 @@ betam(7)*hm+betam(9)+betam(14)+betam(19)*dm)*(65+j) &
                     do
                         OuterLoopIter2 = OuterLoopIter2 + 1
                         print *, "OuterLoopIter2=", OuterLoopIter2
-                        call EqmConds(Np-1, aggvars(1:2), fvec(1:2), 0)
+                        call EqmConds(Np-1, aggvars(1:2), fvec(1:2), 0, getype)
                         if (UseEarnsTax == 1) then
                             aggvars(1) = EarnsTaxNew*1.0d0 + EarnsTax*0.0d0
                             EarnsTax = EarnsTaxNew                                                    
@@ -1162,7 +1121,7 @@ betam(7)*hm+betam(9)+betam(14)+betam(19)*dm)*(65+j) &
                     aggvars(1) = PropTax           
                 end if
                 if (PartialEqm == 1 .or. RunOnce == 1) then            
-                    call EqmConds(Np, aggvars, eqs, 0)            
+                    call EqmConds(Np, aggvars, eqs, 0, getype)            
                 else                
                     iopt = 2   
                     nprint = 0        
@@ -1173,7 +1132,7 @@ betam(7)*hm+betam(9)+betam(14)+betam(19)*dm)*(65+j) &
                     do
                         OuterLoopIter1 = OuterLoopIter1 + 1
                         print *, "OuterLoopIter1=", OuterLoopIter1
-                        call EqmConds(Np-1, aggvars(1:2), fvec(1:2), 0)                        
+                        call EqmConds(Np-1, aggvars(1:2), fvec(1:2), 0, getype)                        
                         if (UseEarnsTax == 1) then
                             aggvars(1) = EarnsTax
                         else
@@ -1194,7 +1153,7 @@ betam(7)*hm+betam(9)+betam(14)+betam(19)*dm)*(65+j) &
                     do
                         OuterLoopIter2 = OuterLoopIter2 + 1
                         print *, "OuterLoopIter2=", OuterLoopIter2
-                        call EqmConds(Np-1, aggvars(1:2), fvec(1:2), 0)
+                        call EqmConds(Np-1, aggvars(1:2), fvec(1:2), 0, getype)
                         if (UseEarnsTax == 1) then
                             aggvars(1) = EarnsTax
                         else
@@ -1288,12 +1247,9 @@ betam(7)*hm+betam(9)+betam(14)+betam(19)*dm)*(65+j) &
         !pause    
 
         AggCons = sum(CohortWeights(:nw)*sum(sum(sum(sum(sum(sum(consumptionWcube * psiW,6),5),4),3),2),1),1) & 
-                      + sum(CohortWeights(nw+1:)*sum(sum(sum(sum(sum(sum(consumptionRcubeMarried * &
-psiRMarried,6),5),4),3),2),1),1) & 
-                      + sum(CohortWeights(nw+1:)*sum(sum(sum(sum(sum(sum(consumptionRcubeWidow * & 
-psiRWidow,6),5),4),3),2),1),1) & 
-                      + sum(CohortWeights(nw+1:)*sum(sum(sum(sum(sum(sum(consumptionRcubeWidower * &
-psiRWidower,6),5),4),3),2),1),1)
+                      + sum(CohortWeights(nw+1:)*sum(sum(sum(sum(sum(sum(consumptionRcubeMarried * psiRMarried,6),5),4),3),2),1),1) & 
+                      + sum(CohortWeights(nw+1:)*sum(sum(sum(sum(sum(sum(consumptionRcubeWidow * psiRWidow,6),5),4),3),2),1),1) & 
+                      + sum(CohortWeights(nw+1:)*sum(sum(sum(sum(sum(sum(consumptionRcubeWidower * psiRWidower,6),5),4),3),2),1),1)
         if (OpenEconomy == 1) then
             AggBudgetConst = AggCons + AggMedExp + IncomeTaxes + SSTaxes + CapitalTaxes  +EarnsTaxes &
                              - AggLaborSupply*w - GovTransfers  - TotalPayments - AggCapitalSupply*(r-ng)
@@ -1376,24 +1332,21 @@ end subroutine SSM
 !%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 !%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 !subroutine EqmConds(in, eqs, Np) !for imsl routine 
-subroutine EqmConds(Np, in, eqs, iflag)  !for Powell
+subroutine EqmConds(Np, in, eqs, iflag, getype)  !for Powell
 	use ComputeDistributions
 	use Policies
 	use mathutils
 	use output
 	use Results  
 	use Results2  
-        use globals 
     implicit none
     include 'mpif.h'
-    integer, intent(in):: Np 
+    integer, intent(in):: Np, getype
     real(dbl), intent(in) :: in(Np)
     real(dbl), intent(out):: eqs(Np)  
-    integer ti, i, j, loc, vf, vm, jf, jm, zf, zm, s, nd, em, eh, ef, h, h1, hf, hm
-    integer im, iff, CapitalCounter, loc3, d
+    integer ti, i, j, loc, vf, vm, jf, jm, zf, zm, s, nd, em, eh, ef, h, h1, hf, hm, im, iff, CapitalCounter, loc3, d
     integer iflag
-    real(dbl) preTaxIncomeF, preTaxIncomeM, socsecIncome, AveEarningsM, eta3, QuintileCutoffs(5), fracPast
-    real(dbl) AveEarnsDist(naem), CumAveEarnsDist(naem)          
+    real(dbl) preTaxIncomeF, preTaxIncomeM, socsecIncome, AveEarningsM, eta3, QuintileCutoffs(5), fracPast, AveEarnsDist(naem), CumAveEarnsDist(naem)          
     integer initial_time, count_rate, count_max, final_time
     real(dbl) elapsed_time, check, cumdistGrid(naem), distGrid(naem)
     
@@ -1497,8 +1450,7 @@ subroutine EqmConds(Np, in, eqs, iflag)  !for Powell
                     if (EarnLocsMcube(zf,zm,vm,em,ti) == 0) then                    
                         EarnLocsMcube(zf,zm,vm,em,ti) = 1                    
                     end if
-                    etaMcube(zf,zm,vm,em,ti) = ( aveEarnMvect(EarnLocsMcube(zf,zm,vm,em,ti)+1) - AveEarningsM )/ &
-( aveEarnMvect(EarnLocsMcube(zf,zm,vm,em,ti)+1) - aveEarnMvect(EarnLocsMcube(zf,zm,vm,em,ti)) )
+                    etaMcube(zf,zm,vm,em,ti) = ( aveEarnMvect(EarnLocsMcube(zf,zm,vm,em,ti)+1) - AveEarningsM )/( aveEarnMvect(EarnLocsMcube(zf,zm,vm,em,ti)+1) - aveEarnMvect(EarnLocsMcube(zf,zm,vm,em,ti)) )
                 end if          
             end do
             end do
@@ -1521,10 +1473,8 @@ subroutine EqmConds(Np, in, eqs, iflag)  !for Powell
                 eta3 = etaMcube(zf,zm,vm,em,ti)                                                                                    
                 do jm=1,nem
                 do jf=1,nef                
-                    ProdDistW(jf,jm,loc3,eh,ti)   = ProdDistW(jf,jm,loc3,eh,ti)   +  eta3  *  &
-Puefmat(jf,zf) * Puemmat(jm,zm) * ProdDistW(zf,zm,vm,eh,ti-1)
-                    ProdDistW(jf,jm,loc3+1,eh,ti) = ProdDistW(jf,jm,loc3+1,eh,ti) +  (1-eta3) * &
-Puefmat(jf,zf) * Puemmat(jm,zm) * ProdDistW(zf,zm,vm,eh,ti-1)
+                    ProdDistW(jf,jm,loc3,eh,ti)   = ProdDistW(jf,jm,loc3,eh,ti)   +  eta3  * Puefmat(jf,zf) * Puemmat(jm,zm) * ProdDistW(zf,zm,vm,eh,ti-1)
+                    ProdDistW(jf,jm,loc3+1,eh,ti) = ProdDistW(jf,jm,loc3+1,eh,ti) +  (1-eta3) * Puefmat(jf,zf) * Puemmat(jm,zm) * ProdDistW(zf,zm,vm,eh,ti-1)
                 end do
                 end do                                
             end do
@@ -1631,8 +1581,7 @@ Puefmat(jf,zf) * Puemmat(jm,zm) * ProdDistW(zf,zm,vm,eh,ti-1)
         do h1=1,nhht 
             im = mod(h1+1,2)+1            
             iff = int((h1+1)/2)                        
-            dist(h1,1,ti) = dist(h1,1,ti) + dist(j,1,ti-1) * survivalProbVectF(jf,1,ti-1) * &
- survivalProbVectM(jm,1,ti-1) * &
+            dist(h1,1,ti) = dist(h1,1,ti) + dist(j,1,ti-1) * survivalProbVectF(jf,1,ti-1) * survivalProbVectM(jm,1,ti-1) * &
                 PhmatF(iff,jf,1,ti-1)* PhmatM(im,jm,1,ti-1) /(1+ng)                 
                                                                                               
         end do
@@ -1643,16 +1592,14 @@ Puefmat(jf,zf) * Puemmat(jm,zm) * ProdDistW(zf,zm,vm,eh,ti-1)
             jm = mod(j+1,2)+1
             jf = int((j+1)/2)
         do h1=1,nsht                                           
-            dist(h1,2,ti) = dist(h1,2,ti) + (dist(j,1,ti-1) * survivalProbVectF(jf,1,ti-1) * &
- (1-survivalProbVectM(jm,1,ti-1)) * PhmatF(h1,jf,1,ti-1)) /(1+ng)                                                   
+            dist(h1,2,ti) = dist(h1,2,ti) + (dist(j,1,ti-1) * survivalProbVectF(jf,1,ti-1) * (1-survivalProbVectM(jm,1,ti-1)) * PhmatF(h1,jf,1,ti-1)) /(1+ng)                                                   
         end do
         end do
 
         !widow to widow
         do h=1,nsht            
         do h1=1,nsht                                    
-            dist(h1,2,ti) = dist(h1,2,ti) + dist(h,2,ti-1) * survivalProbVectF(h,2,ti-1) * &
- PhmatF(h1,h,2,ti-1) /(1+ng)                                                        
+            dist(h1,2,ti) = dist(h1,2,ti) + dist(h,2,ti-1) * survivalProbVectF(h,2,ti-1) * PhmatF(h1,h,2,ti-1) /(1+ng)                                                        
         end do       
         end do
         
@@ -1661,16 +1608,14 @@ Puefmat(jf,zf) * Puemmat(jm,zm) * ProdDistW(zf,zm,vm,eh,ti-1)
             jm = mod(j+1,2)+1
             jf = int((j+1)/2)
         do h1=1,nsht                                           
-            dist(h1,3,ti) = dist(h1,3,ti) + (dist(j,1,ti-1) * (1-survivalProbVectF(jf,1,ti-1)) * &
-survivalProbVectM(jm,1,ti-1) * PhmatM(h1,jm,1,ti-1)) /(1+ng)                                                   
+            dist(h1,3,ti) = dist(h1,3,ti) + (dist(j,1,ti-1) * (1-survivalProbVectF(jf,1,ti-1)) * survivalProbVectM(jm,1,ti-1) * PhmatM(h1,jm,1,ti-1)) /(1+ng)                                                   
         end do
         end do    
 
         !widower to widower
         do h=1,nsht            
         do h1=1,nsht                                    
-            dist(h1,3,ti) = dist(h1,3,ti) + dist(h,3,ti-1) * survivalProbVectM(h,3,ti-1) * &
-PhmatM(h1,h,3,ti-1) /(1+ng)                                                        
+            dist(h1,3,ti) = dist(h1,3,ti) + dist(h,3,ti-1) * survivalProbVectM(h,3,ti-1) * PhmatM(h1,h,3,ti-1) /(1+ng)                                                        
         end do
         end do                
              
@@ -1707,8 +1652,7 @@ PhmatM(h1,h,3,ti-1) /(1+ng)
         end do
         do ti=1,nr
             AggregateCapitalVect(nw+ti) = sum(aPolicyRCubeMarried(:,:, : ,:,:,:,ti) * psiRMarried(:,:, : ,:,:,:,ti)) + &
-                sum(aPolicyRCubeWidow(:,:, : ,:,:,:,ti) * psiRWidow(:,:, : ,:,:,:,ti)) + &
-sum(aPolicyRCubeWidower(:,:, : ,:,:,:,ti) * psiRWidower(:,:, : ,:,:,:,ti))
+                sum(aPolicyRCubeWidow(:,:, : ,:,:,:,ti) * psiRWidow(:,:, : ,:,:,:,ti)) + sum(aPolicyRCubeWidower(:,:, : ,:,:,:,ti) * psiRWidower(:,:, : ,:,:,:,ti))
         end do   
         AggCapitalSupply = sum(CohortWeights * AggregateCapitalVect,1)/(1+ng)
          
@@ -1723,8 +1667,7 @@ sum(aPolicyRCubeWidower(:,:, : ,:,:,:,ti) * psiRWidower(:,:, : ,:,:,:,ti))
         do i = 1,na    
             em = mod(eh+1,2)+1        
             ef = int((eh+1)/2)           
-            AggLaborSupply = AggLaborSupply + (efmat(jf,jm,ef,ti)*labWcube(i,jf,jm,vf,vm,eh,ti) + &
-emmat(jf,jm,em,ti)*hbar)*psiW(i,jf,jm,vf,vm,eh,ti)*CohortWeights(ti)
+            AggLaborSupply = AggLaborSupply + (efmat(jf,jm,ef,ti)*labWcube(i,jf,jm,vf,vm,eh,ti) + emmat(jf,jm,em,ti)*hbar)*psiW(i,jf,jm,vf,vm,eh,ti)*CohortWeights(ti)
             if (labWcube(i,jf,jm,vf,vm,eh,ti) > 0.0d0) then
                 fracWwork = fracWwork + psiW(i,jf,jm,vf,vm,eh,ti)*CohortWeights(ti)
             end if   
@@ -1812,22 +1755,17 @@ emmat(jf,jm,em,ti)*hbar)*psiW(i,jf,jm,vf,vm,eh,ti)*CohortWeights(ti)
             CapitalDiff = abs(AggCapitalSupply - AggCapitalDemand)/AggCapitalDemand
             
             print *, "--------------------"
-            print '(a,es10.2,a,f13.9,a,f13.9,a,f13.9)', "AggCapitalSupply - AggCapitalDemand = ", CapitalDiff, &
- " AggCapitalSupply = ", AggCapitalSupply, " AggCapitalDemand = ", AggCapitalDemand, "r=", r       
+            print '(a,es10.2,a,f13.9,a,f13.9,a,f13.9)', "AggCapitalSupply - AggCapitalDemand = ", CapitalDiff, " AggCapitalSupply = ", AggCapitalSupply, " AggCapitalDemand = ", AggCapitalDemand, "r=", r       
             if (GEexperiment ==1) then
                 if (UseEarnsTax == 1) then
-                    print '(a,es10.2,a,f12.9)', "Govt Revenue - Expends = ",GovBudgetConstraint, " EarnsTax = ", &
-EarnsTax
+                    print '(a,es10.2,a,f12.9)', "Govt Revenue - Expends = ",GovBudgetConstraint, " EarnsTax = ", EarnsTax
                 else
-                    print '(a,es10.2,a,f12.9)', "Govt Revenue - Expends = ",GovBudgetConstraint, " PropTax = ", & 
-PropTax
+                    print '(a,es10.2,a,f12.9)', "Govt Revenue - Expends = ",GovBudgetConstraint, " PropTax = ", PropTax
                 end if 
             else 
-                print '(a,es10.2,a,f12.9)', "Govt Revenue - Expends = ", GovBudgetConstraint, " GovSpending = ", & 
-GovSpending 
+                print '(a,es10.2,a,f12.9)', "Govt Revenue - Expends = ", GovBudgetConstraint, " GovSpending = ", GovSpending 
             end if
-            print '(a,es10.2,a,f13.9,a,f13.9)', "AveEarningsAllNew - AveEarningsAll = ", LaborMarketClearing, " & 
-AveEarningsAllNew = ", AveEarningsAllNew, " AveEarningsAll = ", AveEarningsAll        
+            print '(a,es10.2,a,f13.9,a,f13.9)', "AveEarningsAllNew - AveEarningsAll = ", LaborMarketClearing, " AveEarningsAllNew = ", AveEarningsAllNew, " AveEarningsAll = ", AveEarningsAll        
             print '(a,f13.9)', "fracWwork = ", fracWwork
             !print '(a,es10.2,a,f12.9)', "AccBequestsG - AccBequests = ", BeqClearing, " AccBequestsG = ", AccBequestsG
             print *, "--------------------"
@@ -1871,23 +1809,16 @@ AveEarningsAllNew = ", AveEarningsAllNew, " AveEarningsAll = ", AveEarningsAll
         do i = 1,na  
             em = mod(eh+1,2)+1        
             ef = int((eh+1)/2)              
-            preTaxIncomeF = w*efmat(jf,jm,ef,ti)*labWcube(i,jf,jm,vf,vm,eh,ti) - &
-SocSecTax(w*efmat(jf,jm,ef,ti)*labWcube(i,jf,jm,vf,vm,eh,ti)) + 0.5d0*r* avect(i) &
+            preTaxIncomeF = w*efmat(jf,jm,ef,ti)*labWcube(i,jf,jm,vf,vm,eh,ti) - SocSecTax(w*efmat(jf,jm,ef,ti)*labWcube(i,jf,jm,vf,vm,eh,ti)) + 0.5d0*r* avect(i) &
                 - EarnsTaxFn(w*efmat(jf,jm,ef,ti)*labWcube(i,jf,jm,vf,vm,eh,ti))  
-            preTaxIncomeM = w*emmat(jf,jm,em,ti)*hbar - SocSecTax(w*emmat(jf,jm,em,ti)*hbar) + &
-0.5d0*r* avect(i) &
+            preTaxIncomeM = w*emmat(jf,jm,em,ti)*hbar - SocSecTax(w*emmat(jf,jm,em,ti)*hbar) + 0.5d0*r* avect(i) &
                 - EarnsTaxFn(w*emmat(jf,jm,em,ti)*hbar)                  
-            IncTaxByAge(ti) = IncTaxByAge(ti) + (IncomeTax(preTaxIncomeF+preTaxIncomeM- &
-max(0.0d0,r*avect(i)*capTax)))* psiW(i,jf,jm,vf,vm,eh,ti)   
+            IncTaxByAge(ti) = IncTaxByAge(ti) + (IncomeTax(preTaxIncomeF+preTaxIncomeM-max(0.0d0,r*avect(i)*capTax)))* psiW(i,jf,jm,vf,vm,eh,ti)   
             GovTransfersVect(ti) = GovTransfersVect(ti) + transfers(preTaxIncomeF + preTaxIncomeM + avect(i) &
-                 - IncomeTax(preTaxIncomeF+preTaxIncomeM-max(0.0d0,r*avect(i)*capTax)) - &
-max(0.0d0,r*avect(i)*capTax) ) * psiW(i,jf,jm,vf,vm,eh,ti)                    
-            SSTaxesVect(ti) = SSTaxesVect(ti) +  (SocSecTax(w*efmat(jf,jm,ef,ti)* & 
-labWcube(i,jf,jm,vf,vm,eh,ti)) + SocSecTax(w*emmat(jf,jm,em,ti)*hbar)) * psiW(i,jf,jm,vf,vm,eh,ti)         
-            TotalTaxableIncome = TotalTaxableIncome + (preTaxIncomeF+preTaxIncomeM)* &
-psiW(i,jf,jm,vf,vm,eh,ti)*CohortWeights(ti)
-            EarnsTaxesVect(ti) = EarnsTaxesVect(ti) +  (EarnsTaxFn(w*efmat(jf,jm,ef,ti)* & 
-labWcube(i,jf,jm,vf,vm,eh,ti)) + EarnsTaxFn(w*emmat(jf,jm,em,ti)*hbar)) * psiW(i,jf,jm,vf,vm,eh,ti)         
+                 - IncomeTax(preTaxIncomeF+preTaxIncomeM-max(0.0d0,r*avect(i)*capTax)) -max(0.0d0,r*avect(i)*capTax) ) * psiW(i,jf,jm,vf,vm,eh,ti)                    
+            SSTaxesVect(ti) = SSTaxesVect(ti) +  (SocSecTax(w*efmat(jf,jm,ef,ti)*labWcube(i,jf,jm,vf,vm,eh,ti)) + SocSecTax(w*emmat(jf,jm,em,ti)*hbar)) * psiW(i,jf,jm,vf,vm,eh,ti)         
+            TotalTaxableIncome = TotalTaxableIncome + (preTaxIncomeF+preTaxIncomeM)* psiW(i,jf,jm,vf,vm,eh,ti)*CohortWeights(ti)
+            EarnsTaxesVect(ti) = EarnsTaxesVect(ti) +  (EarnsTaxFn(w*efmat(jf,jm,ef,ti)*labWcube(i,jf,jm,vf,vm,eh,ti)) + EarnsTaxFn(w*emmat(jf,jm,em,ti)*hbar)) * psiW(i,jf,jm,vf,vm,eh,ti)         
         end do
         end do
         end do 
@@ -1904,13 +1835,10 @@ labWcube(i,jf,jm,vf,vm,eh,ti)) + EarnsTaxFn(w*emmat(jf,jm,em,ti)*hbar)) * psiW(i
         do j = 1,nm
         do i = 1,na             
             IncTaxByAge(nw+ti) = IncTaxByAge(nw+ti) + &
-                IncomeTax(avect(i)*r-max(0.0d0,r*avect(i)*capTax),socsecIncome,mmat(j,h,d,1,ti),1) * & 
-psiRMarried(i,j,vf,vm,h,d,ti)       
+                IncomeTax(avect(i)*r-max(0.0d0,r*avect(i)*capTax),socsecIncome,mmat(j,h,d,1,ti),1) * psiRMarried(i,j,vf,vm,h,d,ti)       
             GovTransfersVect(nw+ti) = GovTransfersVect(nw+ti) + transfersRetired(socsecIncome + avect(i) * r &
-               + avect(i) - IncomeTax(avect(i)*r-max(0.0d0,r*avect(i)*capTax),socsecIncome,mmat(j,h,d,1,ti),1)- & 
-max(0.0d0,r*avect(i)*capTax),ti,j,h,d,1,i) * psiRMarried(i,j,vf,vm,h,d,ti)
-            TotalTaxableIncome = TotalTaxableIncome + TaxableIncome(avect(i)*r-max(0.0d0,r*avect(i)*capTax), &
-socsecIncome,mmat(j,h,d,1,ti),1) * psiRMarried(i,j,vf,vm,h,d,ti)*CohortWeights(nw+ti)                
+               + avect(i) - IncomeTax(avect(i)*r-max(0.0d0,r*avect(i)*capTax),socsecIncome,mmat(j,h,d,1,ti),1)-max(0.0d0,r*avect(i)*capTax),ti,j,h,d,1,i) * psiRMarried(i,j,vf,vm,h,d,ti)
+            TotalTaxableIncome = TotalTaxableIncome + TaxableIncome(avect(i)*r-max(0.0d0,r*avect(i)*capTax),socsecIncome,mmat(j,h,d,1,ti),1) * psiRMarried(i,j,vf,vm,h,d,ti)*CohortWeights(nw+ti)                
         end do
         end do
         end do
@@ -1926,13 +1854,10 @@ socsecIncome,mmat(j,h,d,1,ti),1) * psiRMarried(i,j,vf,vm,h,d,ti)*CohortWeights(n
         do j = 1,nm
         do i = 1,na             
             IncTaxByAge(nw+ti) = IncTaxByAge(nw+ti) + &
-                IncomeTax(avect(i)*r-max(0.0d0,r*avect(i)*capTax), & 
-socsecIncome,mmat(j,h,d,2,ti),2) * psiRWidow(i,j,vf,vm,h,d,ti)       
+                IncomeTax(avect(i)*r-max(0.0d0,r*avect(i)*capTax),socsecIncome,mmat(j,h,d,2,ti),2) * psiRWidow(i,j,vf,vm,h,d,ti)       
             GovTransfersVect(nw+ti) = GovTransfersVect(nw+ti) + transfersRetired(socsecIncome + avect(i) * r &
-               + avect(i) - IncomeTax(avect(i)*r-max(0.0d0,r*avect(i)*capTax), & 
-socsecIncome,mmat(j,h,d,2,ti),2)-max(0.0d0,r*avect(i)*capTax),ti,j,h,d,2,i) * psiRWidow(i,j,vf,vm,h,d,ti) 
-            TotalTaxableIncome = TotalTaxableIncome + TaxableIncome(avect(i)*r- & 
-max(0.0d0,r*avect(i)*capTax),socsecIncome,mmat(j,h,d,2,ti),2) * psiRWidow(i,j,vf,vm,h,d,ti) *CohortWeights(nw+ti)                
+               + avect(i) - IncomeTax(avect(i)*r-max(0.0d0,r*avect(i)*capTax),socsecIncome,mmat(j,h,d,2,ti),2)-max(0.0d0,r*avect(i)*capTax),ti,j,h,d,2,i) * psiRWidow(i,j,vf,vm,h,d,ti) 
+            TotalTaxableIncome = TotalTaxableIncome + TaxableIncome(avect(i)*r-max(0.0d0,r*avect(i)*capTax),socsecIncome,mmat(j,h,d,2,ti),2) * psiRWidow(i,j,vf,vm,h,d,ti) *CohortWeights(nw+ti)                
         end do
         end do
         end do
@@ -1948,13 +1873,10 @@ max(0.0d0,r*avect(i)*capTax),socsecIncome,mmat(j,h,d,2,ti),2) * psiRWidow(i,j,vf
         do j = 1,nm
         do i = 1,na             
             IncTaxByAge(nw+ti) = IncTaxByAge(nw+ti) + &
-                IncomeTax(avect(i)*r-max(0.0d0,r*avect(i)*capTax),socsecIncome,mmat(j,h,d,3,ti),3) * & 
- psiRWidower(i,j,vf,vm,h,d,ti)       
+                IncomeTax(avect(i)*r-max(0.0d0,r*avect(i)*capTax),socsecIncome,mmat(j,h,d,3,ti),3) * psiRWidower(i,j,vf,vm,h,d,ti)       
             GovTransfersVect(nw+ti) = GovTransfersVect(nw+ti) + transfersRetired(socsecIncome + avect(i) * r &
-               + avect(i) - IncomeTax(avect(i)*r-max(0.0d0,r*avect(i)*capTax), & 
-socsecIncome,mmat(j,h,d,3,ti),3)-max(0.0d0,r*avect(i)*capTax),ti,j,h,d,3,i) * psiRWidower(i,j,vf,vm,h,d,ti)
-            TotalTaxableIncome = TotalTaxableIncome + TaxableIncome(avect(i)*r-max(0.0d0, & 
-r*avect(i)*capTax),socsecIncome,mmat(j,h,d,3,ti),3) * psiRWidower(i,j,vf,vm,h,d,ti)*CohortWeights(nw+ti)                
+               + avect(i) - IncomeTax(avect(i)*r-max(0.0d0,r*avect(i)*capTax),socsecIncome,mmat(j,h,d,3,ti),3)-max(0.0d0,r*avect(i)*capTax),ti,j,h,d,3,i) * psiRWidower(i,j,vf,vm,h,d,ti)
+            TotalTaxableIncome = TotalTaxableIncome + TaxableIncome(avect(i)*r-max(0.0d0,r*avect(i)*capTax),socsecIncome,mmat(j,h,d,3,ti),3) * psiRWidower(i,j,vf,vm,h,d,ti)*CohortWeights(nw+ti)                
         end do
         end do
         end do
@@ -1974,8 +1896,7 @@ r*avect(i)*capTax),socsecIncome,mmat(j,h,d,3,ti),3) * psiRWidower(i,j,vf,vm,h,d,
     do ti = 1,nr
     do j = 1, naem   
     do i = 1, naef                                
-        TotalPayments = TotalPayments + socsec(aveEarnFvect(i),aveEarnMvect(j),1)* & 
-sum(psiRMarried(:,:,i,j,:,:,ti))*CohortWeights(nw+ti) &
+        TotalPayments = TotalPayments + socsec(aveEarnFvect(i),aveEarnMvect(j),1)*sum(psiRMarried(:,:,i,j,:,:,ti))*CohortWeights(nw+ti) &
             + socsec(aveEarnFvect(i),aveEarnMvect(j),2)*sum(psiRWidow(:,:,i,j,:,:,ti))*CohortWeights(nw+ti) &
             + socsec(aveEarnFvect(i),aveEarnMvect(j),3)*sum(psiRWidower(:,:,i,j,:,:,ti))*CohortWeights(nw+ti)        
     end do      
@@ -2004,12 +1925,10 @@ sum(psiRMarried(:,:,i,j,:,:,ti))*CohortWeights(nw+ti) &
         !GovSpending = (IncomeTaxes + SSTaxes  + IncTaxBequests/(1.0d0+ng) + CapitalTaxes- GovTransfers - TotalPayments)/AggOutput
         !eqs(1) = IncomeTaxes + SSTaxes + IncTaxBequests/(1.0d0+ng) + CapitalTaxes - GovTransfers - GovSpending*AggOutput - TotalPayments
         GovSpending = (IncomeTaxes + SSTaxes  + CapitalTaxes + EarnsTaxes - GovTransfers - TotalPayments)/AggOutput
-        eqs(1) = IncomeTaxes + SSTaxes  + CapitalTaxes + EarnsTaxes - GovTransfers - & 
-GovSpending*AggOutput - TotalPayments
+        eqs(1) = IncomeTaxes + SSTaxes  + CapitalTaxes + EarnsTaxes - GovTransfers - GovSpending*AggOutput - TotalPayments
     else               
         !eqs(1) = IncomeTaxes + SSTaxes + IncTaxBequests/(1.0d0+ng) + CapitalTaxes  - GovTransfers - GovSpendingBaseline*AggOutput - TotalPayments
-        eqs(1) = IncomeTaxes + SSTaxes + CapitalTaxes + EarnsTaxes - GovTransfers - & 
-GovSpendingBaseline*AggOutput - TotalPayments - AddGovConsumption
+        eqs(1) = IncomeTaxes + SSTaxes + CapitalTaxes + EarnsTaxes - GovTransfers - GovSpendingBaseline*AggOutput - TotalPayments - AddGovConsumption
     end if
     print *, "IncomeTaxes=", IncomeTaxes
     print *, "SSTaxes=", SSTaxes
@@ -2035,24 +1954,22 @@ GovSpendingBaseline*AggOutput - TotalPayments - AddGovConsumption
     else 
         print '(a,es10.2,a,f12.9)', "Govt Revenue - Expends = ", eqs(1), " GovSpending = ", GovSpending 
     end if
-    print '(a,es10.2,a,f13.9,a,f13.9)', "AveEarningsAllNew - AveEarningsAll = ", eqs(2),  & 
-" AveEarningsAllNew = ", AveEarningsAllNew, " AveEarningsAll = ", AveEarningsAll        
+    print '(a,es10.2,a,f13.9,a,f13.9)', "AveEarningsAllNew - AveEarningsAll = ", eqs(2), " AveEarningsAllNew = ", AveEarningsAllNew, " AveEarningsAll = ", AveEarningsAll        
     print '(a,f13.9)', "fracWwork = ", fracWwork
     print '(a,f13.9)', "AveHHIncome = ", AveHHIncome
-    print '(a,es10.2,a,f13.9,a,f13.9,a,f13.9)', "AggCapitalSupply - AggCapitalDemand = ", & 
-CapitalDiff, " AggCapitalSupply = ", AggCapitalSupply, " AggCapitalDemand = ", AggCapitalDemand, "r=", r       
+    print '(a,es10.2,a,f13.9,a,f13.9,a,f13.9)', "AggCapitalSupply - AggCapitalDemand = ", CapitalDiff, " AggCapitalSupply = ", AggCapitalSupply, " AggCapitalDemand = ", AggCapitalDemand, "r=", r       
     print '(a)', "*********************************************************"
     print *, ret        
     
  end subroutine EqmConds      
  
  
- subroutine BaseConds(N,input,consts,iflag)       
+ subroutine BaseConds(N,input,consts,iflag, getype)       
     use globals
     implicit none
     integer N
     real(dbl), intent(in) :: input(2)
-    !integer, intent(in) :: getype
+    integer, intent(in) :: getype
     real(dbl)  consts(2), input2(3), output(3)   
     integer iflag  
     
@@ -2063,7 +1980,7 @@ CapitalDiff, " AggCapitalSupply = ", AggCapitalSupply, " AggCapitalDemand = ", A
     end if
     input2(2:3) = input
     
-    call EqmConds(3, input2, output, 0) 
+    call EqmConds(3, input2, output, 0, getype) 
     consts = output(2:3)    
     print '(a,es10.2,a,f12.9)', "AveEarningsAllNew - AveEarningsAll  = ", consts(1), " AveEarningsAllNew = ", AveEarningsAllNew
     print '(a,es10.2,a,f12.9)', "AggCapitalSupply - AggCapitalDemand = ", consts(2), " r = ", r
@@ -2072,12 +1989,12 @@ CapitalDiff, " AggCapitalSupply = ", AggCapitalSupply, " AggCapitalDemand = ", A
     GovBudgetConstraint = output(1) 
  end subroutine  BaseConds 
 
- subroutine BaseCondsCapIter(N,input,consts,iflag)       
+ subroutine BaseCondsCapIter(N,input,consts,iflag, getype)       
     use globals
     implicit none
     integer N
     real(dbl), intent(in) :: input
-    !integer, intent(in) :: getype
+    integer, intent(in) :: getype
     real(dbl)  consts(1), input2(2), output(2)   
     integer iflag  
     
@@ -2088,7 +2005,7 @@ CapitalDiff, " AggCapitalSupply = ", AggCapitalSupply, " AggCapitalDemand = ", A
     end if
     input2(2) = input
     
-    call EqmConds(2, input2, output, 0) 
+    call EqmConds(2, input2, output, 0, getype) 
     consts = output(2)    
     print '(a,es10.2,a,f12.9)', "AveEarningsAllNew - AveEarningsAll  = ", consts(1), " AveEarningsAllNew = ", AveEarningsAllNew
     print '(a,es10.2,a,f12.9)', "AggCapitalSupply - AggCapitalDemand = ", CapitalDiff, " r = ", r

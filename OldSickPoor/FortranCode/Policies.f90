@@ -35,8 +35,10 @@ subroutine ComputePolicies()
     do i=1,na  
         ssIncome = socsec(aveEarnFvect(vf),aveEarnMvect(vm),1)         
         preTaxIncome = ssIncome + avect(i) * r 
-        postTaxWealth = preTaxIncome + avect(i) -  IncomeTax(avect(i)*r- max(0.0d0,avect(i)*r*capTax),ssIncome,mmat(j,h,4,1,nr),1) - max(0.0d0,avect(i)*r*capTax)
-        consumptionRCubeMarried(i,j,vf,vm,h,4,nr) = postTaxWealth + transfersRetired(postTaxWealth, nr, j ,h, 4, 1, i) - mmat(j,h,4,1,nr)        
+        postTaxWealth = preTaxIncome + avect(i) -  IncomeTax(avect(i)*r- & 
+max(0.0d0,avect(i)*r*capTax),ssIncome,mmat(j,h,4,1,nr),1) - max(0.0d0,avect(i)*r*capTax)
+        consumptionRCubeMarried(i,j,vf,vm,h,4,nr) = postTaxWealth + & 
+transfersRetired(postTaxWealth, nr, j ,h, 4, 1, i) - mmat(j,h,4,1,nr)        
         VnewRCubeMarried(i,j,vf,vm,h,4,nr) = U(consumptionRCubeMarried(i,j,vf,vm,h,4,nr),0.0d0,1,0)
         UtilConsRCubeMarried(i,j,vf,vm,h,4,nr) = Ucons(consumptionRCubeMarried(i,j,vf,vm,h,4,nr),1)
     end do
@@ -55,8 +57,10 @@ subroutine ComputePolicies()
     do i=1,na  
         ssIncome = socsec(aveEarnFvect(vf),aveEarnMvect(vm),s)         
         preTaxIncome = ssIncome + avect(i) * r 
-        postTaxWealth = preTaxIncome + avect(i) -  IncomeTax(avect(i)*r- max(0.0d0,avect(i)*r*capTax),ssIncome,mmat(j,h,2,s,nr),s) - max(0.0d0,avect(i)*r*capTax)
-        consumptionRCubeWidow(i,j,vf,vm,h,2,nr) = postTaxWealth + transfersRetired(postTaxWealth, nr, j ,h, 2, s, i) - mmat(j,h,2,s,nr)        
+        postTaxWealth = preTaxIncome + avect(i) -  IncomeTax(avect(i)*r- & 
+max(0.0d0,avect(i)*r*capTax),ssIncome,mmat(j,h,2,s,nr),s) - max(0.0d0,avect(i)*r*capTax)
+        consumptionRCubeWidow(i,j,vf,vm,h,2,nr) = postTaxWealth + transfersRetired(postTaxWealth, nr, j ,h, 2, s, i) - & 
+mmat(j,h,2,s,nr)        
         VnewRCubeWidow(i,j,vf,vm,h,2,nr) = U(consumptionRCubeWidow(i,j,vf,vm,h,2,nr),0.0d0,s,0)
         UtilConsRCubeWidow(i,j,vf,vm,h,2,nr) = Ucons(consumptionRCubeWidow(i,j,vf,vm,h,2,nr),s)
     end do
@@ -75,8 +79,10 @@ subroutine ComputePolicies()
     do i=1,na  
         ssIncome = socsec(aveEarnFvect(vf),aveEarnMvect(vm),s)         
         preTaxIncome = ssIncome + avect(i) * r 
-        postTaxWealth = preTaxIncome + avect(i) -  IncomeTax(avect(i)*r- max(0.0d0,avect(i)*r*capTax),ssIncome,mmat(j,h,2,s,nr),s) - max(0.0d0,avect(i)*r*capTax)
-        consumptionRCubeWidower(i,j,vf,vm,h,2,nr) = postTaxWealth + transfersRetired(postTaxWealth, nr, j ,h, 2, s, i) - mmat(j,h,2,s,nr)        
+        postTaxWealth = preTaxIncome + avect(i) -  IncomeTax(avect(i)*r- &
+ max(0.0d0,avect(i)*r*capTax),ssIncome,mmat(j,h,2,s,nr),s) - max(0.0d0,avect(i)*r*capTax)
+        consumptionRCubeWidower(i,j,vf,vm,h,2,nr) = postTaxWealth + transfersRetired(postTaxWealth, nr, j ,h, 2, s, i) - &
+ mmat(j,h,2,s,nr)        
         VnewRCubeWidower(i,j,vf,vm,h,2,nr) = U(consumptionRCubeWidower(i,j,vf,vm,h,2,nr),0.0d0,s,0)
         UtilConsRCubeWidower(i,j,vf,vm,h,2,nr) = Ucons(consumptionRCubeWidower(i,j,vf,vm,h,2,nr),s)
     end do
@@ -210,12 +216,17 @@ subroutine ComputePolicies()
             call mpi_recv(part_CURcube,na*count_rm*count_raef*count_raem*count_rh*count_rs,mpi_double_precision, &
                 sender, mpi_any_tag, mpi_comm_world, status, ier)                                                             
                         
-            aPolicyRCubeMarried(:,wind(9):wind(10),wind(7):wind(8),wind(5):wind(6),wind(3):wind(4),wind(1):wind(2),ti) = part_aPolicyRCube
-            consumptionRCubeMarried(:,wind(9):wind(10),wind(7):wind(8),wind(5):wind(6),wind(3):wind(4),wind(1):wind(2),ti) = part_consRCube
-            VnewRCubeMarried(:,wind(9):wind(10),wind(7):wind(8),wind(5):wind(6),wind(3):wind(4),wind(1):wind(2),ti) = part_VRcube         
-            UtilConsRCubeMarried(:,wind(9):wind(10),wind(7):wind(8),wind(5):wind(6),wind(3):wind(4),wind(1):wind(2),ti) = part_CURcube          
+            aPolicyRCubeMarried(:,wind(9):wind(10),wind(7):wind(8),wind(5):wind(6), & 
+wind(3):wind(4),wind(1):wind(2),ti) = part_aPolicyRCube
+            consumptionRCubeMarried(:,wind(9):wind(10),wind(7):wind(8),wind(5):wind(6), & 
+wind(3):wind(4),wind(1):wind(2),ti) = part_consRCube
+            VnewRCubeMarried(:,wind(9):wind(10),wind(7):wind(8),wind(5):wind(6), & 
+wind(3):wind(4),wind(1):wind(2),ti) = part_VRcube         
+            UtilConsRCubeMarried(:,wind(9):wind(10),wind(7):wind(8),wind(5):wind(6), & 
+wind(3):wind(4),wind(1):wind(2),ti) = part_CURcube          
             
-            num_recv = num_recv + (wind(10)-wind(9)+1)*(wind(8)-wind(7)+1)*(wind(6)-wind(5)+1)*(wind(4)-wind(3)+1)*(wind(2)-wind(1)+1)                     
+            num_recv = num_recv + (wind(10)-wind(9)+1)*(wind(8)-wind(7)+1)*(wind(6)-wind(5)+1)* & 
+(wind(4)-wind(3)+1)*(wind(2)-wind(1)+1)                     
             !print *, "num_recv =", num_recv
             !send him more work with tag = 2
             !print *, "num_sent_s =", num_sent_s
@@ -404,12 +415,17 @@ subroutine ComputePolicies()
             call mpi_recv(part_CURcube,na*count_rm*count_raef*count_raem*count_rh*count_rs,mpi_double_precision, &
                 sender, mpi_any_tag, mpi_comm_world, status, ier)                                                             
                         
-            aPolicyRCubeWidow(:,wind(9):wind(10),wind(7):wind(8),wind(5):wind(6),wind(3):wind(4),wind(1):wind(2),ti) = part_aPolicyRCube
-            consumptionRCubeWidow(:,wind(9):wind(10),wind(7):wind(8),wind(5):wind(6),wind(3):wind(4),wind(1):wind(2),ti) = part_consRCube
-            VnewRCubeWidow(:,wind(9):wind(10),wind(7):wind(8),wind(5):wind(6),wind(3):wind(4),wind(1):wind(2),ti) = part_VRcube         
-            UtilConsRCubeWidow(:,wind(9):wind(10),wind(7):wind(8),wind(5):wind(6),wind(3):wind(4),wind(1):wind(2),ti) = part_CURcube          
+            aPolicyRCubeWidow(:,wind(9):wind(10),wind(7):wind(8),wind(5):wind(6), & 
+wind(3):wind(4),wind(1):wind(2),ti) = part_aPolicyRCube
+            consumptionRCubeWidow(:,wind(9):wind(10),wind(7):wind(8),wind(5):wind(6), & 
+wind(3):wind(4),wind(1):wind(2),ti) = part_consRCube
+            VnewRCubeWidow(:,wind(9):wind(10),wind(7):wind(8),wind(5):wind(6), & 
+wind(3):wind(4),wind(1):wind(2),ti) = part_VRcube         
+            UtilConsRCubeWidow(:,wind(9):wind(10),wind(7):wind(8),wind(5):wind(6), & 
+wind(3):wind(4),wind(1):wind(2),ti) = part_CURcube          
             
-            num_recv = num_recv + (wind(10)-wind(9)+1)*(wind(8)-wind(7)+1)*(wind(6)-wind(5)+1)*(wind(4)-wind(3)+1)*(wind(2)-wind(1)+1)                     
+            num_recv = num_recv + (wind(10)-wind(9)+1)*(wind(8)-wind(7)+1)*(wind(6)-wind(5)+1)* & 
+(wind(4)-wind(3)+1)*(wind(2)-wind(1)+1)                     
             !print *, "num_recv =", num_recv
             !send him more work with tag = 2
             !print *, "num_sent_s =", num_sent_s
@@ -587,12 +603,17 @@ subroutine ComputePolicies()
             call mpi_recv(part_CURcube,na*count_rm*count_raef*count_raem*count_rh*count_rs,mpi_double_precision, &
                 sender, mpi_any_tag, mpi_comm_world, status, ier)                                                             
                         
-            aPolicyRCubeWidower(:,wind(9):wind(10),wind(7):wind(8),wind(5):wind(6),wind(3):wind(4),wind(1):wind(2),ti) = part_aPolicyRCube
-            consumptionRCubeWidower(:,wind(9):wind(10),wind(7):wind(8),wind(5):wind(6),wind(3):wind(4),wind(1):wind(2),ti) = part_consRCube
-            VnewRCubeWidower(:,wind(9):wind(10),wind(7):wind(8),wind(5):wind(6),wind(3):wind(4),wind(1):wind(2),ti) = part_VRcube         
-            UtilConsRCubeWidower(:,wind(9):wind(10),wind(7):wind(8),wind(5):wind(6),wind(3):wind(4),wind(1):wind(2),ti) = part_CURcube          
+            aPolicyRCubeWidower(:,wind(9):wind(10),wind(7):wind(8),wind(5):wind(6), & 
+wind(3):wind(4),wind(1):wind(2),ti) = part_aPolicyRCube
+            consumptionRCubeWidower(:,wind(9):wind(10),wind(7):wind(8),wind(5):wind(6), & 
+wind(3):wind(4),wind(1):wind(2),ti) = part_consRCube
+            VnewRCubeWidower(:,wind(9):wind(10),wind(7):wind(8),wind(5):wind(6), & 
+wind(3):wind(4),wind(1):wind(2),ti) = part_VRcube         
+            UtilConsRCubeWidower(:,wind(9):wind(10),wind(7):wind(8),wind(5):wind(6), & 
+wind(3):wind(4),wind(1):wind(2),ti) = part_CURcube          
             
-            num_recv = num_recv + (wind(10)-wind(9)+1)*(wind(8)-wind(7)+1)*(wind(6)-wind(5)+1)*(wind(4)-wind(3)+1)*(wind(2)-wind(1)+1)                     
+            num_recv = num_recv + (wind(10)-wind(9)+1)*(wind(8)-wind(7)+1)*(wind(6)-wind(5)+1)* & 
+(wind(4)-wind(3)+1)*(wind(2)-wind(1)+1)                     
             !print *, "num_recv =", num_recv
             !send him more work with tag = 2
             !print *, "num_sent_s =", num_sent_s
@@ -819,7 +840,8 @@ subroutine ComputePolicies()
             VnewWCube(:,wind(9):wind(10),wind(7):wind(8),wind(5):wind(6),wind(3):wind(4),wind(1):wind(2),ti) = part_Vcube    
             UtilConsWCube(:,wind(9):wind(10),wind(7):wind(8),wind(5):wind(6),wind(3):wind(4),wind(1):wind(2),ti) = part_CUcube          
             
-            num_recv = num_recv + (wind(10)-wind(9)+1)*(wind(8)-wind(7)+1)*(wind(6)-wind(5)+1)*(wind(4)-wind(3)+1)*(wind(2)-wind(1)+1)                     
+            num_recv = num_recv + (wind(10)-wind(9)+1)*(wind(8)-wind(7)+1)*(wind(6)-wind(5)+1)* & 
+(wind(4)-wind(3)+1)*(wind(2)-wind(1)+1)                     
             !print *, "num_recv =", num_recv
             !send him more work with tag = 2
             if (num_sent_et < nhet) then

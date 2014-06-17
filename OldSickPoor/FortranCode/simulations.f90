@@ -35,29 +35,40 @@ module simulations
         integer NumWidBad, NumWidGood, NumWidrBad, NumWidrGood, NumFWids(nr), NumMWids(nr), NumDied(5)
         integer pm, NumPeopleF, NumPeopleM
         integer NumYears, TotNum, NumZeroStd
-        real(dbl) meanChangeWageF, meanChangeWageM, meanChangeHoursF, stdChangeWageF, stdChangeWageM, stdChangeHoursF
+        real(dbl) meanChangeWageF, meanChangeWageM, meanChangeHoursF, stdChangeWageF
+        real(dbl) stdChangeWageM, stdChangeHoursF
         real(dbl) changeWagesF(nw-1), changeWagesM(nw-1), changeHoursF(nw-1)
         real(dbl) wagem1, wagem0, wagef1, wagef0, covWageFMxtemp, covWageMHoursFxtemp
-        real(dbl) cumuinit(nef,nem), cumuf(nef), cumum(nem), cumeducdist(nhet), cummeddist(npm,nhet), cumhealf(nsht,nset)
+        real(dbl) cumuinit(nef,nem), cumuf(nef), cumum(nem), cumeducdist(nhet)
+        real(dbl) cummeddist(npm,nhet), cumhealf(nsht,nset)
         real(dbl) cumhealm(nsht,nset), cummed(npm), cumsinitH(3,naem)
         real(dbl) preTaxIncome, postTaxWealth, preTaxIncomeM, preTaxIncomeF
-        real(dbl),allocatable,dimension(:,:):: wealthMat, labfMat, earnsfMat, earnsmMat, aveearnsfMat, aveearnsmMat, consMat
-        real(dbl),allocatable,dimension(:,:):: SocSecMat, TotMedExpMat, UtilMat, UtilConsMat, OOPExpMat, GovTransferMat                           
+        real(dbl),allocatable,dimension(:,:):: wealthMat, labfMat, earnsfMat, earnsmMat
+        real(dbl),allocatable,dimension(:,:):: aveearnsfMat 
+        real(dbl),allocatable,dimension(:,:):: aveearnsmMat, consMat
+        real(dbl),allocatable,dimension(:,:):: SocSecMat, TotMedExpMat, UtilMat, UtilConsMat
+        real(dbl),allocatable,dimension(:,:):: OOPExpMat, GovTransferMat                           
         integer, allocatable, dimension(:,:):: maritalMat, aliveHmat
         
-        integer, allocatable, dimension(:,:):: alivefmat, alivemmat, prodflocMat, prodmlocMat, medlocMat, healHmat, healfMat, healmMat, TotMedExpRankMat, futureStatus
-        integer, allocatable, dimension(:)::  HHeducloc, earnsmrank, maritalrank, medicalrank, aliverank, aveearnsmloc,  changeWagesFx, changeWagesMx, changeHoursFx
+        integer, allocatable, dimension(:,:):: alivefmat, alivemmat, prodflocMat, prodmlocMat
+        integer, allocatable, dimension(:,:):: medlocMat, healHmat, healfMat, healmMat
+        integer, allocatable, dimension(:,:):: TotMedExpRankMat, futureStatus
+        integer, allocatable, dimension(:)::  HHeducloc, earnsmrank, maritalrank, medicalrank, aliverank
+        integer, allocatable, dimension(:)::  aveearnsmloc,  changeWagesFx, changeWagesMx, changeHoursFx
         real(dbl), allocatable, dimension(:)::aveearnsPrimary     
         !real(dbl), allocatable,dimension(:,:):: ChangeWage, ChangeFHours
         !real(dbl), allocatable,dimension(:):: ChangeWageVect, ChangeFHoursVect
         
-        allocate (wealthMat(T,Ns),labfMat(nw,Ns),earnsfMat(nw,Ns),earnsmMat(nw,Ns), aveearnsfMat(nw+1,Ns),aveearnsmMat(nw+1,Ns), consMat(T,Ns), stat=status)
-        allocate (SocSecMat(nr,Ns), TotMedExpMat(nr,Ns), UtilMat(T,Ns), UtilConsMat(T,Ns), OOPExpMat(nr,Ns), GovTransferMat(T,Ns), stat=status)
+        allocate (wealthMat(T,Ns),labfMat(nw,Ns),earnsfMat(nw,Ns),earnsmMat(nw,Ns), & 
+aveearnsfMat(nw+1,Ns),aveearnsmMat(nw+1,Ns), consMat(T,Ns), stat=status)
+        allocate (SocSecMat(nr,Ns), TotMedExpMat(nr,Ns), UtilMat(T,Ns), UtilConsMat(T,Ns), & 
+OOPExpMat(nr,Ns), GovTransferMat(T,Ns), stat=status)
         allocate (aliveHmat(nr,Ns), maritalMat(nr,Ns), stat=status)
         
         allocate (prodflocMat(nw,Ns), prodmlocMat(nw,Ns), medlocMat(nr,Ns), stat=status)        
         allocate (alivefMat(nr,Ns),alivemMat(nr,Ns), healHmat(nr,Ns), healfMat(nr,Ns), healmMat(nr,Ns), stat=status)
-        allocate (HHeducloc(Ns), earnsmrank(Ns), TotMedExpRankMat(nr,Ns), maritalrank(Ns), medicalrank(Ns), aliverank(Ns), stat=status)
+        allocate (HHeducloc(Ns), earnsmrank(Ns), TotMedExpRankMat(nr,Ns), maritalrank(Ns), & 
+medicalrank(Ns), aliverank(Ns), stat=status)
         allocate (aveearnsmloc(Ns), futureStatus(nr,Ns))         
         !allocate (changeWagesF(nw-1), changeWagesM(nw-1), changeHoursF(nw-1)) 
         
@@ -119,12 +130,14 @@ module simulations
                         prodmlocMat(1,i) = 1
                     end do             
                 else if (zm==1) then
-                    do i=nint(cumeducdist(s-1)*Ns)+nint(cumuinit(zf-1,nem)*EducDist(s)*Ns)+1,nint(cumeducdist(s-1)*Ns)+nint(cumuinit(zf,1)*EducDist(s)*Ns)
+                    do i=nint(cumeducdist(s-1)*Ns)+nint(cumuinit(zf-1,nem)*EducDist(s)*Ns)+1, & 
+nint(cumeducdist(s-1)*Ns)+nint(cumuinit(zf,1)*EducDist(s)*Ns)
                         prodflocMat(1,i) = zf
                         prodmlocMat(1,i) = zm
                     end do            
                 else                                
-                    do i=nint(cumeducdist(s-1)*Ns)+nint(cumuinit(zf,zm-1)*EducDist(s)*Ns)+1,nint(cumeducdist(s-1)*Ns)+nint(cumuinit(zf,zm)*EducDist(s)*Ns)
+                    do i=nint(cumeducdist(s-1)*Ns)+nint(cumuinit(zf,zm-1)*EducDist(s)*Ns)+1, &
+nint(cumeducdist(s-1)*Ns)+nint(cumuinit(zf,zm)*EducDist(s)*Ns)
                         prodflocMat(1,i) = zf
                         prodmlocMat(1,i) = zm
                     end do
@@ -228,33 +241,37 @@ module simulations
             !incomeMat(1,i) = postTaxWealth - wealthMat(1,i) + GovTransferMat(1,i)                                                       
             do j=2,nw
                 !age-j wealth
-                call interpol3d(avect, aveEarnFvect, aveEarnMvect, aPolicyWCube(:,prodflocMat(j-1,i),prodmlocMat(j-1,i),:,:,het,j-1), &
-                        wealthMat(j-1,i), aveearnsfMat(j-1,i), aveearnsmMat(j-1,i), wealthMat(j,i) )                  
+                call interpol3d(avect, aveEarnFvect, aveEarnMvect, aPolicyWCube(:,prodflocMat(j-1,i), & 
+prodmlocMat(j-1,i),:,:,het,j-1), wealthMat(j-1,i), aveearnsfMat(j-1,i), & 
+aveearnsmMat(j-1,i), wealthMat(j,i) )                  
                 
                 !age-j average earnings (average of earnings up to age j-1 earnings)                                      
                 aveearnsfMat(j,i) = ((j-2)*aveearnsfMat(j-1,i) + earnsfMat(j-1,i))/(j-1)    
                 aveearnsmMat(j,i) = ((j-2)*aveearnsmMat(j-1,i) + earnsmMat(j-1,i))/(j-1)       
                 
                 !age-j female labor supply
-                call interpol3d(avect, aveEarnFvect, aveEarnMvect,labWCube(:,prodflocMat(j,i),prodmlocMat(j,i),:,:,het,j), &
-                        wealthMat(j,i),aveearnsfMat(j,i), aveearnsmMat(j,i),labfMat(j,i))                   
+                call interpol3d(avect, aveEarnFvect, aveEarnMvect,labWCube(:,prodflocMat(j,i),prodmlocMat(j,i),:,:, & 
+het,j), wealthMat(j,i),aveearnsfMat(j,i), aveearnsmMat(j,i),labfMat(j,i))                   
                 
                 !earnings                                                             
                 earnsfMat(j,i) = w*efmat(prodflocMat(j,i), prodmlocMat(j,i),fet,j)*labfMat(j,i)
                 earnsmMat(j,i) = w*emmat(prodflocMat(j,i), prodmlocMat(j,i),met,j)*hbar  
                    
                 !age-j consumption                            
-                call interpol3d(avect, aveEarnFvect, aveEarnMvect, consumptionWCube(:,prodflocMat(j,i),prodmlocMat(j,i),:,:,het,j), &
-                    wealthMat(j,i), aveearnsfMat(j,i),aveearnsmMat(j,i), consMat(j,i) ) 
+                call interpol3d(avect, aveEarnFvect, aveEarnMvect, consumptionWCube(:,prodflocMat(j,i), & 
+prodmlocMat(j,i),:,:,het,j), wealthMat(j,i), aveearnsfMat(j,i),aveearnsmMat(j,i), consMat(j,i) ) 
                 
-                preTaxIncomeM = earnsmMat(j,i) - SocSecTax(earnsmMat(j,i)) + 0.5d0*r* wealthMat(j,i) - EarnsTaxFn(earnsmMat(j,i)) + 0.5d0*r* wealthMat(j,i)
-                preTaxIncomeF = earnsfMat(j,i) - SocSecTax(earnsfMat(j,i)) + 0.5d0*r* wealthMat(j,i) - EarnsTaxFn(earnsfMat(j,i)) + 0.5d0*r* wealthMat(j,i)                     
-                postTaxWealth = preTaxIncomeF + preTaxIncomeM + wealthMat(j,i) - IncomeTax(preTaxIncomeF+preTaxIncomeM- max(0.0d0,r*wealthMat(j,i)*capTax)) - max(0.0d0,r*wealthMat(j,i)*capTax)
+                preTaxIncomeM = earnsmMat(j,i) - SocSecTax(earnsmMat(j,i)) + 0.5d0*r* wealthMat(j,i) -  & 
+EarnsTaxFn(earnsmMat(j,i)) + 0.5d0*r* wealthMat(j,i)
+                preTaxIncomeF = earnsfMat(j,i) - SocSecTax(earnsfMat(j,i)) + 0.5d0*r* wealthMat(j,i) - & 
+EarnsTaxFn(earnsfMat(j,i)) + 0.5d0*r* wealthMat(j,i)                     
+                postTaxWealth = preTaxIncomeF + preTaxIncomeM + wealthMat(j,i) - & 
+IncomeTax(preTaxIncomeF+preTaxIncomeM- max(0.0d0,r*wealthMat(j,i)*capTax)) - max(0.0d0,r*wealthMat(j,i)*capTax)
                 !if (j == 1) postTaxWealth = postTaxWealth + btran(het)            
                 GovTransferMat(j,i) = transfers(postTaxWealth)
                 
-                call interpol3d(avect, aveEarnFvect, aveEarnMvect,VnewWCube(:,prodflocMat(j,i),prodmlocMat(j,i),:,:,het,j), &
-                    wealthMat(j,i),aveearnsfMat(j,i), aveearnsmMat(j,i),UtilMat(j,i))       
+                call interpol3d(avect, aveEarnFvect, aveEarnMvect,VnewWCube(:,prodflocMat(j,i),prodmlocMat(j,i), & 
+:,:,het,j), wealthMat(j,i),aveearnsfMat(j,i), aveearnsmMat(j,i),UtilMat(j,i))       
                  call interpol3d(avect, aveEarnFvect, aveEarnMvect,UtilConsWCube(:,prodflocMat(j,i),prodmlocMat(j,i),:,:,het,j), &
                     wealthMat(j,i),aveearnsfMat(j,i), aveearnsmMat(j,i),UtilConsMat(j,i))  
                                    
@@ -480,51 +497,67 @@ module simulations
             do j=1,nr                
                 !age-nw+j wealth
                 if (j == 1) then                
-                    call interpol3d(avect, aveEarnFvect, aveEarnMvect, aPolicyWCube(:,prodflocMat(nw,i),prodmlocMat(nw,i),:,:,HHeducloc(i),nw), &
+                    call interpol3d(avect, aveEarnFvect, aveEarnMvect, aPolicyWCube(:,prodflocMat(nw,i),&
+prodmlocMat(nw,i),:,:,HHeducloc(i),nw), &
                         wealthMat(nw,i), aveearnsfMat(nw,i), aveearnsmMat(nw,i), wealthMat(nw+1,i) )                     
                 else
                     if (maritalMat(j-1,i) == 1) then
-                        call interpol3d(avect, aveEarnFvect, aveEarnMvect, aPolicyRCubeMarried(:,medlocMat(j-1,i),:,:,healHmat(j-1,i),futureStatus(j-1,i),j-1), &
+                        call interpol3d(avect, aveEarnFvect, aveEarnMvect, aPolicyRCubeMarried(:,medlocMat(j-1,i),&
+:,:,healHmat(j-1,i),futureStatus(j-1,i),j-1), &
                             wealthMat(nw+j-1,i), aveearnsfMat(nw+1,i), aveearnsmMat(nw+1,i), wealthMat(nw+j,i) )                      
                     else if (maritalMat(j-1,i) == 2) then
-                        call interpol3d(avect, aveEarnFvect, aveEarnMvect, aPolicyRCubeWidow(:,medlocMat(j-1,i),:,:,healfMat(j-1,i),futureStatus(j-1,i),j-1), &
+                        call interpol3d(avect, aveEarnFvect, aveEarnMvect, aPolicyRCubeWidow(:,medlocMat(j-1,i),& 
+:,:,healfMat(j-1,i),futureStatus(j-1,i),j-1), &
                             wealthMat(nw+j-1,i), aveearnsfMat(nw+1,i), aveearnsmMat(nw+1,i), wealthMat(nw+j,i) )                                          
                     else
-                        call interpol3d(avect, aveEarnFvect, aveEarnMvect, aPolicyRCubeWidower(:,medlocMat(j-1,i),:,:,healmMat(j-1,i),futureStatus(j-1,i),j-1), &
+                        call interpol3d(avect, aveEarnFvect, aveEarnMvect, aPolicyRCubeWidower(:,medlocMat(j-1,i),& 
+:,:,healmMat(j-1,i),futureStatus(j-1,i),j-1), &
                             wealthMat(nw+j-1,i), aveearnsfMat(nw+1,i), aveearnsmMat(nw+1,i), wealthMat(nw+j,i) )                                          
                     end if                                                                     
                 end if
                 
 
                 if (maritalMat(j,i) == 1) then
-                    call interpol3d(avect, aveEarnFvect, aveEarnMvect, consumptionRCubeMarried(:,medlocMat(j,i),:,:,healHmat(j,i),futureStatus(j,i),j), &
+                    call interpol3d(avect, aveEarnFvect, aveEarnMvect, consumptionRCubeMarried(:,medlocMat(j,i),:,:, & 
+healHmat(j,i),futureStatus(j,i),j), &
                        wealthMat(nw+j,i), aveearnsfMat(nw+1,i), aveearnsmMat(nw+1,i), consMat(nw+j,i) ) 
-                    call interpol3d(avect, aveEarnFvect, aveEarnMvect,VnewRCubeMarried(:,medlocMat(j,i),:,:,healHmat(j,i),futureStatus(j,i),j), &
+                    call interpol3d(avect, aveEarnFvect, aveEarnMvect,VnewRCubeMarried(:,medlocMat(j,i),:,:, & 
+healHmat(j,i),futureStatus(j,i),j), &
                         wealthMat(nw+j,i),aveearnsfMat(nw+1,i), aveearnsmMat(nw+1,i),UtilMat(nw+j,i)) 
-                    call interpol3d(avect, aveEarnFvect, aveEarnMvect,UtilConsRCubeMarried(:,medlocMat(j,i),:,:,healHmat(j,i),futureStatus(j,i),j), &
+                    call interpol3d(avect, aveEarnFvect, aveEarnMvect,UtilConsRCubeMarried(:,medlocMat(j,i),:,:, & 
+healHmat(j,i),futureStatus(j,i),j), &
                         wealthMat(nw+j,i),aveearnsfMat(nw+1,i), aveearnsmMat(nw+1,i),UtilConsMat(nw+j,i))    
                 else if (maritalMat(j,i) == 2) then
-                    call interpol3d(avect, aveEarnFvect, aveEarnMvect, consumptionRCubeWidow(:,medlocMat(j,i),:,:,healHmat(j,i),futureStatus(j,i),j), &
+                    call interpol3d(avect, aveEarnFvect, aveEarnMvect, consumptionRCubeWidow(:,medlocMat(j,i),:,:, & 
+healHmat(j,i),futureStatus(j,i),j), &
                        wealthMat(nw+j,i), aveearnsfMat(nw+1,i), aveearnsmMat(nw+1,i), consMat(nw+j,i) ) 
-                    call interpol3d(avect, aveEarnFvect, aveEarnMvect,VnewRCubeWidow(:,medlocMat(j,i),:,:,healHmat(j,i),futureStatus(j,i),j), &
+                    call interpol3d(avect, aveEarnFvect, aveEarnMvect,VnewRCubeWidow(:,medlocMat(j,i),:,:, & 
+healHmat(j,i),futureStatus(j,i),j), &
                         wealthMat(nw+j,i),aveearnsfMat(nw+1,i), aveearnsmMat(nw+1,i),UtilMat(nw+j,i)) 
-                    call interpol3d(avect, aveEarnFvect, aveEarnMvect,UtilConsRCubeWidow(:,medlocMat(j,i),:,:,healHmat(j,i),futureStatus(j,i),j), &
+                    call interpol3d(avect, aveEarnFvect, aveEarnMvect,UtilConsRCubeWidow(:,medlocMat(j,i),:,:, & 
+healHmat(j,i),futureStatus(j,i),j), &
                         wealthMat(nw+j,i),aveearnsfMat(nw+1,i), aveearnsmMat(nw+1,i),UtilConsMat(nw+j,i))                           
                 else
-                    call interpol3d(avect, aveEarnFvect, aveEarnMvect, consumptionRCubeWidower(:,medlocMat(j,i),:,:,healHmat(j,i),futureStatus(j,i),j), &
+                    call interpol3d(avect, aveEarnFvect, aveEarnMvect, consumptionRCubeWidower(:,medlocMat(j,i),:,:, & 
+healHmat(j,i),futureStatus(j,i),j), &
                        wealthMat(nw+j,i), aveearnsfMat(nw+1,i), aveearnsmMat(nw+1,i), consMat(nw+j,i) ) 
-                    call interpol3d(avect, aveEarnFvect, aveEarnMvect,VnewRCubeWidower(:,medlocMat(j,i),:,:,healHmat(j,i),futureStatus(j,i),j), &
+                    call interpol3d(avect, aveEarnFvect, aveEarnMvect,VnewRCubeWidower(:,medlocMat(j,i),:,:, & 
+healHmat(j,i),futureStatus(j,i),j), &
                         wealthMat(nw+j,i),aveearnsfMat(nw+1,i), aveearnsmMat(nw+1,i),UtilMat(nw+j,i)) 
-                    call interpol3d(avect, aveEarnFvect, aveEarnMvect,UtilConsRCubeWidower(:,medlocMat(j,i),:,:,healHmat(j,i),futureStatus(j,i),j), &
+                    call interpol3d(avect, aveEarnFvect, aveEarnMvect,UtilConsRCubeWidower(:,medlocMat(j,i),:,:, &
+healHmat(j,i),futureStatus(j,i),j), &
                         wealthMat(nw+j,i),aveearnsfMat(nw+1,i), aveearnsmMat(nw+1,i),UtilConsMat(nw+j,i))                           
                 end if                 
 
                 TotMedExpMat(j,i) = mmat(medlocMat(j,i),healHmat(j,i),futureStatus(j,i),maritalMat(j,i),j)
                 SocSecMat(j,i) = socsec(aveearnsfMat(nw+1,i),aveearnsmMat(nw+1,i),maritalMat(j,i))
                 preTaxIncome = SocSecMat(j,i) + r*wealthMat(nw+j,i)
-                postTaxWealth = preTaxIncome + wealthMat(nw+j,i) - IncomeTax(r*wealthMat(nw+j,i)- max(0.0d0,r*wealthMat(nw+j,i)*capTax),SocSecMat(j,i),TotMedExpMat(j,i),maritalMat(j,i)) - max(0.0d0,r*wealthMat(nw+j,i)*capTax)
+                postTaxWealth = preTaxIncome + wealthMat(nw+j,i) - IncomeTax(r*wealthMat(nw+j,i)- & 
+max(0.0d0,r*wealthMat(nw+j,i)*capTax),SocSecMat(j,i),TotMedExpMat(j,i),maritalMat(j,i)) - &
+max(0.0d0,r*wealthMat(nw+j,i)*capTax)
                              
-                GovTransferMat(nw+j,i) = transfersRetired(postTaxWealth, j,medlocMat(j,i),healHmat(j,i),futureStatus(j,i),maritalMat(j,i),1)
+                GovTransferMat(nw+j,i) = transfersRetired(postTaxWealth, j,medlocMat(j,i),healHmat(j,i), &
+futureStatus(j,i),maritalMat(j,i),1)
                 !incomeMat(nw+j,i) = preTaxIncome  - IncomeTax(r*wealthMat(nw+j,i) - r*wealthMat(nw+j,i)*capTax,SocSecMat(j,i),TotMedExpMat(j,i),maritalMat(j,i)) + max(GovTransferMat(nw+j,i) - medMat(j,i),0.0d0) - r*wealthMat(nw+j,i)*capTax  
                 
                 if(GovTransferMat(nw+j,i) == 0.0d0) then
@@ -643,10 +676,12 @@ module simulations
                 stdChangeWageM = sqrt(sum((changeWagesM - meanChangeWageM)**2,changeWagesF > -1.d6)/(NumYears-1))
                 stdChangeHoursF = sqrt(sum((changeHoursF - meanChangeHoursF)**2,changeWagesF > -1.d6)/(NumYears-1))
                 corrWageFM = corrWageFM + &
-                    sum( (changeWagesF - meanChangeWageF)*(changeWagesM - meanChangeWageM),changeWagesF > -1.d6)/(NumYears-1)/stdChangeWageF/stdChangeWageM
+                    sum( (changeWagesF - meanChangeWageF)*(changeWagesM - meanChangeWageM),changeWagesF > -1.d6)/&
+(NumYears-1)/stdChangeWageF/stdChangeWageM
                 if (stdChangeHoursF > 1.d-5) then
                     corrWageMHoursF = corrWageMHoursF + &
-                        sum( (changeHoursF - meanChangeHoursF)*(changeWagesM - meanChangeWageM),changeWagesF > -1.d6)/(NumYears-1)/stdChangeHoursF/stdChangeWageM
+                        sum( (changeHoursF - meanChangeHoursF)*(changeWagesM - meanChangeWageM),changeWagesF > -1.d6)/&
+(NumYears-1)/stdChangeHoursF/stdChangeWageM
                 else
                     NumZeroStd = NumZeroStd + 1    
                 end if
@@ -710,7 +745,8 @@ module simulations
                     stdChangeWageM = stdChangeWageM + (changeWagesMx(i) - meanChangeWageM)**2
                     stdChangeHoursF = stdChangeHoursF + (changeHoursFx(i) - meanChangeHoursF)**2
                     covWageFMxtemp = covWageFMxtemp + (changeWagesFx(i) - meanChangeWageF)*(changeWagesMx(i) - meanChangeWageM)
-                    covWageMHoursFxtemp = covWageMHoursFxtemp + (changeHoursFx(i) - meanChangeHoursF)*(changeWagesMx(i) - meanChangeWageM)
+                    covWageMHoursFxtemp = covWageMHoursFxtemp + (changeHoursFx(i) - & 
+meanChangeHoursF)*(changeWagesMx(i) - meanChangeWageM)
                 end if         
             end do 
             if (TotNum > 1) then
@@ -762,27 +798,43 @@ module simulations
         TotMedByAge = sum(TotMedExpMat*aliveHMat,2)/sum(aliveHMat,2)
         OOPMedByAge = sum(OOPExpMat*aliveHMat,2)/sum(aliveHMat,2)
         WealthByAgeEduc(:nw,1) = sum(wealthMat(:nw,:nint(Ns*cumeducdist(1))),2)/nint(Ns*cumeducdist(1))
-        WealthByAgeEduc(nw+1:,1) = sum(wealthMat(nw+1:,:nint(Ns*cumeducdist(1))) *aliveHMat(:,:nint(Ns*cumeducdist(1))) ,2)/sum(aliveHMat(:,:nint(Ns*cumeducdist(1))),2)
+        WealthByAgeEduc(nw+1:,1) = sum(wealthMat(nw+1:,:nint(Ns*cumeducdist(1))) *aliveHMat(:,&
+:nint(Ns*cumeducdist(1))) ,2)/sum(aliveHMat(:,:nint(Ns*cumeducdist(1))),2)
         ConsByAgeEduc(:nw,1) = sum(consMat(:nw,:nint(Ns*cumeducdist(1))),2)/nint(Ns*cumeducdist(1))
-        ConsByAgeEduc(nw+1:,1) = sum(consMat(nw+1:,:nint(Ns*cumeducdist(1))) *aliveHMat(:,:nint(Ns*cumeducdist(1))) ,2)/sum(aliveHMat(:,:nint(Ns*cumeducdist(1))),2)        
+        ConsByAgeEduc(nw+1:,1) = sum(consMat(nw+1:,:nint(Ns*cumeducdist(1))) *aliveHMat(:,&
+:nint(Ns*cumeducdist(1))) ,2)/sum(aliveHMat(:,:nint(Ns*cumeducdist(1))),2)        
         AveUtilByAgeEduc(:nw,1) =  sum(UtilMat(:nw,:nint(Ns*cumeducdist(1))),2)/nint(Ns*cumeducdist(1))
-        AveUtilByAgeEduc(nw+1:,1) = sum(UtilMat(nw+1:,:nint(Ns*cumeducdist(1))) *aliveHMat(:,:nint(Ns*cumeducdist(1))) ,2)/sum(aliveHMat(:,:nint(Ns*cumeducdist(1))),2) 
+        AveUtilByAgeEduc(nw+1:,1) = sum(UtilMat(nw+1:,:nint(Ns*cumeducdist(1))) *aliveHMat(:,&
+:nint(Ns*cumeducdist(1))) ,2)/sum(aliveHMat(:,:nint(Ns*cumeducdist(1))),2) 
         AveUtilConsByAgeEduc(:nw,1) =  sum(UtilConsMat(:nw,:nint(Ns*cumeducdist(1))),2)/nint(Ns*cumeducdist(1))
-        AveUtilConsByAgeEduc(nw+1:,1) = sum(UtilConsMat(nw+1:,:nint(Ns*cumeducdist(1))) *aliveHMat(:,:nint(Ns*cumeducdist(1))) ,2)/sum(aliveHMat(:,:nint(Ns*cumeducdist(1))),2) 
+        AveUtilConsByAgeEduc(nw+1:,1) = sum(UtilConsMat(nw+1:,:nint(Ns*cumeducdist(1))) *aliveHMat(:,&
+:nint(Ns*cumeducdist(1))) ,2)/sum(aliveHMat(:,:nint(Ns*cumeducdist(1))),2) 
 
         AggWorkersAssets = sum(WealthByAge(:nw)*CohortWeights(:nw))
         AggRetireesAssets = sum(WealthByAge(nw+1:)*CohortWeights(nw+1:))        
   
 
         do het=2,nhet
-           WealthByAgeEduc(:nw,het) = sum(wealthMat(:nw,nint(Ns*cumeducdist(het-1))+1:nint(Ns*cumeducdist(het))),2)/(nint(Ns*cumeducdist(het))-nint(Ns*cumeducdist(het-1)))
-           WealthByAgeEduc(nw+1:,het) = sum(wealthMat(nw+1:,nint(Ns*cumeducdist(het-1))+1:nint(Ns*cumeducdist(het)))*aliveHMat(:,nint(Ns*cumeducdist(het-1))+1:nint(Ns*cumeducdist(het))),2)/sum(aliveHMat(:,nint(Ns*cumeducdist(het-1))+1:nint(Ns*cumeducdist(het))),2)
-           ConsByAgeEduc(:nw,het) = sum(consMat(:nw,nint(Ns*cumeducdist(het-1))+1:nint(Ns*cumeducdist(het))),2)/(nint(Ns*cumeducdist(het))-nint(Ns*cumeducdist(het-1)))
-           ConsByAgeEduc(nw+1:,het) = sum(consMat(nw+1:,nint(Ns*cumeducdist(het-1))+1:nint(Ns*cumeducdist(het)))*aliveHMat(:,nint(Ns*cumeducdist(het-1))+1:nint(Ns*cumeducdist(het))),2)/sum(aliveHMat(:,nint(Ns*cumeducdist(het-1))+1:nint(Ns*cumeducdist(het))),2)            
-           AveUtilByAgeEduc(:nw,het) =  sum(UtilMat(:nw,nint(Ns*cumeducdist(het-1))+1:nint(Ns*cumeducdist(het))),2)/(nint(Ns*cumeducdist(het))-nint(Ns*cumeducdist(het-1)))
-           AveUtilByAgeEduc(nw+1:,het) = sum(UtilMat(nw+1:,nint(Ns*cumeducdist(het-1))+1:nint(Ns*cumeducdist(het)))*aliveHMat(:,nint(Ns*cumeducdist(het-1))+1:nint(Ns*cumeducdist(het))),2)/sum(aliveHMat(:,nint(Ns*cumeducdist(het-1))+1:nint(Ns*cumeducdist(het))),2)
-           AveUtilConsByAgeEduc(:nw,het) =  sum(UtilConsMat(:nw,nint(Ns*cumeducdist(het-1))+1:nint(Ns*cumeducdist(het))),2)/(nint(Ns*cumeducdist(het))-nint(Ns*cumeducdist(het-1)))
-           AveUtilConsByAgeEduc(nw+1:,het) = sum(UtilConsMat(nw+1:,nint(Ns*cumeducdist(het-1))+1:nint(Ns*cumeducdist(het)))*aliveHMat(:,nint(Ns*cumeducdist(het-1))+1:nint(Ns*cumeducdist(het))),2)/sum(aliveHMat(:,nint(Ns*cumeducdist(het-1))+1:nint(Ns*cumeducdist(het))),2)        
+           WealthByAgeEduc(:nw,het) = sum(wealthMat(:nw,nint(Ns*cumeducdist(het-1))+1:nint(Ns*cumeducdist(het))),2)/&
+(nint(Ns*cumeducdist(het))-nint(Ns*cumeducdist(het-1)))
+           WealthByAgeEduc(nw+1:,het) = sum(wealthMat(nw+1:,nint(Ns*cumeducdist(het-1))+&
+1:nint(Ns*cumeducdist(het)))*aliveHMat(:,nint(Ns*cumeducdist(het-1))+1:nint(Ns*cumeducdist(het))),2)/&
+sum(aliveHMat(:,nint(Ns*cumeducdist(het-1))+1:nint(Ns*cumeducdist(het))),2)
+           ConsByAgeEduc(:nw,het) = sum(consMat(:nw,nint(Ns*cumeducdist(het-1))+1:nint(Ns*cumeducdist(het))),2)/&
+(nint(Ns*cumeducdist(het))-nint(Ns*cumeducdist(het-1)))
+           ConsByAgeEduc(nw+1:,het) = sum(consMat(nw+1:,nint(Ns*cumeducdist(het-1))+1:nint(Ns*cumeducdist(het)))*&
+aliveHMat(:,nint(Ns*cumeducdist(het-1))+1:nint(Ns*cumeducdist(het))),2)/&
+sum(aliveHMat(:,nint(Ns*cumeducdist(het-1))+1:nint(Ns*cumeducdist(het))),2)            
+           AveUtilByAgeEduc(:nw,het) =  sum(UtilMat(:nw,nint(Ns*cumeducdist(het-1))+1:nint(Ns*cumeducdist(het))),2)/&
+(nint(Ns*cumeducdist(het))-nint(Ns*cumeducdist(het-1)))
+           AveUtilByAgeEduc(nw+1:,het) = sum(UtilMat(nw+1:,nint(Ns*cumeducdist(het-1))+1:nint(Ns*cumeducdist(het)))*&
+aliveHMat(:,nint(Ns*cumeducdist(het-1))+1:nint(Ns*cumeducdist(het))),2)/&
+sum(aliveHMat(:,nint(Ns*cumeducdist(het-1))+1:nint(Ns*cumeducdist(het))),2)
+           AveUtilConsByAgeEduc(:nw,het) =  sum(UtilConsMat(:nw,nint(Ns*cumeducdist(het-1))+1:&
+nint(Ns*cumeducdist(het))),2)/(nint(Ns*cumeducdist(het))-nint(Ns*cumeducdist(het-1)))
+           AveUtilConsByAgeEduc(nw+1:,het) = sum(UtilConsMat(nw+1:,nint(Ns*cumeducdist(het-1))+1:&
+nint(Ns*cumeducdist(het)))*aliveHMat(:,nint(Ns*cumeducdist(het-1))+1:nint(Ns*cumeducdist(het))),2)/&
+sum(aliveHMat(:,nint(Ns*cumeducdist(het-1))+1:nint(Ns*cumeducdist(het))),2)        
         end do
         
         FracRecGovTransByAgeEduc = 0.0d0        
@@ -823,7 +875,8 @@ module simulations
         end do
         end do  
         do i=2,nhet            
-            FracRecGovTransByAgeEduc(nw+1:,i) = FracRecGovTransByAgeEduc(nw+1:,i)/sum(aliveHmat(:,nint(Ns*cumeducdist(i-1))+1:nint(Ns*cumeducdist(i)) ),2)             
+            FracRecGovTransByAgeEduc(nw+1:,i) = FracRecGovTransByAgeEduc(nw+1:,i)/&
+sum(aliveHmat(:,nint(Ns*cumeducdist(i-1))+1:nint(Ns*cumeducdist(i)) ),2)             
         end do          
         
         NumWidBad = 0
@@ -897,29 +950,44 @@ module simulations
         do i=1,5
             AveEarnsQuintileCutoffs(i) = aveearnsmMat(nw+1,Np*(i-1)+1)
             WealthByAgePEM(:nw,i) = sum(wealthMat(:nw,Np*(i-1)+1:Np*i),2)/Np 
-            WealthByAgePEM(nw+1:,i) = sum(wealthMat(nw+1:,Np*(i-1)+1:Np*i)*aliveHmat(:,Np*(i-1)+1:Np*i),2)/sum(aliveHmat(:,Np*(i-1)+1:Np*i),2)
+            WealthByAgePEM(nw+1:,i) = sum(wealthMat(nw+1:,Np*(i-1)+1:Np*i)*aliveHmat(:,Np*(i-1)+1:Np*i),2)/&
+sum(aliveHmat(:,Np*(i-1)+1:Np*i),2)
             ConsByAgePEM(:nw,i) = sum(consMat(:nw,Np*(i-1)+1:Np*i),2)/Np
-            ConsByAgePEM(nw+1:,i) = sum(consMat(nw+1:,Np*(i-1)+1:Np*i)*aliveHmat(:,Np*(i-1)+1:Np*i),2)/sum(aliveHmat(:,Np*(i-1)+1:Np*i),2)
+            ConsByAgePEM(nw+1:,i) = sum(consMat(nw+1:,Np*(i-1)+1:Np*i)*aliveHmat(:,Np*(i-1)+1:Np*i),2)/&
+sum(aliveHmat(:,Np*(i-1)+1:Np*i),2)
             UtilByAgePEM(:nw,i) = sum(UtilMat(:nw,Np*(i-1)+1:Np*i),2)/Np                                        
-            UtilByAgePEM(nw+1:,i) = sum(UtilMat(nw+1:,Np*(i-1)+1:Np*i)*aliveHmat(:,Np*(i-1)+1:Np*i),2)/sum(aliveHmat(:,Np*(i-1)+1:Np*i),2)
+            UtilByAgePEM(nw+1:,i) = sum(UtilMat(nw+1:,Np*(i-1)+1:Np*i)*aliveHmat(:,Np*(i-1)+1:Np*i),2)/&
+sum(aliveHmat(:,Np*(i-1)+1:Np*i),2)
             UtilConsByAgePEM(:nw,i) = sum(UtilConsMat(:nw,Np*(i-1)+1:Np*i),2)/Np                                        
-            UtilConsByAgePEM(nw+1:,i) = sum(UtilConsMat(nw+1:,Np*(i-1)+1:Np*i)*aliveHmat(:,Np*(i-1)+1:Np*i),2)/sum(aliveHmat(:,Np*(i-1)+1:Np*i),2)            
+            UtilConsByAgePEM(nw+1:,i) = sum(UtilConsMat(nw+1:,Np*(i-1)+1:Np*i)*aliveHmat(:,Np*(i-1)+1:Np*i),2)/&
+sum(aliveHmat(:,Np*(i-1)+1:Np*i),2)            
             EarnsMByAgePEM(:,i) = sum(earnsmmat(:,Np*(i-1)+1:Np*i),2)/Np 
             EarnsFByAgePEM(:,i) = sum(earnsfmat(:,Np*(i-1)+1:Np*i),2)/Np 
             LabFByAgePEM(:,i) = sum(labfMat(:,Np*(i-1)+1:Np*i),2)/Np 
-            SocSecByAgePEM(:,i) = sum(SocSecMat(:,Np*(i-1)+1:Np*i)*aliveHmat(:,Np*(i-1)+1:Np*i),2)/sum(aliveHmat(:,Np*(i-1)+1:Np*i),2)
+            SocSecByAgePEM(:,i) = sum(SocSecMat(:,Np*(i-1)+1:Np*i)*aliveHmat(:,Np*(i-1)+1:Np*i),2)/&
+sum(aliveHmat(:,Np*(i-1)+1:Np*i),2)
             
-            SocSecRepRateAge65(i,1) =sum( SocSecMat(1,Np*(i-1)+1:Np*i)/(aveearnsfMat(nw+1,Np*(i-1)+1:Np*i)+aveearnsmMat(nw+1,Np*(i-1)+1:Np*i)) &
-                *aliveHmat(1,Np*(i-1)+1:Np*i),1,maritalMat(1,Np*(i-1)+1:Np*i)==1)/sum(aliveHmat(1,Np*(i-1)+1:Np*i),1,maritalMat(1,Np*(i-1)+1:Np*i)==1)  
-            SocSecRepRateAge65(i,2) =sum( SocSecMat(1,Np*(i-1)+1:Np*i)/(aveearnsfMat(nw+1,Np*(i-1)+1:Np*i)+aveearnsmMat(nw+1,Np*(i-1)+1:Np*i)) &
-                *aliveHmat(1,Np*(i-1)+1:Np*i),1,maritalMat(1,Np*(i-1)+1:Np*i)==2)/sum(aliveHmat(1,Np*(i-1)+1:Np*i),1,maritalMat(1,Np*(i-1)+1:Np*i)==2)  
-            SocSecRepRateAge65(i,3) =sum( SocSecMat(1,Np*(i-1)+1:Np*i)/(aveearnsfMat(nw+1,Np*(i-1)+1:Np*i)+aveearnsmMat(nw+1,Np*(i-1)+1:Np*i)) &
-                *aliveHmat(1,Np*(i-1)+1:Np*i),1,maritalMat(1,Np*(i-1)+1:Np*i)==3)/sum(aliveHmat(1,Np*(i-1)+1:Np*i),1,maritalMat(1,Np*(i-1)+1:Np*i)==3)                                      
-            TotMedByAgePEM(:,i) = sum(TotMedExpMat(:,Np*(i-1)+1:Np*i)*aliveHmat(:,Np*(i-1)+1:Np*i),2)/sum(aliveHmat(:,Np*(i-1)+1:Np*i),2)
-            OOPExpByAgePEM(:,i) = sum(OOPExpMat(:,Np*(i-1)+1:Np*i)*aliveHmat(:,Np*(i-1)+1:Np*i),2)/sum(aliveHmat(:,Np*(i-1)+1:Np*i),2)
-            MedicaidExpByAgePEM(:,i) = sum((TotMedExpMat(:,Np*(i-1)+1:Np*i)-OOPExpMat(:,Np*(i-1)+1:Np*i))*aliveHmat(:,Np*(i-1)+1:Np*i),2)/sum(aliveHmat(:,Np*(i-1)+1:Np*i),2)
+            SocSecRepRateAge65(i,1) =sum( SocSecMat(1,Np*(i-1)+1:Np*i)/(aveearnsfMat(nw+1,Np*(i-1)+1:Np*i)+&
+aveearnsmMat(nw+1,Np*(i-1)+1:Np*i)) &
+                *aliveHmat(1,Np*(i-1)+1:Np*i),1,maritalMat(1,Np*(i-1)+1:Np*i)==1)/sum(aliveHmat(1,Np*(i-1)+1:Np*i),&
+1,maritalMat(1,Np*(i-1)+1:Np*i)==1)  
+            SocSecRepRateAge65(i,2) =sum( SocSecMat(1,Np*(i-1)+1:Np*i)/(aveearnsfMat(nw+1,Np*(i-1)+1:Np*i)+&
+aveearnsmMat(nw+1,Np*(i-1)+1:Np*i)) &
+                *aliveHmat(1,Np*(i-1)+1:Np*i),1,maritalMat(1,Np*(i-1)+1:Np*i)==2)/sum(aliveHmat(1,Np*(i-1)+&
+1:Np*i),1,maritalMat(1,Np*(i-1)+1:Np*i)==2)  
+            SocSecRepRateAge65(i,3) =sum( SocSecMat(1,Np*(i-1)+1:Np*i)/(aveearnsfMat(nw+1,Np*(i-1)+1:Np*i)+&
+aveearnsmMat(nw+1,Np*(i-1)+1:Np*i)) &
+                *aliveHmat(1,Np*(i-1)+1:Np*i),1,maritalMat(1,Np*(i-1)+1:Np*i)==3)/sum(aliveHmat(1,Np*(i-1)+&
+1:Np*i),1,maritalMat(1,Np*(i-1)+1:Np*i)==3)                                      
+            TotMedByAgePEM(:,i) = sum(TotMedExpMat(:,Np*(i-1)+1:Np*i)*aliveHmat(:,Np*(i-1)+1:Np*i),2)/&
+sum(aliveHmat(:,Np*(i-1)+1:Np*i),2)
+            OOPExpByAgePEM(:,i) = sum(OOPExpMat(:,Np*(i-1)+1:Np*i)*aliveHmat(:,Np*(i-1)+1:Np*i),2)/&
+sum(aliveHmat(:,Np*(i-1)+1:Np*i),2)
+            MedicaidExpByAgePEM(:,i) = sum((TotMedExpMat(:,Np*(i-1)+1:Np*i)-OOPExpMat(:,Np*(i-1)+1:Np*i))*&
+aliveHmat(:,Np*(i-1)+1:Np*i),2)/sum(aliveHmat(:,Np*(i-1)+1:Np*i),2)
             GovTransferByAgePEM(:nw,i) = sum(GovTransferMat(:nw,Np*(i-1)+1:Np*i),2)/Np 
-            GovTransferByAgePEM(nw+1:,i) = sum(GovTransferMat(nw+1:,Np*(i-1)+1:Np*i)*aliveHmat(:,Np*(i-1)+1:Np*i),2)/sum(aliveHmat(:,Np*(i-1)+1:Np*i),2)  
+            GovTransferByAgePEM(nw+1:,i) = sum(GovTransferMat(nw+1:,Np*(i-1)+1:Np*i)*&
+aliveHmat(:,Np*(i-1)+1:Np*i),2)/sum(aliveHmat(:,Np*(i-1)+1:Np*i),2)  
             MaritalDistAge65PEM(i,1) = count(maritalMat(1,Np*(i-1)+1:Np*i) == 1)
             MaritalDistAge65PEM(i,2) = count(maritalMat(1,Np*(i-1)+1:Np*i) == 2)             
         end do 
@@ -962,11 +1030,16 @@ module simulations
             AggregateConsPEQ(i) = sum(ConsByAgePEM(:,i)*CohortWeights,1)     
             AggregateRetConsPEQ(i) = sum(ConsByAgePEM(nw+1:,i)*CohortWeights(nw+1:),1)       
             MeanMedicaidPEQ(i) = sum(MedicaidExpByAgePEM(:,i)*CohortWeights(nw+1:))/sum(CohortWeights(nw+1:)) 
-            FracWorkersRecGovTrans(i) = sum(FracRecGovTransByAgePEM(:nw,i)*CohortWeights(:nw))/sum(CohortWeights(:nw))
-            FracRetireesRecGovTrans(i) = sum(FracRecGovTransByAgePEM(nw+1:,i)*CohortWeights(nw+1:))/sum(CohortWeights(nw+1:))
-            Frac6574RecGovTrans(i) = sum(FracRecGovTransByAgePEM(nw+1:nw+5,i)*CohortWeights(nw+1:nw+5))/sum(CohortWeights(nw+1:nw+5))
-            Frac7584RecGovTrans(i) = sum(FracRecGovTransByAgePEM(nw+6:nw+10,i)*CohortWeights(nw+6:nw+10))/sum(CohortWeights(nw+6:nw+10))
-            Frac85plusRecGovTrans(i) = sum(FracRecGovTransByAgePEM(nw+11:,i)*CohortWeights(nw+11:))/sum(CohortWeights(nw+11:))
+            FracWorkersRecGovTrans(i) = sum(FracRecGovTransByAgePEM(:nw,i)*CohortWeights(:nw))/&
+sum(CohortWeights(:nw))
+            FracRetireesRecGovTrans(i) = sum(FracRecGovTransByAgePEM(nw+1:,i)*CohortWeights(nw+1:))/&
+sum(CohortWeights(nw+1:))
+            Frac6574RecGovTrans(i) = sum(FracRecGovTransByAgePEM(nw+1:nw+5,i)*CohortWeights(nw+1:nw+5))/&
+sum(CohortWeights(nw+1:nw+5))
+            Frac7584RecGovTrans(i) = sum(FracRecGovTransByAgePEM(nw+6:nw+10,i)*CohortWeights(nw+6:nw+10))/&
+sum(CohortWeights(nw+6:nw+10))
+            Frac85plusRecGovTrans(i) = sum(FracRecGovTransByAgePEM(nw+11:,i)*CohortWeights(nw+11:))/&
+sum(CohortWeights(nw+11:))
         end do          
         
         deallocate (HHeducloc, TotMedExpRankMat, maritalrank, medicalrank, aliverank)  
@@ -1046,16 +1119,23 @@ module simulations
            End Subroutine I_mrgrnk                      
         End Interface 
                 
-        integer i, j, v, s, ic, n, iseed, status, count, Np, NumHouseholds(nr-1), NumHHAlive2(nr-1), NumIndAlive(nr), TotNum, het, zf, zm, fet, met, set, h
+        integer i, j, v, s, ic, n, iseed, status, count
+        integer Np, NumHouseholds(nr-1), NumHHAlive2(nr-1), NumIndAlive(nr), TotNum, het, zf, zm, fet, met, set, h
         integer TotNum6574, TotNum7584, TotNum85plus, TotNumNewMedicaid6574, TotNumNewMedicaid7584, TotNumNewMedicaid85plus
         integer NumPeopleNewMedicaid(nr), NumMarriedAlive(nr), NumMarriedNewMedicaid(nr)   
-        integer NumHHAlive(nr), NumHHNewMedicaid(nr), NumWidowsAlive(nr), NumWidowsNewMedicaid(nr), NumWidowersAlive(nr), NumWidowersNewMedicaid(nr) 
+        integer NumHHAlive(nr), NumHHNewMedicaid(nr), NumWidowsAlive(nr), NumWidowsNewMedicaid(nr)
+        integer NumWidowersAlive(nr), NumWidowersNewMedicaid(nr) 
         integer pm, tm, Totals(10)
-        real(dbl) cumuinit(nef,nem), cumuf(nef), cumum(nem), cumeducdist(nhet), cummeddist(npm,nhet), cumhealf(nsht,nset), cumhealm(nsht,nset), cummed(npm), cumsinitH(3,naem)
+        real(dbl) cumuinit(nef,nem), cumuf(nef), cumum(nem), cumeducdist(nhet)
+        real(dbl) cummeddist(npm,nhet), cumhealf(nsht,nset)
+        real(dbl) cumhealm(nsht,nset), cummed(npm), cumsinitH(3,naem)
         real(dbl) preTaxIncome, postTaxWealth, AverageOOPExpenses, htemp
-        real(dbl),allocatable,dimension(:,:,:):: TotMedExpMat, OOPExpMat, GovTransferMat, earnsfMat, earnsmMat, aveearnsfMat, aveearnsmMat, wealthMat, labfMat, SocSecMat
+        real(dbl),allocatable,dimension(:,:,:):: TotMedExpMat, OOPExpMat, GovTransferMat, earnsfMat, earnsmMat
+        real(dbl),allocatable,dimension(:,:,:)::aveearnsfMat, aveearnsmMat, wealthMat, labfMat, SocSecMat
         real(dbl),allocatable,dimension(:):: medVect, wealthVect
-        integer, allocatable, dimension(:,:,:):: prodflocMat, prodmlocMat, medlocMat, alivefmat, alivemmat, aliveHmat, healHmat, healfMat, healmMat, maritalMat, futureStatus
+        integer, allocatable, dimension(:,:,:):: prodflocMat, prodmlocMat, medlocMat, alivefmat
+        integer, allocatable, dimension(:,:,:):: alivemmat, aliveHmat, healHmat, healfMat, healmMat
+        integer, allocatable, dimension(:,:,:):: maritalMat, futureStatus
         integer, allocatable, dimension(:):: InitQuintile, FinalQuintile, AgentNum, ip, InitNHstatus, FinalNHstatus  
         integer, allocatable, dimension(:,:):: HHeducloc, aveearnsmloc, PEQuintile     
         iseed = 3464653
@@ -1070,9 +1150,15 @@ module simulations
         NumHouseholds = nint( (/(1.0d0/(1+ng)**ic,ic=0,nr-2)/)*Np )         
         
         !person, age, cohort        
-        allocate (prodflocMat(Np,nw,nr-1), prodmlocMat(Np,nw,nr-1), aveearnsfMat(Np,nw+1,nr-1), aveearnsmMat(Np,nw+1,nr-1), wealthMat(Np,T,nr-1), stat=status)                                              
-        allocate (labfMat(Np,nw,nr-1),earnsfMat(Np,nw,nr-1),earnsmMat(Np,nw,nr-1),HHeducloc(Np,nr-1),aveearnsmloc(Np,nr-1), stat = status)
-        allocate (alivefMat(Np,nr,nr-1),alivemMat(Np,nr,nr-1),aliveHmat(Np,nr,nr-1), healHmat(Np,nr,nr-1), healfMat(Np,nr,nr-1), healmMat(Np,nr,nr-1), futureStatus(Np,nr,nr-1), stat=status)
+        allocate (prodflocMat(Np,nw,nr-1), prodmlocMat(Np,nw,nr-1), aveearnsfMat(Np,nw+1,nr-1), stat=status)
+        allocate (aveearnsmMat(Np,nw+1,nr-1), wealthMat(Np,T,nr-1), stat=status)            
+                                  
+        allocate (labfMat(Np,nw,nr-1),earnsfMat(Np,nw,nr-1), stat=status)
+        allocate (earnsmMat(Np,nw,nr-1),HHeducloc(Np,nr-1),aveearnsmloc(Np,nr-1), stat = status)
+
+        allocate (alivefMat(Np,nr,nr-1),alivemMat(Np,nr,nr-1), stat=status)
+        allocate (aliveHmat(Np,nr,nr-1), healHmat(Np,nr,nr-1), healfMat(Np,nr,nr-1), stat=status)
+        allocate (healmMat(Np,nr,nr-1), futureStatus(Np,nr,nr-1), stat=status)
         
         !Workers
         !!!!!!!!!!!!!!!!!!!!!!!
@@ -1109,14 +1195,16 @@ module simulations
                         prodmlocMat(i,1,ic) = 1
                     end do             
                 else if (zm==1) then
-                    do i=nint(cumuinit(zf-1,nem)*EducDist(1)*NumHouseholds(ic)+1),nint(cumuinit(zf,1)*EducDist(1)*NumHouseholds(ic))
+                    do i=nint(cumuinit(zf-1,nem)*EducDist(1)*NumHouseholds(ic)+1), &
+nint(cumuinit(zf,1)*EducDist(1)*NumHouseholds(ic))
                         prodflocMat(i,1,ic) = zf
                         prodmlocMat(i,1,ic) = zm
                     end do            
                 else
                     !print *, "nint(cumuinit(zf,zm-1)*EducDist(1)*NumHouseholds(ic)+1) =" , nint(cumuinit(zf,zm-1)*EducDist(1)*NumHouseholds(ic)+1)
                     !print *, "nint(cumuinit(zf,zm)*EducDist(1)*NumHouseholds(ic)) = ", nint(cumuinit(zf,zm)*EducDist(1)*NumHouseholds(ic))
-                    do i=nint(cumuinit(zf,zm-1)*EducDist(1)*NumHouseholds(ic)+1),nint(cumuinit(zf,zm)*EducDist(1)*NumHouseholds(ic))
+                    do i=nint(cumuinit(zf,zm-1)*EducDist(1)*NumHouseholds(ic)+1), & 
+nint(cumuinit(zf,zm)*EducDist(1)*NumHouseholds(ic))
                         prodflocMat(i,1,ic) = zf
                         prodmlocMat(i,1,ic) = zm
                     end do                    
@@ -1129,17 +1217,22 @@ module simulations
                 do zf = 1,nef              
                 do zm = 1,nem        
                     if (zf==1 .and. zm==1) then
-                        do i=nint(cumeducdist(s-1)*NumHouseholds(ic))+1 ,nint(cumeducdist(s-1)*NumHouseholds(ic)+cumuinit(1,1)*EducDist(s)*NumHouseholds(ic)) 
+                        do i=nint(cumeducdist(s-1)*NumHouseholds(ic))+1 , & 
+nint(cumeducdist(s-1)*NumHouseholds(ic)+cumuinit(1,1)*EducDist(s)*NumHouseholds(ic)) 
                             prodflocMat(i,1,ic) = 1
                             prodmlocMat(i,1,ic) = 1
                         end do             
                     else if (zm==1) then
-                        do i=nint(cumeducdist(s-1)*NumHouseholds(ic)+cumuinit(zf-1,nem)*EducDist(s)*NumHouseholds(ic))+1,nint(cumeducdist(s-1)*NumHouseholds(ic)+cumuinit(zf,1)*EducDist(s)*NumHouseholds(ic))
+                        do i=nint(cumeducdist(s-1)*NumHouseholds(ic)+cumuinit(zf-1,nem)* & 
+EducDist(s)*NumHouseholds(ic))+1,nint(cumeducdist(s-1)*NumHouseholds(ic)+&
+cumuinit(zf,1)*EducDist(s)*NumHouseholds(ic))
                             prodflocMat(i,1,ic) = zf
                             prodmlocMat(i,1,ic) = zm
                         end do            
                     else                                
-                        do i=nint(cumeducdist(s-1)*NumHouseholds(ic)+cumuinit(zf,zm-1)*EducDist(s)*NumHouseholds(ic))+1,nint(cumeducdist(s-1)*NumHouseholds(ic)+cumuinit(zf,zm)*EducDist(s)*NumHouseholds(ic))
+                        do i=nint(cumeducdist(s-1)*NumHouseholds(ic)+cumuinit(zf,zm-1)* & 
+EducDist(s)*NumHouseholds(ic))+1,nint(cumeducdist(s-1)*NumHouseholds(ic)+ & 
+cumuinit(zf,zm)*EducDist(s)*NumHouseholds(ic))
                             prodflocMat(i,1,ic) = zf
                             prodmlocMat(i,1,ic) = zm
                         end do
@@ -1209,7 +1302,8 @@ module simulations
             wealthMat(i,1,ic) = 0.0d0                                                                                                    
         do j=2,nw    !age  
             !age-j wealth
-            call interpol3d(avect, aveEarnFvect, aveEarnMvect, aPolicyWCube(:,prodflocMat(i,j-1,ic),prodmlocMat(i,j-1,ic),:,:,het,j-1), &
+            call interpol3d(avect, aveEarnFvect, aveEarnMvect, aPolicyWCube(:,prodflocMat(i,j-1,ic), & 
+prodmlocMat(i,j-1,ic),:,:,het,j-1), &
                     wealthMat(i,j-1,ic), aveearnsfMat(i,j-1,ic), aveearnsmMat(i,j-1,ic), wealthMat(i,j,ic) )                  
             
             !age-j average earnings (average of earnings up to age j-1 earnings)                                      
@@ -1236,7 +1330,8 @@ module simulations
         deallocate(labfMat,earnsfMat,earnsmMat)       
         allocate (medlocMat(Np,nr,nr-1), stat=status)    
         !print *, "status =", status        
-        allocate (SocSecMat(Np,nr,nr-1), maritalMat(Np,nr,nr-1), TotMedExpMat(Np,nr,nr-1), OOPExpMat(Np,nr,nr-1), GovTransferMat(Np,nr,nr-1), stat=status)
+        allocate (SocSecMat(Np,nr,nr-1), maritalMat(Np,nr,nr-1), TotMedExpMat(Np,nr,nr-1), stat=status)
+        allocate (OOPExpMat(Np,nr,nr-1), GovTransferMat(Np,nr,nr-1), stat=status)
         !print *, "status =", status 
         print *, "point 6d" 
                                
@@ -1454,17 +1549,21 @@ module simulations
             do j=1,nr
                 !age-nw+j wealth
                 if (j == 1) then                
-                    call interpol3d(avect, aveEarnFvect, aveEarnMvect, aPolicyWCube(:,prodflocMat(i,nw,ic),prodmlocMat(i,nw,ic),:,:,HHeducloc(i,ic),nw), &
+                    call interpol3d(avect, aveEarnFvect, aveEarnMvect, aPolicyWCube(:,prodflocMat(i,nw,ic), & 
+prodmlocMat(i,nw,ic),:,:,HHeducloc(i,ic),nw), &
                         wealthMat(i,nw,ic), aveearnsfMat(i,nw,ic), aveearnsmMat(i,nw,ic), wealthMat(i,nw+1,ic) )                     
                 else
                     if (maritalMat(i,j-1,ic) == 1) then
-                        call interpol3d(avect, aveEarnFvect, aveEarnMvect, aPolicyRCubeMarried(:,medlocMat(i,j-1,ic),:,:,healHmat(i,j-1,ic),futureStatus(i,j-1,ic),j-1), &
+                        call interpol3d(avect, aveEarnFvect, aveEarnMvect, aPolicyRCubeMarried(:,medlocMat(i,j-1,ic),&
+:,:,healHmat(i,j-1,ic),futureStatus(i,j-1,ic),j-1), &
                             wealthMat(i,nw+j-1,ic), aveearnsfMat(i,nw+1,ic), aveearnsmMat(i,nw+1,ic), wealthMat(i,nw+j,ic) )                     
                     else if (maritalMat(i,j-1,ic) == 2) then
-                        call interpol3d(avect, aveEarnFvect, aveEarnMvect, aPolicyRCubeWidow(:,medlocMat(i,j-1,ic),:,:,healHmat(i,j-1,ic),futureStatus(i,j-1,ic),j-1), &
+                        call interpol3d(avect, aveEarnFvect, aveEarnMvect, aPolicyRCubeWidow(:,medlocMat(i,j-1,ic), & 
+:,:,healHmat(i,j-1,ic),futureStatus(i,j-1,ic),j-1), &
                             wealthMat(i,nw+j-1,ic), aveearnsfMat(i,nw+1,ic), aveearnsmMat(i,nw+1,ic), wealthMat(i,nw+j,ic) )                                            
                     else
-                        call interpol3d(avect, aveEarnFvect, aveEarnMvect, aPolicyRCubeWidower(:,medlocMat(i,j-1,ic),:,:,healHmat(i,j-1,ic),futureStatus(i,j-1,ic),j-1), &
+                        call interpol3d(avect, aveEarnFvect, aveEarnMvect, aPolicyRCubeWidower(:,medlocMat(i,j-1,ic),& 
+:,:,healHmat(i,j-1,ic),futureStatus(i,j-1,ic),j-1), &
                             wealthMat(i,nw+j-1,ic), aveearnsfMat(i,nw+1,ic), aveearnsmMat(i,nw+1,ic), wealthMat(i,nw+j,ic) )                                            
                     end if                                                                                                      
                 end if
@@ -1472,9 +1571,12 @@ module simulations
                 TotMedExpMat(i,j,ic) = mmat(medlocMat(i,j,ic),healHmat(i,j,ic),futureStatus(i,j,ic),maritalMat(i,j,ic),j)
                 SocSecMat(i,j,ic) = socsec(aveearnsfMat(i,nw+1,ic),aveearnsmMat(i,nw+1,ic),maritalMat(i,j,ic))
                 preTaxIncome = SocSecMat(i,j,ic) + r*wealthMat(i,nw+j,ic)
-                postTaxWealth = preTaxIncome + wealthMat(i,nw+j,ic) - IncomeTax(r*wealthMat(i,nw+j,ic)- max(0.0d0,r*wealthMat(i,nw+j,ic)*capTax),SocSecMat(i,j,ic),TotMedExpMat(i,j,ic),maritalMat(i,j,ic)) - max(0.0d0,r*wealthMat(i,nw+j,ic)*capTax)
+                postTaxWealth = preTaxIncome + wealthMat(i,nw+j,ic) - IncomeTax(r*wealthMat(i,nw+j,ic)- &
+ max(0.0d0,r*wealthMat(i,nw+j,ic)*capTax),SocSecMat(i,j,ic),TotMedExpMat(i,j,ic),maritalMat(i,j,ic)) - &
+ max(0.0d0,r*wealthMat(i,nw+j,ic)*capTax)
                              
-                GovTransferMat(i,j,ic) = transfersRetired(postTaxWealth, j,medlocMat(i,j,ic),healHmat(i,j,ic),futureStatus(i,j,ic),maritalMat(i,j,ic),1)
+                GovTransferMat(i,j,ic) = transfersRetired(postTaxWealth, j,medlocMat(i,j,ic), & 
+healHmat(i,j,ic),futureStatus(i,j,ic),maritalMat(i,j,ic),1)
                 !incomeMat(nw+j,i) = preTaxIncome  - IncomeTax(r*wealthMat(nw+j,i) - r*wealthMat(i,nw+j,ic)*capTax,SocSecMat(j,i),TotMedExpMat(j,i),maritalMat(j,i)) + max(GovTransferMat(nw+j,i) - medMat(j,i),0.0d0)  - r*wealthMat(i,nw+j,ic)*capTax
                 
                 if(GovTransferMat(i,j,ic) == 0.0d0) then
@@ -2062,7 +2164,8 @@ module simulations
                 
         !wealth mobility matrices 65-74
         TotNum = sum(NumHHAlive2(:5))
-        allocate (wealthVect(TotNum), InitQuintile(TotNum), FinalQuintile(TotNum), AgentNum(TotNum), ip(TotNum), InitNHstatus(TotNum), FinalNHstatus(TotNum), stat=status)    
+        allocate (wealthVect(TotNum), InitQuintile(TotNum), FinalQuintile(TotNum), stat=status)
+        allocate (AgentNum(TotNum), ip(TotNum), InitNHstatus(TotNum), FinalNHstatus(TotNum), stat=status)    
         InitNHstatus = 0       
         FinalNHstatus = 0                   
         !extract expenses in period 1 for each household
@@ -2125,10 +2228,14 @@ module simulations
         do i=1,5
         do j=1,5
             WealthMobMatHH2yr6574(i,j) = count(FinalQuintile==j .and. InitQuintile==i)  
-            WealthMobMatCondSpousalDeath6574(2*i-1,2*j-1) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==0)
-            WealthMobMatCondSpousalDeath6574(2*i-1,2*j) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==1)   
-            WealthMobMatCondSpousalDeath6574(2*i,2*j-1) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==0)   
-            WealthMobMatCondSpousalDeath6574(2*i,2*j) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==1)                              
+            WealthMobMatCondSpousalDeath6574(2*i-1,2*j-1) = count(FinalQuintile==j .and. &
+InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==0)
+            WealthMobMatCondSpousalDeath6574(2*i-1,2*j) = count(FinalQuintile==j .and. & 
+InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==1)   
+            WealthMobMatCondSpousalDeath6574(2*i,2*j-1) = count(FinalQuintile==j .and. & 
+InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==0)   
+            WealthMobMatCondSpousalDeath6574(2*i,2*j) = count(FinalQuintile==j .and.  & 
+InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==1)                              
         end do
         end do
         WealthMobMatHH2yr6574 = dble(WealthMobMatHH2yr6574)/dble(TotNum/5)       
@@ -2141,7 +2248,8 @@ module simulations
                 
         !wealth mobility matrices 75-84
         TotNum = sum(NumHHAlive2(6:10))
-        allocate (wealthVect(TotNum), InitQuintile(TotNum), FinalQuintile(TotNum), AgentNum(TotNum), ip(TotNum), InitNHstatus(TotNum), FinalNHstatus(TotNum), stat=status)
+        allocate (wealthVect(TotNum), InitQuintile(TotNum), FinalQuintile(TotNum), stat=status)
+        allocate (AgentNum(TotNum), ip(TotNum), InitNHstatus(TotNum), FinalNHstatus(TotNum), stat=status)
         InitNHstatus = 0       
         FinalNHstatus = 0  
  !call Out(12,"TotNum", TotNum, ret)
@@ -2209,10 +2317,14 @@ module simulations
         do i=1,5
         do j=1,5
             WealthMobMatHH2yr7584(i,j) = count(FinalQuintile==j .and. InitQuintile==i)         
-            WealthMobMatCondSpousalDeath7584(2*i-1,2*j-1) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==0)
-            WealthMobMatCondSpousalDeath7584(2*i-1,2*j) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==1)   
-            WealthMobMatCondSpousalDeath7584(2*i,2*j-1) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==0)   
-            WealthMobMatCondSpousalDeath7584(2*i,2*j) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==1)                    
+            WealthMobMatCondSpousalDeath7584(2*i-1,2*j-1) = count(FinalQuintile==j .and. & 
+InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==0)
+            WealthMobMatCondSpousalDeath7584(2*i-1,2*j) = count(FinalQuintile==j .and. & 
+InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==1)   
+            WealthMobMatCondSpousalDeath7584(2*i,2*j-1) = count(FinalQuintile==j .and. & 
+InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==0)   
+            WealthMobMatCondSpousalDeath7584(2*i,2*j) = count(FinalQuintile==j .and. & 
+InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==1)                    
         end do
         end do
         WealthMobMatHH2yr7584 = dble(WealthMobMatHH2yr7584)/dble(TotNum/5)
@@ -2225,7 +2337,8 @@ module simulations
           
         !wealth mobility matrices 85+
         TotNum = sum(NumHHAlive2(11:))
-        allocate (wealthVect(TotNum), InitQuintile(TotNum), FinalQuintile(TotNum), AgentNum(TotNum), ip(TotNum), InitNHstatus(TotNum), FinalNHstatus(TotNum), stat=status)    
+        allocate (wealthVect(TotNum), InitQuintile(TotNum), FinalQuintile(TotNum), stat=status)
+        allocate (AgentNum(TotNum), ip(TotNum), InitNHstatus(TotNum), FinalNHstatus(TotNum), stat=status)    
         InitNHstatus = 0       
         FinalNHstatus = 0    
         !print *, "status=", status
@@ -2298,10 +2411,14 @@ module simulations
         do i=1,5
         do j=1,5
             WealthMobMatHH2yr85plus(i,j) = count(FinalQuintile==j .and. InitQuintile==i)
-            WealthMobMatCondSpousalDeath85plus(2*i-1,2*j-1) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==0)
-            WealthMobMatCondSpousalDeath85plus(2*i-1,2*j) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==1)   
-            WealthMobMatCondSpousalDeath85plus(2*i,2*j-1) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==0)   
-            WealthMobMatCondSpousalDeath85plus(2*i,2*j) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==1)                              
+            WealthMobMatCondSpousalDeath85plus(2*i-1,2*j-1) = count(FinalQuintile==j .and. & 
+ InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==0)
+            WealthMobMatCondSpousalDeath85plus(2*i-1,2*j) = count(FinalQuintile==j .and. &
+ InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==1)   
+            WealthMobMatCondSpousalDeath85plus(2*i,2*j-1) = count(FinalQuintile==j .and. &
+ InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==0)   
+            WealthMobMatCondSpousalDeath85plus(2*i,2*j) = count(FinalQuintile==j .and. & 
+InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==1)                              
                              
         end do
         end do
@@ -2396,7 +2513,8 @@ module simulations
         NumIndAlive = NumMarriedAlive + NumWidowsAlive + NumWidowersAlive        
                 
         TotNum = sum(NumIndAlive(:5))   
-        allocate (wealthVect(TotNum), InitQuintile(TotNum), FinalQuintile(TotNum), AgentNum(TotNum), ip(TotNum), InitNHstatus(TotNum), FinalNHstatus(TotNum), stat=status)
+        allocate (wealthVect(TotNum), InitQuintile(TotNum), FinalQuintile(TotNum), stat=status)
+        allocate (AgentNum(TotNum), ip(TotNum), InitNHstatus(TotNum), FinalNHstatus(TotNum), stat=status)
         InitNHstatus = 0       
         FinalNHstatus = 0                
         !extract expenses in period 1 for each individual
@@ -2498,10 +2616,14 @@ module simulations
         do i=1,5
         do j=1,5
             WealthMobMatInd2yr6574(i,j) = count(FinalQuintile==j .and. InitQuintile==i) 
-            WealthMobMatCondNH6574(2*i-1,2*j-1) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==0)
-            WealthMobMatCondNH6574(2*i-1,2*j) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==1)   
-            WealthMobMatCondNH6574(2*i,2*j-1) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==0)   
-            WealthMobMatCondNH6574(2*i,2*j) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==1)                
+            WealthMobMatCondNH6574(2*i-1,2*j-1) = count(FinalQuintile==j .and. &
+InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==0)
+            WealthMobMatCondNH6574(2*i-1,2*j) = count(FinalQuintile==j .and. & 
+InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==1)   
+            WealthMobMatCondNH6574(2*i,2*j-1) = count(FinalQuintile==j .and. &
+InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==0)   
+            WealthMobMatCondNH6574(2*i,2*j) = count(FinalQuintile==j .and. & 
+InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==1)                
         end do
         end do
         WealthMobMatInd2yr6574 = dble(WealthMobMatInd2yr6574)/dble(TotNum/5)       
@@ -2573,10 +2695,14 @@ module simulations
                 
         do i=1,5
         do j=1,5
-            WealthMobMatCondHosp6574(2*i-1,2*j-1) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==0)
-            WealthMobMatCondHosp6574(2*i-1,2*j) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==1)   
-            WealthMobMatCondHosp6574(2*i,2*j-1) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==0)   
-            WealthMobMatCondHosp6574(2*i,2*j) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==1)                
+            WealthMobMatCondHosp6574(2*i-1,2*j-1) = count(FinalQuintile==j .and. &
+InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==0)
+            WealthMobMatCondHosp6574(2*i-1,2*j) = count(FinalQuintile==j .and. &
+InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==1)   
+            WealthMobMatCondHosp6574(2*i,2*j-1) = count(FinalQuintile==j .and. &
+InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==0)   
+            WealthMobMatCondHosp6574(2*i,2*j) = count(FinalQuintile==j .and. &
+InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==1)                
         end do
         end do
         Totals = sum(WealthMobMatCondHosp6574,2)
@@ -2643,10 +2769,14 @@ module simulations
                 
         do i=1,5
         do j=1,5
-            WealthMobMatCondBadHeal6574(2*i-1,2*j-1) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==0)
-            WealthMobMatCondBadHeal6574(2*i-1,2*j) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==1)   
-            WealthMobMatCondBadHeal6574(2*i,2*j-1) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==0)   
-            WealthMobMatCondBadHeal6574(2*i,2*j) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==1)                
+            WealthMobMatCondBadHeal6574(2*i-1,2*j-1) = count(FinalQuintile==j .and. &
+InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==0)
+            WealthMobMatCondBadHeal6574(2*i-1,2*j) = count(FinalQuintile==j .and. &
+InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==1)   
+            WealthMobMatCondBadHeal6574(2*i,2*j-1) = count(FinalQuintile==j .and. &
+InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==0)   
+            WealthMobMatCondBadHeal6574(2*i,2*j) = count(FinalQuintile==j .and. &
+InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==1)                
         end do
         end do
         Totals = sum(WealthMobMatCondBadHeal6574,2)
@@ -2660,7 +2790,8 @@ module simulations
         
         !Redo with women's marital status
         TotNum = sum(NumWidowsAlive(1:5)) + sum(NumMarriedAlive(1:5))/2   
-        allocate (wealthVect(TotNum), InitQuintile(TotNum), FinalQuintile(TotNum), AgentNum(TotNum), ip(TotNum), InitNHstatus(TotNum), FinalNHstatus(TotNum), stat=status)
+        allocate (wealthVect(TotNum), InitQuintile(TotNum), FinalQuintile(TotNum), stat=status)
+        allocate (AgentNum(TotNum), ip(TotNum), InitNHstatus(TotNum), FinalNHstatus(TotNum), stat=status)
         InitNHstatus = 0       
         FinalNHstatus = 0    
                         
@@ -2728,10 +2859,14 @@ module simulations
         
         do i=1,5
         do j=1,5            
-            WealthMobMatCondWidow6574(2*i-1,2*j-1) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==0)
-            WealthMobMatCondWidow6574(2*i-1,2*j) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==1)   
-            WealthMobMatCondWidow6574(2*i,2*j-1) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==0)   
-            WealthMobMatCondWidow6574(2*i,2*j) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==1)                                                         
+            WealthMobMatCondWidow6574(2*i-1,2*j-1) = count(FinalQuintile==j .and. &
+InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==0)
+            WealthMobMatCondWidow6574(2*i-1,2*j) = count(FinalQuintile==j .and. &
+InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==1)   
+            WealthMobMatCondWidow6574(2*i,2*j-1) = count(FinalQuintile==j .and. &
+InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==0)   
+            WealthMobMatCondWidow6574(2*i,2*j) = count(FinalQuintile==j .and. &
+InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==1)                                                         
         end do
         end do       
         Totals = sum(WealthMobMatCondWidow6574,2)
@@ -2742,7 +2877,8 @@ module simulations
 
         !Redo with men's marital status
         TotNum = sum(NumWidowersAlive(1:5)) + sum(NumMarriedAlive(1:5))/2   
-        allocate (wealthVect(TotNum), InitQuintile(TotNum), FinalQuintile(TotNum), AgentNum(TotNum), ip(TotNum), InitNHstatus(TotNum), FinalNHstatus(TotNum), stat=status)
+        allocate (wealthVect(TotNum), InitQuintile(TotNum), FinalQuintile(TotNum), stat=status)
+        allocate (AgentNum(TotNum), ip(TotNum), InitNHstatus(TotNum), FinalNHstatus(TotNum), stat=status)
         InitNHstatus = 0       
         FinalNHstatus = 0    
                         
@@ -2809,10 +2945,14 @@ module simulations
         
         do i=1,5
         do j=1,5            
-            WealthMobMatCondWidower6574(2*i-1,2*j-1) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==0)
-            WealthMobMatCondWidower6574(2*i-1,2*j) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==1)   
-            WealthMobMatCondWidower6574(2*i,2*j-1) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==0)   
-            WealthMobMatCondWidower6574(2*i,2*j) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==1)                                                         
+            WealthMobMatCondWidower6574(2*i-1,2*j-1) = count(FinalQuintile==j .and. &
+InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==0)
+            WealthMobMatCondWidower6574(2*i-1,2*j) = count(FinalQuintile==j .and. &
+InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==1)   
+            WealthMobMatCondWidower6574(2*i,2*j-1) = count(FinalQuintile==j .and. &
+InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==0)   
+            WealthMobMatCondWidower6574(2*i,2*j) = count(FinalQuintile==j .and. &
+InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==1)                                                         
         end do
         end do       
         Totals = sum(WealthMobMatCondWidower6574,2)
@@ -2825,7 +2965,8 @@ module simulations
                 
         !wealth mobility matrices 75-84
         TotNum = sum(NumIndAlive(6:10))   
-        allocate (wealthVect(TotNum), InitQuintile(TotNum), FinalQuintile(TotNum), AgentNum(TotNum), ip(TotNum), InitNHstatus(TotNum), FinalNHstatus(TotNum), stat=status)
+        allocate (wealthVect(TotNum), InitQuintile(TotNum), FinalQuintile(TotNum), stat=status)
+        allocate (AgentNum(TotNum), ip(TotNum), InitNHstatus(TotNum), FinalNHstatus(TotNum), stat=status)
         InitNHstatus = 0       
         FinalNHstatus = 0    
                                 
@@ -2929,10 +3070,14 @@ module simulations
         do i=1,5
         do j=1,5
             WealthMobMatInd2yr7584(i,j) = count(FinalQuintile==j .and. InitQuintile==i)   
-            WealthMobMatCondNH7584(2*i-1,2*j-1) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==0)
-            WealthMobMatCondNH7584(2*i-1,2*j) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==1)   
-            WealthMobMatCondNH7584(2*i,2*j-1) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==0)   
-            WealthMobMatCondNH7584(2*i,2*j) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==1)                                
+            WealthMobMatCondNH7584(2*i-1,2*j-1) = count(FinalQuintile==j .and. &
+InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==0)
+            WealthMobMatCondNH7584(2*i-1,2*j) = count(FinalQuintile==j .and. &
+InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==1)   
+            WealthMobMatCondNH7584(2*i,2*j-1) = count(FinalQuintile==j .and. &
+InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==0)   
+            WealthMobMatCondNH7584(2*i,2*j) = count(FinalQuintile==j .and. &
+InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==1)                                
         end do
         end do
         WealthMobMatInd2yr7584 = dble(WealthMobMatInd2yr7584)/dble(TotNum/5)      
@@ -3006,10 +3151,14 @@ module simulations
         
         do i=1,5
         do j=1,5
-            WealthMobMatCondHosp7584(2*i-1,2*j-1) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==0)
-            WealthMobMatCondHosp7584(2*i-1,2*j) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==1)   
-            WealthMobMatCondHosp7584(2*i,2*j-1) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==0)   
-            WealthMobMatCondHosp7584(2*i,2*j) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==1)                                
+            WealthMobMatCondHosp7584(2*i-1,2*j-1) = count(FinalQuintile==j .and. &
+InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==0)
+            WealthMobMatCondHosp7584(2*i-1,2*j) = count(FinalQuintile==j .and. &
+InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==1)   
+            WealthMobMatCondHosp7584(2*i,2*j-1) = count(FinalQuintile==j .and. &
+InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==0)   
+            WealthMobMatCondHosp7584(2*i,2*j) = count(FinalQuintile==j .and. &
+InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==1)                                
         end do
         end do        
         Totals = sum(WealthMobMatCondHosp7584,2)
@@ -3078,10 +3227,14 @@ module simulations
         
         do i=1,5
         do j=1,5
-            WealthMobMatCondBadHeal7584(2*i-1,2*j-1) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==0)
-            WealthMobMatCondBadHeal7584(2*i-1,2*j) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==1)   
-            WealthMobMatCondBadHeal7584(2*i,2*j-1) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==0)   
-            WealthMobMatCondBadHeal7584(2*i,2*j) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==1)                                
+            WealthMobMatCondBadHeal7584(2*i-1,2*j-1) = count(FinalQuintile==j .and. &
+InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==0)
+            WealthMobMatCondBadHeal7584(2*i-1,2*j) = count(FinalQuintile==j .and. &
+InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==1)   
+            WealthMobMatCondBadHeal7584(2*i,2*j-1) = count(FinalQuintile==j .and. &
+InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==0)   
+            WealthMobMatCondBadHeal7584(2*i,2*j) = count(FinalQuintile==j .and. &
+InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==1)                                
         end do
         end do        
         Totals = sum(WealthMobMatCondBadHeal7584,2)
@@ -3095,7 +3248,8 @@ module simulations
         
         !Redo with women's marital status
         TotNum = sum(NumWidowsAlive(6:10))  + sum(NumMarriedAlive(6:10))/2  
-        allocate (wealthVect(TotNum), InitQuintile(TotNum), FinalQuintile(TotNum), AgentNum(TotNum), ip(TotNum), InitNHstatus(TotNum), FinalNHstatus(TotNum), stat=status)
+        allocate (wealthVect(TotNum), InitQuintile(TotNum), FinalQuintile(TotNum), stat=status)
+        allocate (AgentNum(TotNum), ip(TotNum), InitNHstatus(TotNum), FinalNHstatus(TotNum), stat=status)
         InitNHstatus = 0       
         FinalNHstatus = 0    
                         
@@ -3162,10 +3316,14 @@ module simulations
         
         do i=1,5
         do j=1,5            
-            WealthMobMatCondWidow7584(2*i-1,2*j-1) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==0)
-            WealthMobMatCondWidow7584(2*i-1,2*j) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==1)   
-            WealthMobMatCondWidow7584(2*i,2*j-1) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==0)   
-            WealthMobMatCondWidow7584(2*i,2*j) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==1)                                                         
+            WealthMobMatCondWidow7584(2*i-1,2*j-1) = count(FinalQuintile==j .and. &
+InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==0)
+            WealthMobMatCondWidow7584(2*i-1,2*j) = count(FinalQuintile==j .and. &
+InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==1)   
+            WealthMobMatCondWidow7584(2*i,2*j-1) = count(FinalQuintile==j .and. &
+InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==0)   
+            WealthMobMatCondWidow7584(2*i,2*j) = count(FinalQuintile==j .and. &
+InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==1)                                                         
         end do
         end do       
         Totals = sum(WealthMobMatCondWidow7584,2)
@@ -3178,7 +3336,8 @@ module simulations
         
         !Redo with men's marital status
         TotNum = sum(NumWidowersAlive(6:10))  + sum(NumMarriedAlive(6:10))/2  
-        allocate (wealthVect(TotNum), InitQuintile(TotNum), FinalQuintile(TotNum), AgentNum(TotNum), ip(TotNum), InitNHstatus(TotNum), FinalNHstatus(TotNum), stat=status)
+        allocate (wealthVect(TotNum), InitQuintile(TotNum), FinalQuintile(TotNum), stat=status)
+        allocate (AgentNum(TotNum), ip(TotNum), InitNHstatus(TotNum), FinalNHstatus(TotNum), stat=status)
         InitNHstatus = 0       
         FinalNHstatus = 0    
                         
@@ -3245,10 +3404,14 @@ module simulations
         
         do i=1,5
         do j=1,5            
-            WealthMobMatCondWidower7584(2*i-1,2*j-1) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==0)
-            WealthMobMatCondWidower7584(2*i-1,2*j) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==1)   
-            WealthMobMatCondWidower7584(2*i,2*j-1) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==0)   
-            WealthMobMatCondWidower7584(2*i,2*j) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==1)                                                         
+            WealthMobMatCondWidower7584(2*i-1,2*j-1) = count(FinalQuintile==j .and. &
+InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==0)
+            WealthMobMatCondWidower7584(2*i-1,2*j) = count(FinalQuintile==j .and. &
+InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==1)   
+            WealthMobMatCondWidower7584(2*i,2*j-1) = count(FinalQuintile==j .and. &
+InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==0)   
+            WealthMobMatCondWidower7584(2*i,2*j) = count(FinalQuintile==j .and. &
+InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==1)                                                         
         end do
         end do       
         Totals = sum(WealthMobMatCondWidower7584,2)
@@ -3262,7 +3425,8 @@ module simulations
         
         !wealth mobility matrices 85+
         TotNum = sum(NumIndAlive(11:))   
-        allocate (wealthVect(TotNum), InitQuintile(TotNum), FinalQuintile(TotNum), AgentNum(TotNum), ip(TotNum), InitNHstatus(TotNum), FinalNHstatus(TotNum), stat=status)
+        allocate (wealthVect(TotNum), InitQuintile(TotNum), FinalQuintile(TotNum), stat=status)
+        allocate (AgentNum(TotNum), ip(TotNum), InitNHstatus(TotNum), FinalNHstatus(TotNum), stat=status)
         InitNHstatus = 0       
         FinalNHstatus = 0    
                         
@@ -3366,10 +3530,14 @@ module simulations
         do i=1,5
         do j=1,5
             WealthMobMatInd2yr85plus(i,j) = count(FinalQuintile==j .and. InitQuintile==i)    
-            WealthMobMatCondNH85plus(2*i-1,2*j-1) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==0)
-            WealthMobMatCondNH85plus(2*i-1,2*j) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==1)   
-            WealthMobMatCondNH85plus(2*i,2*j-1) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==0)   
-            WealthMobMatCondNH85plus(2*i,2*j) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==1)                                                         
+            WealthMobMatCondNH85plus(2*i-1,2*j-1) = count(FinalQuintile==j .and. &
+InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==0)
+            WealthMobMatCondNH85plus(2*i-1,2*j) = count(FinalQuintile==j .and. &
+InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==1)   
+            WealthMobMatCondNH85plus(2*i,2*j-1) = count(FinalQuintile==j .and. &
+InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==0)   
+            WealthMobMatCondNH85plus(2*i,2*j) = count(FinalQuintile==j .and. &
+InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==1)                                                         
         end do
         end do
         WealthMobMatInd2yr85plus = dble(WealthMobMatInd2yr85plus)/dble(TotNum/5)   
@@ -3442,10 +3610,14 @@ module simulations
         
         do i=1,5
         do j=1,5            
-            WealthMobMatCondHosp85plus(2*i-1,2*j-1) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==0)
-            WealthMobMatCondHosp85plus(2*i-1,2*j) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==1)   
-            WealthMobMatCondHosp85plus(2*i,2*j-1) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==0)   
-            WealthMobMatCondHosp85plus(2*i,2*j) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==1)                                                         
+            WealthMobMatCondHosp85plus(2*i-1,2*j-1) = count(FinalQuintile==j .and. &
+InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==0)
+            WealthMobMatCondHosp85plus(2*i-1,2*j) = count(FinalQuintile==j .and. &
+InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==1)   
+            WealthMobMatCondHosp85plus(2*i,2*j-1) = count(FinalQuintile==j .and. &
+InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==0)   
+            WealthMobMatCondHosp85plus(2*i,2*j) = count(FinalQuintile==j .and. &
+InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==1)                                                         
         end do
         end do        
         Totals = sum(WealthMobMatCondHosp85plus,2)
@@ -3513,10 +3685,14 @@ module simulations
         
         do i=1,5
         do j=1,5            
-            WealthMobMatCondBadHeal85plus(2*i-1,2*j-1) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==0)
-            WealthMobMatCondBadHeal85plus(2*i-1,2*j) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==1)   
-            WealthMobMatCondBadHeal85plus(2*i,2*j-1) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==0)   
-            WealthMobMatCondBadHeal85plus(2*i,2*j) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==1)                                                         
+            WealthMobMatCondBadHeal85plus(2*i-1,2*j-1) = count(FinalQuintile==j .and. &
+InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==0)
+            WealthMobMatCondBadHeal85plus(2*i-1,2*j) = count(FinalQuintile==j .and. &
+InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==1)   
+            WealthMobMatCondBadHeal85plus(2*i,2*j-1) = count(FinalQuintile==j .and. &
+InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==0)   
+            WealthMobMatCondBadHeal85plus(2*i,2*j) = count(FinalQuintile==j .and. &
+InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==1)                                                         
         end do
         end do        
         Totals = sum(WealthMobMatCondBadHeal85plus,2)
@@ -3529,7 +3705,8 @@ module simulations
         
         !Redo with women's marital status
         TotNum = sum(NumWidowsAlive(11:)) + sum(NumMarriedAlive(11:))/2  
-        allocate (wealthVect(TotNum), InitQuintile(TotNum), FinalQuintile(TotNum), AgentNum(TotNum), ip(TotNum), InitNHstatus(TotNum), FinalNHstatus(TotNum), stat=status)
+        allocate (wealthVect(TotNum), InitQuintile(TotNum), FinalQuintile(TotNum), stat=status)
+        allocate (AgentNum(TotNum), ip(TotNum), InitNHstatus(TotNum), FinalNHstatus(TotNum), stat=status)
         InitNHstatus = 0       
         FinalNHstatus = 0    
                         
@@ -3596,10 +3773,14 @@ module simulations
         
         do i=1,5
         do j=1,5            
-            WealthMobMatCondWidow85plus(2*i-1,2*j-1) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==0)
-            WealthMobMatCondWidow85plus(2*i-1,2*j) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==1)   
-            WealthMobMatCondWidow85plus(2*i,2*j-1) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==0)   
-            WealthMobMatCondWidow85plus(2*i,2*j) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==1)                                                         
+            WealthMobMatCondWidow85plus(2*i-1,2*j-1) = count(FinalQuintile==j .and. &
+InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==0)
+            WealthMobMatCondWidow85plus(2*i-1,2*j) = count(FinalQuintile==j .and. &
+InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==1)   
+            WealthMobMatCondWidow85plus(2*i,2*j-1) = count(FinalQuintile==j .and. &
+InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==0)   
+            WealthMobMatCondWidow85plus(2*i,2*j) = count(FinalQuintile==j .and. &
+InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==1)                                                         
         end do
         end do       
         Totals = sum(WealthMobMatCondWidow85plus,2)
@@ -3611,7 +3792,8 @@ module simulations
         
         !Redo with women's marital status
         TotNum = sum(NumWidowsAlive(11:)) + sum(NumMarriedAlive(11:))/2  
-        allocate (wealthVect(TotNum), InitQuintile(TotNum), FinalQuintile(TotNum), AgentNum(TotNum), ip(TotNum), InitNHstatus(TotNum), FinalNHstatus(TotNum), stat=status)
+        allocate (wealthVect(TotNum), InitQuintile(TotNum), FinalQuintile(TotNum), stat=status)
+        allocate (AgentNum(TotNum), ip(TotNum), InitNHstatus(TotNum), FinalNHstatus(TotNum), stat=status)
         InitNHstatus = 0       
         FinalNHstatus = 0    
                         
@@ -3678,10 +3860,14 @@ module simulations
         
         do i=1,5
         do j=1,5            
-            WealthMobMatCondWidower85plus(2*i-1,2*j-1) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==0)
-            WealthMobMatCondWidower85plus(2*i-1,2*j) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==1)   
-            WealthMobMatCondWidower85plus(2*i,2*j-1) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==0)   
-            WealthMobMatCondWidower85plus(2*i,2*j) = count(FinalQuintile==j .and. InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==1)                                                         
+            WealthMobMatCondWidower85plus(2*i-1,2*j-1) = count(FinalQuintile==j .and. &
+InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==0)
+            WealthMobMatCondWidower85plus(2*i-1,2*j) = count(FinalQuintile==j .and. &
+InitQuintile==i .and. InitNHstatus==0 .and. FinalNHstatus==1)   
+            WealthMobMatCondWidower85plus(2*i,2*j-1) = count(FinalQuintile==j .and. &
+InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==0)   
+            WealthMobMatCondWidower85plus(2*i,2*j) = count(FinalQuintile==j .and. &
+InitQuintile==i .and. InitNHstatus==1 .and. FinalNHstatus==1)                                                         
         end do
         end do       
         Totals = sum(WealthMobMatCondWidower85plus,2)
@@ -3729,31 +3915,39 @@ module simulations
                         NumWidowersNewMedicaid(ic) = NumWidowersNewMedicaid(ic) + 1 
                     end if                
                 else
-                    if (GovTransferMat(i,ic-1,ic) == 0.0d0 .and. GovTransferMat(i,ic,ic) > 0.0d0 .and. aliveHmat(i,ic,ic) == 1) then
+                    if (GovTransferMat(i,ic-1,ic) == 0.0d0 .and. GovTransferMat(i,ic,ic) > 0.0d0 .and. & 
+aliveHmat(i,ic,ic) == 1) then
                         NumHHNewMedicaid(ic) = NumHHNewMedicaid(ic) + 1 
                     end if
-                    if (GovTransferMat(i,ic-1,ic) == 0.0d0 .and. GovTransferMat(i,ic,ic) > 0.0d0 .and. alivefmat(i,ic,ic)*alivemmat(i,ic,ic) == 1) then
+                    if (GovTransferMat(i,ic-1,ic) == 0.0d0 .and. GovTransferMat(i,ic,ic) > 0.0d0 .and. & 
+alivefmat(i,ic,ic)*alivemmat(i,ic,ic) == 1) then
                         NumMarriedNewMedicaid(ic) = NumMarriedNewMedicaid(ic) + 2 
                     end if
-                    if (GovTransferMat(i,ic-1,ic) == 0.0d0 .and. GovTransferMat(i,ic,ic) > 0.0d0 .and. alivefmat(i,ic,ic)*(1-alivemmat(i,ic,ic)) == 1) then
+                    if (GovTransferMat(i,ic-1,ic) == 0.0d0 .and. GovTransferMat(i,ic,ic) > 0.0d0 .and. &
+alivefmat(i,ic,ic)*(1-alivemmat(i,ic,ic)) == 1) then
                         NumWidowsNewMedicaid(ic) = NumWidowsNewMedicaid(ic) + 1 
                     end if
-                    if (GovTransferMat(i,ic-1,ic) == 0.0d0 .and. GovTransferMat(i,ic,ic) > 0.0d0 .and. (1-alivefmat(i,ic,ic))*alivemmat(i,ic,ic) == 1) then
+                    if (GovTransferMat(i,ic-1,ic) == 0.0d0 .and. GovTransferMat(i,ic,ic) > 0.0d0 .and. &
+(1-alivefmat(i,ic,ic))*alivemmat(i,ic,ic) == 1) then
                         NumWidowersNewMedicaid(ic) = NumWidowersNewMedicaid(ic) + 1 
                     end if
                 end if
             end do
         end do
-        if (GovTransferMat(i,nr-1,nr-1) == 0.0d0 .and. GovTransferMat(i,nr,nr-1) > 0.0d0 .and. aliveHmat(i,nr,nr-1) == 1) then
+        if (GovTransferMat(i,nr-1,nr-1) == 0.0d0 .and. GovTransferMat(i,nr,nr-1) > 0.0d0 .and. &
+aliveHmat(i,nr,nr-1) == 1) then
             NumHHNewMedicaid(nr) = NumHHNewMedicaid(nr) + 1 
         end if
-        if (GovTransferMat(i,nr-1,nr-1) == 0.0d0 .and. GovTransferMat(i,nr,nr-1) > 0.0d0 .and. alivefmat(i,nr,nr-1)*alivemmat(i,nr,nr-1) == 1) then
+        if (GovTransferMat(i,nr-1,nr-1) == 0.0d0 .and. GovTransferMat(i,nr,nr-1) > 0.0d0 .and. &
+alivefmat(i,nr,nr-1)*alivemmat(i,nr,nr-1) == 1) then
             NumMarriedNewMedicaid(nr) = NumMarriedNewMedicaid(nr) + 2 
         end if
-        if (GovTransferMat(i,nr-1,nr-1) == 0.0d0 .and. GovTransferMat(i,nr,nr-1) > 0.0d0 .and. alivefmat(i,nr,nr-1)*(1-alivemmat(i,nr,nr-1)) == 1) then
+        if (GovTransferMat(i,nr-1,nr-1) == 0.0d0 .and. GovTransferMat(i,nr,nr-1) > 0.0d0 .and. &
+alivefmat(i,nr,nr-1)*(1-alivemmat(i,nr,nr-1)) == 1) then
             NumWidowsNewMedicaid(nr) = NumWidowsNewMedicaid(nr) + 1 
         end if
-        if (GovTransferMat(i,nr-1,nr-1) == 0.0d0 .and. GovTransferMat(i,nr,nr-1) > 0.0d0 .and. (1-alivefmat(i,nr,nr-1))*alivemmat(i,nr,nr-1) == 1) then
+        if (GovTransferMat(i,nr-1,nr-1) == 0.0d0 .and. GovTransferMat(i,nr,nr-1) > 0.0d0 .and. &
+(1-alivefmat(i,nr,nr-1))*alivemmat(i,nr,nr-1) == 1) then
             NumWidowersNewMedicaid(nr) = NumWidowersNewMedicaid(nr) + 1 
         end if        
         
@@ -3845,12 +4039,16 @@ module simulations
            End Subroutine I_mrgrnk                      
         End Interface 
                 
-        integer i, j, v, s, ic, iseed, status, count, Np, NumPeople(T-1), NumPeopleAlive(nr), TotNum, het, zf, zm, fet, met, set, h
+        integer i, j, v, s, ic, iseed, status, count, Np, NumPeople(T-1), NumPeopleAlive(nr)
+        integer TotNum, het, zf, zm, fet, met, set, h
         integer pm, tm
-        real(dbl) cumuinit(nef,nem), cumuf(nef), cumum(nem), cumeducdist(nhet), cummeddist(npm,nhet), cumhealf(nsht,nset), cumhealm(nsht,nset), cummed(npm), cumsinitH(3,naem)
-        real(dbl),allocatable,dimension(:,:,:):: earnsfMat, earnsmMat, aveearnsfMat, aveearnsmMat, wealthMat, labfMat
+        real(dbl) cumuinit(nef,nem), cumuf(nef), cumum(nem), cumeducdist(nhet)
+        real(dbl) cummeddist(npm,nhet), cumhealf(nsht,nset), cumhealm(nsht,nset), cummed(npm), cumsinitH(3,naem)
+        real(dbl),allocatable,dimension(:,:,:):: earnsfMat, earnsmMat, aveearnsfMat, aveearnsmMat
+        real(dbl),allocatable,dimension(:,:,:):: wealthMat, labfMat
         real(dbl),allocatable,dimension(:):: wealthVect
-        integer, allocatable, dimension(:,:,:):: prodflocMat, prodmlocMat, medlocMat, alivefmat, alivemmat, aliveHmat, healHmat, healfMat, healmMat, maritalMat, futureStatus
+        integer, allocatable, dimension(:,:,:):: prodflocMat, prodmlocMat, medlocMat, alivefmat
+        integer, allocatable, dimension(:,:,:):: alivemmat, aliveHmat, healHmat, healfMat, healmMat, maritalMat, futureStatus
         integer, allocatable, dimension(:):: InitQuintile, FinalQuintile, AgentNum, ip  
         integer, allocatable, dimension(:,:):: HHeducloc, aveearnsmloc     
         iseed = 3464653
@@ -3864,9 +4062,12 @@ module simulations
         NumPeople = nint( (/(1.0d0/(1+ng)**ic,ic=0,T-2)/)*Np )         
         
         !person, age, cohort        
-        allocate (prodflocMat(Np,nw,T-1), prodmlocMat(Np,nw,T-1), aveearnsfMat(Np,nw+1,T-1), aveearnsmMat(Np,nw+1,T-1), wealthMat(Np,T,T-1), stat=status)                                              
-        allocate (labfMat(Np,nw,T-1),earnsfMat(Np,nw,T-1),earnsmMat(Np,nw,T-1),HHeducloc(Np,T-1), aveearnsmloc(Np,T-1), stat = status)
-        allocate (alivefMat(Np,nr,T-1),alivemMat(Np,nr,T-1),aliveHmat(Np,nr,T-1), healHmat(Np,nr,T-1), healfMat(Np,nr,T-1), healmMat(Np,nr,T-1), futureStatus(Np,nr,T-1), stat=status)
+        allocate (prodflocMat(Np,nw,T-1), prodmlocMat(Np,nw,T-1), aveearnsfMat(Np,nw+1,T-1), stat=status)
+        allocate (aveearnsmMat(Np,nw+1,T-1), wealthMat(Np,T,T-1), stat=status)                                              
+        allocate (labfMat(Np,nw,T-1),earnsfMat(Np,nw,T-1),earnsmMat(Np,nw,T-1),stat=status)
+        allocate (HHeducloc(Np,T-1), aveearnsmloc(Np,T-1), stat = status)
+        allocate (alivefMat(Np,nr,T-1),alivemMat(Np,nr,T-1),aliveHmat(Np,nr,T-1), stat=status)
+        allocate (healHmat(Np,nr,T-1), healfMat(Np,nr,T-1), healmMat(Np,nr,T-1), futureStatus(Np,nr,T-1), stat=status)
         
         print *, "point 7b"  
         
@@ -3902,14 +4103,16 @@ module simulations
                         prodmlocMat(i,1,ic) = 1
                     end do             
                 else if (zm==1) then
-                    do i=nint(cumuinit(zf-1,nem)*EducDist(1)*NumPeople(ic)+1),nint(cumuinit(zf,1)*EducDist(1)*NumPeople(ic))
+                    do i=nint(cumuinit(zf-1,nem)*EducDist(1)*NumPeople(ic)+1),nint(cumuinit(zf,1)* &
+EducDist(1)*NumPeople(ic))
                         prodflocMat(i,1,ic) = zf
                         prodmlocMat(i,1,ic) = zm
                     end do            
                 else
                     !print *, "nint(cumuinit(zf,zm-1)*EducDist(1)*NumPeople(ic)+1) =" , nint(cumuinit(zf,zm-1)*EducDist(1)*NumPeople(ic)+1)
                     !print *, "nint(cumuinit(zf,zm)*EducDist(1)*NumPeople(ic)) = ", nint(cumuinit(zf,zm)*EducDist(1)*NumPeople(ic))
-                    do i=nint(cumuinit(zf,zm-1)*EducDist(1)*NumPeople(ic)+1),nint(cumuinit(zf,zm)*EducDist(1)*NumPeople(ic))
+                    do i=nint(cumuinit(zf,zm-1)*EducDist(1)*NumPeople(ic)+1),nint(cumuinit(zf,zm)* &
+EducDist(1)*NumPeople(ic))
                         prodflocMat(i,1,ic) = zf
                         prodmlocMat(i,1,ic) = zm
                     end do                    
@@ -3922,17 +4125,20 @@ module simulations
                 do zf = 1,nef              
                 do zm = 1,nem        
                     if (zf==1 .and. zm==1) then
-                        do i=nint(cumeducdist(s-1)*NumPeople(ic))+1 ,nint(cumeducdist(s-1)*NumPeople(ic)+cumuinit(1,1)*EducDist(s)*NumPeople(ic)) 
+                        do i=nint(cumeducdist(s-1)*NumPeople(ic))+1 ,nint(cumeducdist(s-1)* &
+NumPeople(ic)+cumuinit(1,1)*EducDist(s)*NumPeople(ic)) 
                             prodflocMat(i,1,ic) = 1
                             prodmlocMat(i,1,ic) = 1
                         end do             
                     else if (zm==1) then
-                        do i=nint(cumeducdist(s-1)*NumPeople(ic)+cumuinit(zf-1,nem)*EducDist(s)*NumPeople(ic))+1,nint(cumeducdist(s-1)*NumPeople(ic)+cumuinit(zf,1)*EducDist(s)*NumPeople(ic))
+                        do i=nint(cumeducdist(s-1)*NumPeople(ic)+cumuinit(zf-1,nem)*EducDist(s)* & 
+NumPeople(ic))+1,nint(cumeducdist(s-1)*NumPeople(ic)+cumuinit(zf,1)*EducDist(s)*NumPeople(ic))
                             prodflocMat(i,1,ic) = zf
                             prodmlocMat(i,1,ic) = zm
                         end do            
                     else                                
-                        do i=nint(cumeducdist(s-1)*NumPeople(ic)+cumuinit(zf,zm-1)*EducDist(s)*NumPeople(ic))+1,nint(cumeducdist(s-1)*NumPeople(ic)+cumuinit(zf,zm)*EducDist(s)*NumPeople(ic))
+                        do i=nint(cumeducdist(s-1)*NumPeople(ic)+cumuinit(zf,zm-1)*EducDist(s)* &
+NumPeople(ic))+1,nint(cumeducdist(s-1)*NumPeople(ic)+cumuinit(zf,zm)*EducDist(s)*NumPeople(ic))
                             prodflocMat(i,1,ic) = zf
                             prodmlocMat(i,1,ic) = zm
                         end do
@@ -4003,7 +4209,8 @@ module simulations
             wealthMat(i,1,ic) = 0.0d0                                                                                                    
         do j=2,nw    !age  
             !age-j wealth
-            call interpol3d(avect, aveEarnFvect, aveEarnMvect, aPolicyWCube(:,prodflocMat(i,j-1,ic),prodmlocMat(i,j-1,ic),:,:,het,j-1), &
+            call interpol3d(avect, aveEarnFvect, aveEarnMvect, aPolicyWCube(:,prodflocMat(i,j-1,ic), & 
+prodmlocMat(i,j-1,ic),:,:,het,j-1), &
                     wealthMat(i,j-1,ic), aveearnsfMat(i,j-1,ic), aveearnsmMat(i,j-1,ic), wealthMat(i,j,ic) )                  
             
             !age-j average earnings (average of earnings up to age j-1 earnings)                                      
@@ -4011,7 +4218,8 @@ module simulations
             aveearnsmMat(i,j,ic) = ((j-2)*aveearnsmMat(i,j-1,ic) + earnsmMat(i,j-1,ic))/(j-1)       
             
             !age-j female labor supply
-            call interpol3d(avect, aveEarnFvect, aveEarnMvect,labWCube(:,prodflocMat(i,j,ic),prodmlocMat(i,j,ic),:,:,het,j), &
+            call interpol3d(avect, aveEarnFvect, aveEarnMvect,labWCube(:,prodflocMat(i,j,ic), &
+prodmlocMat(i,j,ic),:,:,het,j), &
                     wealthMat(i,j,ic),aveearnsfMat(i,j,ic), aveearnsmMat(i,j,ic),labfMat(i,j,ic))                   
             
             !earnings                                                             
@@ -4245,18 +4453,25 @@ module simulations
             do j=1,nr
                 !age-nw+j wealth
                 if (j == 1) then                
-                    call interpol3d(avect, aveEarnFvect, aveEarnMvect, aPolicyWCube(:,prodflocMat(i,nw,ic),prodmlocMat(i,nw,ic),:,:,HHeducloc(i,ic),nw), &
+                    call interpol3d(avect, aveEarnFvect, aveEarnMvect, aPolicyWCube(:,prodflocMat(i,nw,ic), & 
+prodmlocMat(i,nw,ic),:,:,HHeducloc(i,ic),nw), &
                         wealthMat(i,nw,ic), aveearnsfMat(i,nw,ic), aveearnsmMat(i,nw,ic), wealthMat(i,nw+1,ic) )                     
                 else
                     if (maritalMat(i,j-1,ic) == 1) then
-                        call interpol3d(avect, aveEarnFvect, aveEarnMvect, aPolicyRCubeMarried(:,medlocMat(i,j-1,ic),:,:,healHmat(i,j-1,ic),futureStatus(i,j-1,ic),j-1), &
-                            wealthMat(i,nw+j-1,ic), aveearnsfMat(i,nw+1,ic), aveearnsmMat(i,nw+1,ic), wealthMat(i,nw+j,ic) )                     
+                        call interpol3d(avect, aveEarnFvect, aveEarnMvect, aPolicyRCubeMarried(:, &
+medlocMat(i,j-1,ic),:,:,healHmat(i,j-1,ic),futureStatus(i,j-1,ic),j-1), &
+                            wealthMat(i,nw+j-1,ic), aveearnsfMat(i,nw+1,ic), aveearnsmMat(i,nw+1,ic), &
+wealthMat(i,nw+j,ic) )                     
                     else if (maritalMat(i,j-1,ic) == 2) then
-                        call interpol3d(avect, aveEarnFvect, aveEarnMvect, aPolicyRCubeWidow(:,medlocMat(i,j-1,ic),:,:,healHmat(i,j-1,ic),futureStatus(i,j-1,ic),j-1), &
-                            wealthMat(i,nw+j-1,ic), aveearnsfMat(i,nw+1,ic), aveearnsmMat(i,nw+1,ic), wealthMat(i,nw+j,ic) )                                            
+                        call interpol3d(avect, aveEarnFvect, aveEarnMvect, aPolicyRCubeWidow(:, & 
+medlocMat(i,j-1,ic),:,:,healHmat(i,j-1,ic),futureStatus(i,j-1,ic),j-1), &
+                            wealthMat(i,nw+j-1,ic), aveearnsfMat(i,nw+1,ic), aveearnsmMat(i,nw+1,ic), &
+wealthMat(i,nw+j,ic) )                                            
                     else
-                        call interpol3d(avect, aveEarnFvect, aveEarnMvect, aPolicyRCubeWidower(:,medlocMat(i,j-1,ic),:,:,healHmat(i,j-1,ic),futureStatus(i,j-1,ic),j-1), &
-                            wealthMat(i,nw+j-1,ic), aveearnsfMat(i,nw+1,ic), aveearnsmMat(i,nw+1,ic), wealthMat(i,nw+j,ic) )                                            
+                        call interpol3d(avect, aveEarnFvect, aveEarnMvect, aPolicyRCubeWidower(:, &
+medlocMat(i,j-1,ic),:,:,healHmat(i,j-1,ic),futureStatus(i,j-1,ic),j-1), &
+                            wealthMat(i,nw+j-1,ic), aveearnsfMat(i,nw+1,ic), aveearnsmMat(i,nw+1,ic), &
+wealthMat(i,nw+j,ic) )                                            
                     end if                  
                 end if                                                
                 if (alivefmat(i,j,ic) == 1 .or. alivemmat(i,j,ic)==1) aliveHmat(i,j,ic) = 1                                           
@@ -4280,7 +4495,8 @@ module simulations
         
         TotNum = sum(NumPeople(:nw-1)) + sum(NumPeopleAlive)
         
-        allocate (wealthVect(TotNum), InitQuintile(TotNum), FinalQuintile(TotNum), AgentNum(TotNum), ip(TotNum), stat=status)    
+        allocate (wealthVect(TotNum), InitQuintile(TotNum), FinalQuintile(TotNum), stat=status)
+        allocate (AgentNum(TotNum), ip(TotNum), stat=status)    
         !print *, "status=", status
         
         !extract expenses in period 1 for each household
@@ -4357,7 +4573,8 @@ module simulations
                 
         !wealth mobility matrix 21-64
         TotNum = sum(NumPeople(:nw-1)) + NumPeopleAlive(1)
-        allocate (wealthVect(TotNum), InitQuintile(TotNum), FinalQuintile(TotNum), AgentNum(TotNum), ip(TotNum), stat=status)    
+        allocate (wealthVect(TotNum), InitQuintile(TotNum), FinalQuintile(TotNum), stat=status)
+        allocate (AgentNum(TotNum), ip(TotNum), stat=status)    
         !print *, "status=", status
         
         !extract expenses in period 1 for each household

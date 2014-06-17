@@ -650,21 +650,32 @@ module OutputResults
         call Out(1,"AveTotExps: Widowers/Married", 0.66d0, AveTotExpsByMart(3)/AveTotExpsByMart(1),tab)
         call Out(1,"AveOOPExps: Widows/Married", 0.63d0, AveOOPExpsByMart(2)/AveOOPExpsByMart(1),tab)     
         call Out(1,"AveOOPExps: Widowers/Married", 0.55d0, AveOOPExpsByMart(3)/AveOOPExpsByMart(1),tab)
-        call Out(1,"AveTotExps: BB Married/GG Married", 1.95d0, AveTotExpsByHealMart(1,1)/AveTotExpsByHealMart(4,1),tab)
-        call Out(1,"AveTotExps: BG Married/GG Married", 1.50d0, AveTotExpsByHealMart(2,1)/AveTotExpsByHealMart(4,1),tab)
-        call Out(1,"AveTotExps: GB Married/GG Married", 1.34d0, AveTotExpsByHealMart(3,1)/AveTotExpsByHealMart(4,1),tab)
-        call Out(1,"AveTotExps: Bad Health Widows/Good Health Widows", 2.84d0, AveTotExpsByHealMart(1,2)/AveTotExpsByHealMart(2,2),tab)
-        call Out(1,"AveTotExps: Bad Health Widowers/Good Health Widowers", 3.58d0, AveTotExpsByHealMart(1,3)/AveTotExpsByHealMart(2,3),tab)
-        call Out(1,"AveOOPExps: BB Married/GG Married", 1.52d0, AveOOPExpsByHealMart(1,1)/AveOOPExpsByHealMart(4,1),tab)
-        call Out(1,"AveOOPExps: BG Married/GG Married", 1.21d0, AveOOPExpsByHealMart(2,1)/AveOOPExpsByHealMart(4,1),tab)
-        call Out(1,"AveOOPExps: GB Married/GG Married", 1.25d0, AveOOPExpsByHealMart(3,1)/AveOOPExpsByHealMart(4,1),tab)
-        call Out(1,"AveOOPExps: Bad Health Widows/Good Health Widows", 2.18d0, AveOOPExpsByHealMart(1,2)/AveOOPExpsByHealMart(2,2),tab)
-        call Out(1,"AveOOPExps: Bad Health Widowers/Good Health Widowers", 2.45d0, AveOOPExpsByHealMart(1,3)/AveOOPExpsByHealMart(2,3),tab)
+        call Out(1,"AveTotExps: BB Married/GG Married", 1.95d0, AveTotExpsByHealMart(1,1)/ & 
+AveTotExpsByHealMart(4,1),tab)
+        call Out(1,"AveTotExps: BG Married/GG Married", 1.50d0, AveTotExpsByHealMart(2,1)/ & 
+AveTotExpsByHealMart(4,1),tab)
+        call Out(1,"AveTotExps: GB Married/GG Married", 1.34d0, AveTotExpsByHealMart(3,1)/ & 
+AveTotExpsByHealMart(4,1),tab)
+        call Out(1,"AveTotExps: Bad Health Widows/Good Health Widows", 2.84d0, AveTotExpsByHealMart(1,2)/ & 
+AveTotExpsByHealMart(2,2),tab)
+        call Out(1,"AveTotExps: Bad Health Widowers/Good Health Widowers", 3.58d0, AveTotExpsByHealMart(1,3)/ & 
+AveTotExpsByHealMart(2,3),tab)
+        call Out(1,"AveOOPExps: BB Married/GG Married", 1.52d0, AveOOPExpsByHealMart(1,1)/ & 
+AveOOPExpsByHealMart(4,1),tab)
+        call Out(1,"AveOOPExps: BG Married/GG Married", 1.21d0, AveOOPExpsByHealMart(2,1)/ & 
+AveOOPExpsByHealMart(4,1),tab)
+        call Out(1,"AveOOPExps: GB Married/GG Married", 1.25d0, AveOOPExpsByHealMart(3,1)/ & 
+AveOOPExpsByHealMart(4,1),tab)
+        call Out(1,"AveOOPExps: Bad Health Widows/Good Health Widows", 2.18d0, AveOOPExpsByHealMart(1,2)/ & 
+AveOOPExpsByHealMart(2,2),tab)
+        call Out(1,"AveOOPExps: Bad Health Widowers/Good Health Widowers", 2.45d0, AveOOPExpsByHealMart(1,3)/ & 
+AveOOPExpsByHealMart(2,3),tab)
         
         write(1,'(a)',advance='no') ret 
         write(1,'(a)',advance='no') ret     
         call Out(1,"MaritalDist Age65 PEM", MaritalDistAge65PEM,"MaritalDist Age65 Data", MaritalDistAge65Data)  
-        call Out(1,"MaritalDist Age65 SSincome", MaritalDistAge65SSInc,"MaritalDist Age65 Data", MaritalDistAge65SSIncData)          
+        call Out(1,"MaritalDist Age65 SSincome", MaritalDistAge65SSInc,"MaritalDist Age65 Data", & 
+MaritalDistAge65SSIncData)          
         call Out(1,"AveEarnsQuintileCutoffs",AveEarnsQuintileCutoffs,tab)            
         call Out(1,"MedMobMat",MedMobMat,"MedMobMat85plus",MedMobMat85plus)
         call Out(1,"OOPMobMat",OOPMobMat,"OOPMobMat85plus",OOPMobMat85plus)        
@@ -674,7 +685,8 @@ module OutputResults
         call Out(1,"WealthMobMatHH2yr65plusCondPEQ3",WealthMobMatHH2yr65plusCondPEQ(:,:,3))  
         call Out(1,"WealthMobMatHH2yr65plusCondPEQ4",WealthMobMatHH2yr65plusCondPEQ(:,:,4))  
         call Out(1,"WealthMobMatHH2yr65plusCondPEQ5",WealthMobMatHH2yr65plusCondPEQ(:,:,5))        
-        call Out(1,"WealthMobMatHH2yr6574",WealthMobMatHH2yr6574,"WealthMobMatHH2yr7584",WealthMobMatHH2yr7584,"WealthMobMatHH2yr85plus",WealthMobMatHH2yr85plus)        
+        call Out(1,"WealthMobMatHH2yr6574",WealthMobMatHH2yr6574,"WealthMobMatHH2yr7584", & 
+WealthMobMatHH2yr7584,"WealthMobMatHH2yr85plus",WealthMobMatHH2yr85plus)        
         call Out(1,"WealthMobMatHH2yr8594",WealthMobMatHH2yr8594)  
         !call Out(1,"WealthMobMatHH4yr65plus",WealthMobMatHH4yr65plus)
         !call Out(1,"WealthMobMatHH4yr6574",WealthMobMatHH4yr6574,"WealthMobMatHH4yr7584",WealthMobMatHH4yr7584,"WealthMobMatHH4yr85plus",WealthMobMatHH4yr85plus)        
@@ -683,7 +695,8 @@ module OutputResults
         !call Out(1,"WealthMobMatHH8yr65plus",WealthMobMatHH8yr65plus)
         !call Out(1,"WealthMobMatHH8yr6574",WealthMobMatHH8yr6574,"WealthMobMatHH8yr7584",WealthMobMatHH8yr7584,"WealthMobMatHH8yr85plus",WealthMobMatHH8yr85plus)        
         call Out(1,"WealthMobMatHH2yr",WealthMobMatHH2yr)
-        call Out(1,"WealthMobMatInd2yr6574",WealthMobMatInd2yr6574,"WealthMobMatInd2yr7584",WealthMobMatInd2yr7584,"WealthMobMatInd2yr85plus",WealthMobMatInd2yr85plus)         
+        call Out(1,"WealthMobMatInd2yr6574",WealthMobMatInd2yr6574,"WealthMobMatInd2yr7584",&
+WealthMobMatInd2yr7584,"WealthMobMatInd2yr85plus",WealthMobMatInd2yr85plus)         
         !call Out(1,"WealthMobMatHH4yr",WealthMobMatHH4yr) 
         !call Out(1,"WealthMobMatHH6yr",WealthMobMatHH6yr) 
         !call Out(1,"WealthMobMatHH8yr",WealthMobMatHH8yr) 

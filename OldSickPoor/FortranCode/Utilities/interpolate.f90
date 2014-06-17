@@ -25,7 +25,7 @@ module interpolate1
         do
             if (ju-jl <= 1) exit
             jm = ( ju + jl ) / 2
-            if (ascnd == (x1 >= xvect(jm))) then
+            if (ascnd .eqv. (x1 >= xvect(jm))) then
 	            jl = jm
             else
 	            ju = jm
@@ -48,7 +48,7 @@ module interpolate1
         do
             if (ju-jl <= 1) exit
             jm = ( ju + jl ) / 2
-            if (ascnd == (x1 >= xvect(jm))) then
+            if (ascnd .eqv. (x1 >= xvect(jm))) then
 	            jl = jm
             else
 	            ju = jm

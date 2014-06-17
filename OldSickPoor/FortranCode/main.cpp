@@ -1,22 +1,40 @@
-!Model 10-GE version of SI and Annuities.f90 
-!
-!****************************************************************************
-!
-!  PROGRAM:  Model 10-GE version of SI and Annuities
-!
-!  PURPOSE:  endogenous female labor supply, exogenous male labor supply, individual-specific survival probabilities, different household-types for retirees
-!           In version_3 the retirees problem is parallelized in addition to the workers problem.  
-!           In version_4 the chance of death before retirement is removed.        
-!  AUTHOR: Karen A. Kopecky
-!
-!****************************************************************************
-!INCLUDE 'link_f90_static.h'
+#include <mpi.h>
+#include "parameters.hpp"
 
-program MAIN !WorkingRetiredTogether
-        use constants
-        use globals
-    implicit none
-    !use subroutines  
+using namespace std; 
+
+extern "C"{
+	void master_(int *, int *); 
+	void worker_(int *, int *, int *); 
+}
+
+int main(int argc, char **argv)
+{
+	MPI_Init(&argc, &argv);
+        int my_rank, nNode;
+        MPI_Comm_size(MPI_COMM_WORLD, &nNode);
+        MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
+	
+	int getype, gbtype; 
+	MPI_Type_contiguous( (nef*nem*nset*nw)+(nef*nem*nset*nw)+3+naef+naem+1+1+3*naem, MPI_DOUBLE_PRECISION, &getype); 
+	MPI_Type_commit(&getype); 
+	MPI_Type_contiguous( (nm*nhht*4*3*nr)+na+(nsht*3*nr)-1+(nsht*3*nr)-1+(npm*nhet)+(nef*nef)+(nem*nem)+(npm*npm*(nr-1))+(nhht*nhet)+(nsht*nsht*3*nr)+(nsht*nsht*3*nr)+ntm, MPI_DOUBLE_PRECISION, &gbtype);
+	MPI_Type_commit(&gbtype); 
+
+	if (my_rank == 0)
+		master_(&gbtype, &getype); 
+	else 
+		worker_(&my_rank, &gbtype, &getype); 
+	
+	MPI_Type_free(&gbtype); 
+	MPI_Type_free(&getype); 
+	MPI_Finalize(); 
+	return 0; 	
+}
+
+/*program MAIN !WorkingRetiredTogether
+#    implicit none
+#    use subroutines  
 
     include 'mpif.h'
     real(dbl) init
@@ -40,12 +58,12 @@ program MAIN !WorkingRetiredTogether
     
     if (my_rank .eq. 0) then
         init = MPI_WTIME()
-        !call master
+        call master
         final = MPI_WTIME()
         final = final - init
         print *, "elapsed time  =", final        
     else    
-        !call worker(my_rank)
+        call worker(my_rank)
     endif
 
     call MPI_TYPE_FREE(getype, ier)
@@ -57,5 +75,5 @@ program MAIN !WorkingRetiredTogether
     stop   
 
 end program MAIN !WorkingRetiredTogether
-
+*/
 

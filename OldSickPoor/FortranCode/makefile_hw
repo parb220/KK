@@ -1,0 +1,49 @@
+# -*- Makefile -*-
+#MPIF90 = mpif90
+MPIF90 = gfortran 
+FFLAGS = -g #-nostartfiles
+#GCC = gcc
+#GCCFLAGS = -g -Wall
+
+#MPIF90 = compile -intel -mpi
+#FFLAGS=-O2 -heap-arrays
+
+MPI_INCLUDE_DIR = /usr/include/mpich2-x86_64 
+INCLUDE_DIR := $(INCLUDE_DIR) -I$(MPI_INCLUDE_DIR)
+MPI_LIBS_DIR = -L/usr/lib64/mpich2
+MPI_LIBS = -lmpichf90 -lmpichf90 -lmpich -lopa -lmpl -lrt -lpthread
+LIBS := $(LIBS) $(MPI_LIBS_DIR) $(MPI_LIBS)
+FORTRAN_LIBS_DIR = -L/usr/lib64 -L/usr/local/lib -L/usr/lib/gcc/x86_64-redhat-linux/4.6.3
+FORTRAN_LIBS = -lstdc++ -lgfortran #-lgfortranbegin #
+LIBS := $(LIBS) $(FORTRAN_LIBS_DIR) $(FORTRAN_LIBS)
+
+PROJECT_DIR = $(HOME)/KK/OldSickPoor
+SORUCE_DIR = $(HOME)/KK/FortranUtilities
+UTILITY_DIR = $(SORUCE_DIR)/Utilities
+EXE_DIR = $(HOME)/KK/work
+BUILD_DIR = $(HOME)/KK/work/build
+
+VPATH := $(VPATH) $(SORUCE_DIR) $(UTILITY_DIR) $(BUILD_DIR)
+
+OBJS = constants.o distributions.o interpolate.o mathutils.o mherzo.o mtmod.o output.o discretizeAR1.o toms462.o parameters.o globals.o functions.o ComputeDistributions.o Policies.o simulations.o results.o  results2.o OutputResults.o subroutines.o main.o
+
+TARGET = $(EXE_DIR)/socsec
+all: $(TARGET)
+
+$(TARGET) : $(OBJS)
+	$(MPIF90) $(FFLAGS) -o $(TARGET) $^ $(LIBS)
+
+%.o : %.f90
+	$(MPIF90) $(FFLAGS) $(INCLUDE_DIR) -o $(BUILD_DIR)/$@ -c $< 
+
+%.o : %.F90
+	$(MPIF90) $(FFLAGS) $(INCLUDE_DIR) -o $(BUILD_DIR)/$@ -c $< 
+
+clean:
+	rm -f $(BUILD_DIR)/*.o $(TARGET)
+
+test:
+	echo "MPIF90 $(MPIF90)"
+	echo "OBJS: $(OBJS)"
+	echo "VPATH: $(VPATH)"
+	echo "LIBS: $(LIBS)"

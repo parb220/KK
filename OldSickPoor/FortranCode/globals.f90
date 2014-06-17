@@ -115,10 +115,14 @@ module globals
     real(dbl) AveYearsAliveF, AveYearsAliveM, AveYearsAliveF2, AveYearsAliveM2, MedicareRevenue, AddGovConsumption
     real(dbl) AggConsAtDeath, AggConsExcludeDeath, AggNHExp, AggConsNHResidents
 
-    real(dbl) FracIndMedicaid, Frac6574IndMedicaid, Frac7584IndMedicaid, Frac85plusIndMedicaid, FracIndByMaritalStatusAge(3,nr)
-    real(dbl) FracWidowsMedicaid, Frac6566WidowsMedicaid, Frac6574WidowsMedicaid, Frac7584WidowsMedicaid, Frac85plusWidowsMedicaid
-    real(dbl) FracWidowersMedicaid, Frac6566WidowersMedicaid, Frac6574WidowersMedicaid, Frac7584WidowersMedicaid, Frac85plusWidowersMedicaid
-    real(dbl) FracMarriedMedicaid, Frac6566MarriedMedicaid, Frac6574MarriedMedicaid, Frac7584MarriedMedicaid, Frac85plusMarriedMedicaid    
+    real(dbl) FracIndMedicaid, Frac6574IndMedicaid, Frac7584IndMedicaid
+    real(dbl) Frac85plusIndMedicaid, FracIndByMaritalStatusAge(3,nr)
+    real(dbl) FracWidowsMedicaid, Frac6566WidowsMedicaid, Frac6574WidowsMedicaid
+    real(dbl) Frac7584WidowsMedicaid, Frac85plusWidowsMedicaid
+    real(dbl) FracWidowersMedicaid, Frac6566WidowersMedicaid
+    real(dbl) Frac6574WidowersMedicaid, Frac7584WidowersMedicaid, Frac85plusWidowersMedicaid
+    real(dbl) FracMarriedMedicaid, Frac6566MarriedMedicaid, Frac6574MarriedMedicaid
+    real(dbl) Frac7584MarriedMedicaid, Frac85plusMarriedMedicaid    
     
     !Distributions
     real(dbl) OOPExpGini, OOPmedShareUpper(3), OOPmedShare(5)    
@@ -134,7 +138,8 @@ module globals
     real(dbl) SocSecIncGini,SocSecIncShares(5), SocSecIncSharesUpper(3)    
     real(dbl) Frac65plusShares(5), Frac65plusVect(na)     
     real(dbl) MedMobMat(5,5), OOPMobMat(5,5), OOPMobMat85plus(5,5), MedMobMat85plus(5,5)
-    real(dbl) WealthMobMatHH2yr(5,5), WealthMobMatHH2yr2164(5,5), WealthMobMatHH2yr65plus(5,5), WealthMobMatHH2yr6574(5,5), WealthMobMatHH2yr7584(5,5), WealthMobMatHH2yr85plus(5,5)
+    real(dbl) WealthMobMatHH2yr(5,5), WealthMobMatHH2yr2164(5,5), WealthMobMatHH2yr65plus(5,5)
+    real(dbl) WealthMobMatHH2yr6574(5,5), WealthMobMatHH2yr7584(5,5), WealthMobMatHH2yr85plus(5,5)
     !real(dbl) WealthMobMatHH4yr65plus(5,5), WealthMobMatHH4yr6574(5,5), WealthMobMatHH4yr7584(5,5), WealthMobMatHH4yr85plus(5,5)
     !real(dbl) WealthMobMatHH6yr65plus(5,5), WealthMobMatHH6yr6574(5,5), WealthMobMatHH6yr7584(5,5), WealthMobMatHH6yr85plus(5,5)
     !real(dbl) WealthMobMatHH8yr65plus(5,5), WealthMobMatHH8yr6574(5,5), WealthMobMatHH8yr7584(5,5), WealthMobMatHH8yr85plus(5,5)
@@ -146,23 +151,30 @@ module globals
     real(dbl) WealthMobMatCondWidower6574(10,10), WealthMobMatCondWidower7584(10,10), WealthMobMatCondWidower85plus(10,10) 
     real(dbl) WealthMobMatCondSpousalDeath6574(10,10), WealthMobMatCondSpousalDeath7584(10,10)
     real(dbl) WealthMobMatCondSpousalDeath85plus(10,10) 
-    real(dbl)  WealthMobMatInd2yr6574(5,5), WealthMobMatInd2yr7584(5,5), WealthMobMatInd2yr85plus(5,5), WealthMobMatHH2yr65plusCondPEQ(5,5,5)
+    real(dbl) WealthMobMatInd2yr6574(5,5), WealthMobMatInd2yr7584(5,5), WealthMobMatInd2yr85plus(5,5)
+    real(dbl) WealthMobMatHH2yr65plusCondPEQ(5,5,5)
     
     
     !statistics by age
-    real(dbl) WealthByAge(T), ConsByAge(T), SocSecByAge(nr), EarnsFbyAge(nw), EarnsMbyAge(nw), EarnsFbyAgeID(nw), EarnsMbyAgeID(nw)
+    real(dbl) WealthByAge(T), ConsByAge(T), SocSecByAge(nr), EarnsFbyAge(nw)
+    real(dbl) EarnsMbyAge(nw), EarnsFbyAgeID(nw), EarnsMbyAgeID(nw)
     real(dbl) WealthByAgeID2(T), AveUtilByAge(T), AveUtilConsByAge(T), AveUtilByWidAge(nr), FracWomenLabForByAge(nw)
-    real(dbl) FracWidowsMedicaidByAge(nr), FracWidowersMedicaidByAge(nr), FracMarriedMedicaidByAge(nr), MeanOOPExpsMedicaidByAge(nr)
+    real(dbl) FracWidowsMedicaidByAge(nr), FracWidowersMedicaidByAge(nr), FracMarriedMedicaidByAge(nr)
+    real(dbl) MeanOOPExpsMedicaidByAge(nr)
     real(dbl) GovTransByAge(T), GovTransByAgeCond(T), SocSecByAgeID(nr), AveEarnsFbyAge(nw+1)
     real(dbl) AveEarnsMbyAge(nw+1), AveEarnsFbyAgeID(nw+1), AveEarnsMbyAgeID(nw+1)
-    real(dbl) AveUtilByAgeID(T), AveUtilConsByAgeID(T), AveUtilByEducID(nhet), AveUtilConsByEducID(nhet), FracIndMedicaidByAge(nr), NumOldPeopleByAge(nr)              
-    real(dbl) AveUtilFWidbyAgeWid(nr), AveUtilMWidbyAgeWid(nr), FracIndGovtTransByAgeID(T),  OOPExpGiniByAge(nr), FracHHTopMedShockByAge(nr)
-    real(dbl) FracHHEnterMedicaid(3), FracIndEnterMedicaid(3), FracMarriedEnterMedicaid(3), FracWidowsEnterMedicaid(3), FracWidowersEnterMedicaid(3)
+    real(dbl) AveUtilByAgeID(T), AveUtilConsByAgeID(T), AveUtilByEducID(nhet)
+    real(dbl) AveUtilConsByEducID(nhet), FracIndMedicaidByAge(nr), NumOldPeopleByAge(nr)              
+    real(dbl) AveUtilFWidbyAgeWid(nr), AveUtilMWidbyAgeWid(nr), FracIndGovtTransByAgeID(T)
+    real(dbl) OOPExpGiniByAge(nr), FracHHTopMedShockByAge(nr)
+    real(dbl) FracHHEnterMedicaid(3), FracIndEnterMedicaid(3), FracMarriedEnterMedicaid(3)
+    real(dbl) FracWidowsEnterMedicaid(3), FracWidowersEnterMedicaid(3)
     real(dbl) FracNHMedicaid(nr), MedExpsNHMedicaid(nr), ConsNHMedicaid(nr) 
     real(dbl) FracNHPrivate(nr), MedExpsNHPrivate(nr), ConsNHPrivate(nr) 
        
     !Medical expenditures by age
-    real(dbl) TotMedByAge(nr), TotMedByAgeID(nr), FracMedicaidByAge(nr), FracAtMaxAvectByAge(T), FracAtSecMaxAvectByAge(T)         
+    real(dbl) TotMedByAge(nr), TotMedByAgeID(nr), FracMedicaidByAge(nr)
+    real(dbl) FracAtMaxAvectByAge(T), FracAtSecMaxAvectByAge(T)         
     !OOP expenditures by age
     real(dbl) OOPMedByAge(nr), MeanOOPExpByAge(nr), MeanOOPExpByAgeCond(nr), FracPosOOPByAge(nr)
     real(dbl) AveNHExpensesWidows(nr), AveNonNHExpensesWidows(nr), AveExpensesWidows(nr) !just of widows
@@ -170,12 +182,15 @@ module globals
     real(dbl) AveNHExpensesMarried(nr), AveNonNHExpensesMarried(nr), AveExpensesMarried(nr) 
     
     !Age and Male PE Quintiles
-    real(dbl) WealthByAgePEM(T,5), ConsByAgePEM(T,5), UtilByAgePEM(T,5), UtilConsByAgePEM(T,5), EarnsMByAgePEM(nw,5), EarnsFByAgePEM(nw,5)
-    real(dbl) LabFByAgePEM(nw,5), SocSecByAgePEM(nr,5), TotMedByAgePEM(nr,5), OOPExpByAgePEM(nr,5), GovTransferByAgePEM(T,5)
+    real(dbl) WealthByAgePEM(T,5), ConsByAgePEM(T,5), UtilByAgePEM(T,5), UtilConsByAgePEM(T,5)
+    real(dbl) EarnsMByAgePEM(nw,5), EarnsFByAgePEM(nw,5)
+    real(dbl) LabFByAgePEM(nw,5), SocSecByAgePEM(nr,5), TotMedByAgePEM(nr,5), OOPExpByAgePEM(nr,5)
+    real(dbl) GovTransferByAgePEM(T,5)
     real(dbl) MaritalDistAge65PEM(5,3), MaritalDistAge65Data(5,3) 
     real(dbl) MaritalDistAge65SSInc(5,3), MaritalDistAge65SSIncData(5,3), AggregateOOPSSQ(5,3)                
     real(dbl) FracRecGovTransByAgePEM(T,5), MedicaidExpByAgePEM(nr,5), AveEarnsQuintileCutoffs(5)
-    real(dbl) AggregateWealthPEQ(5), AggregateConsPEQ(5), AggregateRetConsPEQ(5), MeanMedicaidPEQ(5), AggregateOOPPEQ(5), SocSecRepRateAge65(5,3)
+    real(dbl) AggregateWealthPEQ(5), AggregateConsPEQ(5), AggregateRetConsPEQ(5), MeanMedicaidPEQ(5)
+    real(dbl) AggregateOOPPEQ(5), SocSecRepRateAge65(5,3)
     real(dbl) AggWorkersAssetsPEQ(5), AggRetireesAssetsPEQ(5), FracWorkersRecGovTrans(5), FracRetireesRecGovTrans(5)
     real(dbl) Frac6574RecGovTrans(5), Frac7584RecGovTrans(5), Frac85plusRecGovTrans(5)
     
@@ -186,8 +201,10 @@ module globals
     real(dbl) FracWomenLabForByEduc(nhet), AveFemaleHoursByEduc(nhet), AveFemaleHoursCondWorkByEduc(nhet)
     
     !statistics by age and education    
-    real(dbl) WealthByAgeEduc(T,nhet), ConsByAgeEduc(T,nhet), AveUtilByAgeEduc(T,nhet), AveUtilConsByAgeEduc(T,nhet), FracWomenLabForByAgeEduc(nw,nhet)
-    real(dbl) AveFemaleHoursByAgeEduc(nw,nhet), FracRecGovTransByAgeEduc(T,nhet), AveMaleWagesByAgeEduc(nw,nset), AveFemaleWagesByAgeEduc(nw,nset)
+    real(dbl) WealthByAgeEduc(T,nhet), ConsByAgeEduc(T,nhet), AveUtilByAgeEduc(T,nhet)
+    real(dbl) AveUtilConsByAgeEduc(T,nhet), FracWomenLabForByAgeEduc(nw,nhet)
+    real(dbl) AveFemaleHoursByAgeEduc(nw,nhet), FracRecGovTransByAgeEduc(T,nhet)
+    real(dbl) AveMaleWagesByAgeEduc(nw,nset), AveFemaleWagesByAgeEduc(nw,nset)
         
     !statistics by HH health type, Educ, Marital Status
     real(dbl) AveUtilByHeal(nhht)
@@ -220,10 +237,12 @@ module globals
     real(dbl) earnsFMat(na,nef,nem,naef,naem,nhet,nw), etaMat(na,nef,nem,naef,naem,nhet,nw)
 
    
-    integer numprocs, ind(10), ier, my_rank, curstat, getype, gbtype
+    integer numprocs, ind(10), ier, my_rank, curstat
+    integer getype, gbtype
     
     common/gevars/efmat, emmat, w, r, PropTax, aveEarnFvect, aveEarnMvect, AveEarningsAll, AveHHIncome, sinitH
-    common/gbvars/mmat, avect, survivalprobVectF, survivalprobVectM, minit, Puefmat, Puemmat, Pummat, hinitH, PhmatM, PhmatF, Ptmvect
+    common/gbvars/mmat, avect, survivalprobVectF, survivalprobVectM, minit, Puefmat
+    common/gbvars/Puemmat, Pummat, hinitH, PhmatM, PhmatF, Ptmvect
     real(dbl) part_Vcube(na,count_wef,count_wem,count_waef,count_waem,count_wet)
     real(dbl) part_CUcube(na,count_wef,count_wem,count_waef,count_waem,count_wet)
     real(dbl) part_labCube(na,count_wef,count_wem,count_waef,count_waem,count_wet)
