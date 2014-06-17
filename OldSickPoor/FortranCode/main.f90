@@ -15,8 +15,8 @@
 program MAIN !WorkingRetiredTogether
         use constants
         use globals
+        use subroutines  
     implicit none
-    !use subroutines  
 
     include 'mpif.h'
     real(dbl) init
@@ -31,21 +31,21 @@ program MAIN !WorkingRetiredTogether
     call MPI_TYPE_COMMIT(gbtype, ier)
     
     !set current calibration parameters
-    !phi1  = (/0.29d0, 0.16d0, 0.11d0, 0.10d0/)
-    !psi = (/3.2d0, 1.6d0, 2.4d0, 1.7d0/) 
+    phi1  = (/0.29d0, 0.16d0, 0.11d0, 0.10d0/)
+    psi = (/3.2d0, 1.6d0, 2.4d0, 1.7d0/) 
 
-    !clowerbarMarried = clowerbarMarried*0.70640d0 !1.29360d0   !0.273d0  
-    !clowerbarWidow =  clowerbarWidow*0.7064d0 !1.29360d0      !0.273d0
-    !clowerbarWidower =clowerbarWidower*0.7064d0 !1.29360d0    !0.273d0
+    clowerbarMarried = clowerbarMarried*0.70640d0 !1.29360d0   !0.273d0  
+    clowerbarWidow =  clowerbarWidow*0.7064d0 !1.29360d0      !0.273d0
+    clowerbarWidower =clowerbarWidower*0.7064d0 !1.29360d0    !0.273d0
     
     if (my_rank .eq. 0) then
         init = MPI_WTIME()
-        !call master
+        call master
         final = MPI_WTIME()
         final = final - init
         print *, "elapsed time  =", final        
     else    
-        !call worker(my_rank)
+        call worker(my_rank)
     endif
 
     call MPI_TYPE_FREE(getype, ier)

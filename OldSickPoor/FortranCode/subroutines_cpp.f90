@@ -14,7 +14,7 @@ module subroutines
     implicit none
     contains
     
-subroutine master(gbtype, getype)
+subroutine master
     use Results
     use Results2
     use parameters
