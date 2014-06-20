@@ -29,7 +29,7 @@ public:
 
 	TDenseVector operator()(int i, const TIndex &j, int k) const; // (i, j1:j2, k)
 	TDenseVector operator()(int i, int j, const TIndex &k) const; // (i, j, k1:k2)
-	TDenseVector operator()(const TIndex &i, int j, int k) const; // (i1:i2, j, k)
+	TDenseVector operator()(const TIndex &i, int j, int k) const;  // (i1:i2, j, k)
 
 	void Set(double v, int i, int j, int k);	// (i,j,k) = v 
 	void Set(const TDenseVector &v, int i, int j);  // (i,j,:) = v
