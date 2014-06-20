@@ -43,7 +43,7 @@ SOURCE_DIR = $(PROJECT_DIR)/OldSickPoor/C++Code
 EXE_DIR = $(PROJECT_DIR)/work
 BUILD_DIR = $(PROJECT_DIR)/work/build
 
-OBJS := $(OBJS) MultiDimensionArray.o
+OBJS := $(OBJS) TDenseMatrix3D.o TDenseMatrix4D.o
 
 INCLUDE_DIR := $(INCLUDE_DIR) -I$(SOURCE_DIR)
 VPATH := $(VPATH) $(BUILD_DIR) $(SOURCE_DIR) 

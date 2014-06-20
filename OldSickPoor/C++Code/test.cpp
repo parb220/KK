@@ -1,5 +1,5 @@
 #include <iostream>
-#include "MultiDimensionArray.hpp"
+#include "TDenseMatrix3D.hpp"
 #include "dw_dense_matrix.hpp"
 
 using namespace std; 

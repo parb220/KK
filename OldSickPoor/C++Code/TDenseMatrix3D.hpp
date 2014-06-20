@@ -1,5 +1,5 @@
-#ifndef _MULTI_DIMENSION_ARRAY_ 
-#define _MULTI_DIMENSION_ARRAY_
+#ifndef _DENSE_MATRIX_3D_ 
+#define _DENSE_MATRIX_3D_
 
 #include <vector>
 

@@ -1,6 +1,6 @@
 #include "dw_exception.hpp"
 #include "dw_dense_matrix.hpp"
-#include "MultiDimensionArray.hpp"
+#include "TDenseMatrix3D.hpp"
 
 using namespace std; 
 
@@ -293,7 +293,7 @@ const TDenseMatrix3D & TDenseMatrix3D::operator=(const TDenseMatrix3D &right)
 {
 	this->resize(right.size()); 
 	for (int i=0; i<(int)(this->size()); i++)
-		this->operator[](i).CopyContent(right[i]); 
+		this->operator[](i).Insert(0,0,right[i]); 
 	return *this; 
 }
 
@@ -351,7 +351,7 @@ TDenseMatrix TDenseMatrix3D::sum(int d) const
 	switch(d)
 	{
 		case 0: {
-			sum_result.CopyContent(this->operator[](0)); 
+			sum_result.Insert(0,0,this->operator[](0)); 
 			for (int i=1; i<(int)this->size(); i++)
 				sum_result += this->operator[](i); 
 		} break; 
