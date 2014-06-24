@@ -30,8 +30,8 @@ INCLUDE_DIR := $(INCLUDE_DIR) -I$(DW_UTILITIES_BASE)/include
 FC = gfortran
 CC = gcc
 CPP = gcc
-CFLAGS = -g -DSTRUCTURED_COLUMN_MAJOR -Wall -msse2
-CCFLAGS = -g -std=c++0x -DSTRUCTURED_COLUMN_MAJOR -Wall
+CFLAGS = -g -DSTRUCTURED_COLUMN_MAJOR -msse2 #-Wall
+CCFLAGS = -g -std=c++0x -DSTRUCTURED_COLUMN_MAJOR #-Wall
 LIBS := $(LIBS) -lstdc++ -lpthread -DAE_CPU=AE_INTEL
 LIBS := $(LIBS) -lgfortran
 LIBS := $(LIBS) -lm
@@ -39,14 +39,14 @@ LIBS := $(LIBS) -lm
 #################################################################################
 # PROJECT PATHS
 PROJECT_DIR = $(HOME)/KK
-SOURCE_DIR = $(PROJECT_DIR)/C++Utilities
+SOURCE_DIR = $(PROJECT_DIR)/OldSickPoor/C++Code
 EXE_DIR = $(PROJECT_DIR)/work
 BUILD_DIR = $(PROJECT_DIR)/work/build
 
-INCLUDE_DIR := $(INCLUDE_DIR) -I$(PROJECT_DIR)
-VPATH := $(VPATH) $(SOURCE_DIR) $(BUILD_DIR)
+OBJS := $(OBJS) TDenseMatrix3D.o TDenseMatrix4D.o
 
-OBJS:= $(OBJS) addacooper1.o chebyshev.o mathutils.o toms462.o distributions.o mherzo.o discretizeAR1.o interpolate.o
+INCLUDE_DIR := $(INCLUDE_DIR) -I$(SOURCE_DIR)
+VPATH := $(VPATH) $(BUILD_DIR) $(SOURCE_DIR) 
 
 # TEST_ALL #####################################################################
 ALL_OBJS = $(OBJS) test.o 
@@ -56,13 +56,13 @@ ALL_EFILE = $(EXE_DIR)/test
 all : $(ALL_EFILE)
 
 $(ALL_EFILE): $(ALL_OBJS)
-	$(CPP) $(CFLAGS) $^ $(LIBS_DIR) $(LIBS) -o $(ALL_EFILE)
+	$(CPP) $(CCFLAGS) $^ $(LIBS_DIR) $(LIBS) -o $(ALL_EFILE)
 
 %.o : %.c
 	$(CC) $(CFLAGS) $(INCLUDE_DIR) -c $< -o $(BUILD_DIR)/$@
 
 %.o : %.cpp
-	$(CPP) $(CFLAGS) $(INCLUDE_DIR) -c $< -o $(BUILD_DIR)/$@
+	$(CPP) $(CCFLAGS) $(INCLUDE_DIR) -c $< -o $(BUILD_DIR)/$@
 
 #################################################################################
 clean:

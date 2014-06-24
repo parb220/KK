@@ -1,6 +1,6 @@
-#include "dw_dense_matrix.hpp"
 #include "dw_exception.hpp"
-#include "MultiDimensionArray.hpp"
+#include "dw_dense_matrix.hpp"
+#include "TDenseMatrix3D.hpp"
 
 using namespace std; 
 
@@ -57,7 +57,7 @@ double TDenseMatrix3D::operator()(int i, int j, int k) const {
 TDenseMatrix3D TDenseMatrix3D::operator()(const TIndex &i, const TIndex &j, const TIndex &k) const
 {
 	for (int ii=0; ii<i.size; ii++) {
-		if (i[ii] >= size()) 
+		if (i[ii] >= (int)size()) 
 			throw dw_exception("TDenseMatrix3D::operator() indices exceed limits"); 
 	}
 	for (int jj=0; jj<j.size; jj++) {
@@ -96,7 +96,7 @@ TDenseMatrix TDenseMatrix3D::operator()(int i, const TIndex &j, const TIndex &k)
 TDenseMatrix TDenseMatrix3D::operator()(const TIndex &i, int j, const TIndex &k) const
 {
 	for (int ii=0; ii<i.size; ii++) {
-                if (i[ii] >= size() || j >= this->operator[](i[ii]).rows)
+                if (i[ii] >= (int)size() || j >= this->operator[](i[ii]).rows)
                         throw dw_exception("TDenseMatrix3D::operator() indices exceed limits");
         }
 	for (int kk=0; kk<k.size; kk++) {
@@ -113,7 +113,7 @@ TDenseMatrix TDenseMatrix3D::operator()(const TIndex &i, int j, const TIndex &k)
 TDenseMatrix TDenseMatrix3D::operator()(const TIndex &i, const TIndex &j, int k) const
 {
 	for (int ii=0; ii<i.size; ii++) {
-                if (i[ii] >= size() || k >= this->operator[](i[ii]).cols)
+                if (i[ii] >= (int)size() || k >= this->operator[](i[ii]).cols)
                         throw dw_exception("TDenseMatrix3D::operator() indices exceed limits");
         }
 	for (int jj=0; jj<j.size; jj++) {
@@ -129,7 +129,7 @@ TDenseMatrix TDenseMatrix3D::operator()(const TIndex &i, const TIndex &j, int k)
 // Access used on rhs (i, j1:j2, k)
 TDenseVector TDenseMatrix3D::operator()(int i, const TIndex &j, int k) const
 {
-	if (i>=size() || k >= this->operator[](i).cols)
+	if (i>=(int)size() || k >= this->operator[](i).cols)
 		throw dw_exception("TDenseMatrix3D::operator() indices exceed limits");
 	for (int jj=0; jj<j.size; jj++) {
                 if (size() && j[jj] >= this->operator[](0).rows)
@@ -141,7 +141,7 @@ TDenseVector TDenseMatrix3D::operator()(int i, const TIndex &j, int k) const
 // Access used on rhs (i, j, k1:k2)
 TDenseVector TDenseMatrix3D::operator()(int i, int j, const TIndex &k) const
 {
-	if (i>=size() || j >= this->operator[](i).rows)
+	if (i>=(int)size() || j >= this->operator[](i).rows)
 		throw dw_exception("TDenseMatrix3D::operator() indices exceed limits"); 
 	for (int kk=0; kk<k.size; kk++) {
                 if (size() && k[kk] >= this->operator[](0).cols)
@@ -154,13 +154,13 @@ TDenseVector TDenseMatrix3D::operator()(int i, int j, const TIndex &k) const
 TDenseVector TDenseMatrix3D::operator()(const TIndex &i, int j, int k) const
 {
 	for (int ii=0; ii<i.size; ii++) {
-                if (i[ii] >= size() || j >= this->operator[](i[ii]).rows || k >= this->operator[](i[ii]).cols)
+                if (i[ii] >= (int)size() || j >= this->operator[](i[ii]).rows || k >= this->operator[](i[ii]).cols)
                         throw dw_exception("TDenseMatrix3D::operator() indices exceed limits");
         }
-
 	TDenseVector x(i.size,0.0); 
-	for (int ii=0; ii<i.size; ii++)
-		x[ii] = this->operator()(i[ii],j,k); 
+	for (int jj=0; jj<i.size; jj++)
+		x[jj] = this->operator()(i[jj],j,k); 
+	return x; 
 }
 
 // Set value (i,:,:) = v
@@ -190,7 +190,7 @@ void TDenseMatrix3D::Set(const TDenseMatrix3D &v, const TIndex &i, const TIndex 
 	if ((int)v.size() != i.size || (v.size() && (v[0].rows != j.size || v[0].cols != k.size) ))
 		throw dw_exception("TDenseMatrix3D::Set() value and index dimensions do not match"); 
 	for (int ii=0; ii<i.size; ii++) {
-                if (i[ii] >= size())
+                if (i[ii] >= (int)size())
                         throw dw_exception("TDenseMatrix3D::Set() indices exceed limits");
         }
         for (int jj=0; jj<j.size; jj++) {
@@ -229,7 +229,7 @@ void TDenseMatrix3D::Set(const TDenseMatrix &v, const TIndex &i, int j, const TI
 	if (v.rows != i.size || v.cols != k.size)
 		throw dw_exception("TDenseMatrix3D::Set() value and index dimensions do not match");
 	for (int ii=0; ii<i.size; ii++) {
-                if (i[ii] >= size())
+                if (i[ii] >= (int)size())
                         throw dw_exception("TDenseMatrix3D::Set() indices exceed limits");
         }
 	for (int kk=0; kk<k.size; kk++) {
@@ -293,7 +293,7 @@ const TDenseMatrix3D & TDenseMatrix3D::operator=(const TDenseMatrix3D &right)
 {
 	this->resize(right.size()); 
 	for (int i=0; i<(int)(this->size()); i++)
-		this->operator[](i).CopyContent(right[i]); 
+		this->operator[](i).Insert(0,0,right[i]); 
 	return *this; 
 }
 
@@ -351,7 +351,7 @@ TDenseMatrix TDenseMatrix3D::sum(int d) const
 	switch(d)
 	{
 		case 0: {
-			sum_result.CopyContent(this->operator[](0)); 
+			sum_result.Insert(0,0,this->operator[](0)); 
 			for (int i=1; i<(int)this->size(); i++)
 				sum_result += this->operator[](i); 
 		} break; 
@@ -409,7 +409,7 @@ TDenseVector TDenseMatrix3D::sum(int i, int j) const
 	else if (i == 1 && j == 2)
 	{
 		sum_result.Resize(this->size());
-		for (int i=0; i<this->size(); i++)
+		for (int i=0; i<(int)this->size(); i++)
 		{
 			for (int j=0; j<this->operator[](i).rows; j++)
 				for (int k=0; k<this->operator[](i).cols; k++)
@@ -424,7 +424,7 @@ TDenseVector TDenseMatrix3D::sum(int i, int j) const
 double TDenseMatrix3D::sum()const
 {
 	double sum_result = 0; 
-	for (int i=0; i<this->size(); i++)
+	for (int i=0; i<(int)this->size(); i++)
 		for (int j=0; j<this->operator[](i).rows; j++)
 			for (int k=0; k<this->operator[](k).cols; k++)
 				sum_result += this->operator()(i,j,k);
