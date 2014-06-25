@@ -8,10 +8,10 @@ FFLAGS = -g #-nostartfiles
 #MPIF90 = compile -intel -mpi
 #FFLAGS=-O2 -heap-arrays
 
-MPI_INCLUDE_DIR = /usr/include/mpich2-x86_64 
+MPI_INCLUDE_DIR = /usr/local/include 
 INCLUDE_DIR := $(INCLUDE_DIR) -I$(MPI_INCLUDE_DIR)
-MPI_LIBS_DIR = -L/usr/lib64/mpich2
-MPI_LIBS = -lmpichf90 -lmpichf90 -lmpich -lopa -lmpl -lrt -lpthread
+MPI_LIBS_DIR = -L/usr/local/lib -L/usr/lib64
+MPI_LIBS = -lmpifort -lmpi -lrt -lpthread 
 LIBS := $(LIBS) $(MPI_LIBS_DIR) $(MPI_LIBS)
 FORTRAN_LIBS_DIR = -L/usr/lib64 -L/usr/local/lib -L/usr/lib/gcc/x86_64-redhat-linux/4.6.3
 FORTRAN_LIBS = -lstdc++ -lgfortran #-lgfortranbegin #

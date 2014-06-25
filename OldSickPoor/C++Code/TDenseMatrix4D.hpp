@@ -12,13 +12,11 @@ class TDenseMatrix4D : public std::vector<TDenseMatrix3D>
 {
 public:
 	// Construction
-	TDenseMatrix4D(int _n1=0, int _n2=0, int _n3=0, int _n4=0);
+	TDenseMatrix4D(int _n1=0, int _n2=0, int _n3=0, int _n4=0, double _v=0.0);
 	TDenseMatrix4D(const std::vector<TDenseMatrix3D> &_matrixArray); 
 	TDenseMatrix4D(const TDenseMatrix4D &right); 
 	// Destruction
 	~TDenseMatrix4D(); 
-
-	TDenseMatrix4D &Clear(); 
 
 	// RHS Access
 	int Size() const { return (int)this->size(); } 
@@ -67,6 +65,23 @@ public:
 	void Set(const TDenseVector &v, int n1, const TIndex &n2, int n3, int n4); // (n1,n2L:n2R,n3,n4) = v
 	void Set(const TDenseVector &v, int n1, int n2, const TIndex &n3, int n4); // (n1,n2,n3L:n3R,n4) = v
 	void Set(const TDenseVector &v, int n1, int n2, int n3, const TIndex &n4); // (n1,n2,n3,n4L:n4R) = v
+
+	// Operators
+	const TDenseMatrix4D & operator=(const TDenseMatrix4D &right); 
+	TDenseMatrix4D operator+(double ) const ;
+        TDenseMatrix4D operator+(const TDenseMatrix4D &right) const;
+        TDenseMatrix4D operator*(double ) const;
+        TDenseMatrix4D operator*(const TDenseMatrix4D &right) const;
+
+        // Sum
+        TDenseMatrix3D sum(int d) const;
+        TDenseMatrix sum(int i, int j) const;
+	TDenseVector sum(int i, int j, int k) const; 
+        double sum() const;
+
+        // others
+        void Clear();
+        void Resize(int, int, int, int);
 };
 
 #endif

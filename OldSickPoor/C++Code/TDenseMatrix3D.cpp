@@ -5,11 +5,11 @@
 using namespace std; 
 
 // Construction 
-TDenseMatrix3D::TDenseMatrix3D(int _d1, int _d2, int _d3) :
+TDenseMatrix3D::TDenseMatrix3D(int _d1, int _d2, int _d3, double _v) :
 vector<TDenseMatrix>(_d1)
 {
 	for (int i=0; i<(int)(this->size()); i++)
-		this->operator[](i) = TDenseMatrix(_d2, _d3, 0.0); 
+		this->operator[](i) = TDenseMatrix(_d2, _d3, _v); 
 }
 
 TDenseMatrix3D::TDenseMatrix3D(const std::vector<TDenseMatrix> & _matrixArray) : 
@@ -347,10 +347,14 @@ TDenseMatrix3D TDenseMatrix3D::operator*(const TDenseMatrix3D &right) const
 
 TDenseMatrix TDenseMatrix3D::sum(int d) const
 {
+	if (!this->size())
+		return TDenseMatrix(0,0); 
+
 	TDenseMatrix sum_result; 
 	switch(d)
 	{
 		case 0: {
+			sum_result.Resize(this->operator[](0).rows, this->operator[](0).cols); 	
 			sum_result.Insert(0,0,this->operator[](0)); 
 			for (int i=1; i<(int)this->size(); i++)
 				sum_result += this->operator[](i); 
@@ -383,8 +387,10 @@ TDenseMatrix TDenseMatrix3D::sum(int d) const
 
 TDenseVector TDenseMatrix3D::sum(int i, int j) const
 {
+	if (!this->size())
+		return TDenseVector(0); 
 	TDenseVector sum_result; 
-	if (i == 0 && j == 1)
+	if (i == 0 && j == 1 || i == 1 && j == 0)
 	{
 		sum_result.Resize(this->operator[](0).cols); 
 		for (int k=0; k<this->operator[](0).cols; k++)
@@ -395,7 +401,7 @@ TDenseVector TDenseMatrix3D::sum(int i, int j) const
 					sum_result[k] += this->operator()(i,j,k); 
 		}
 	}
-	else if (i == 0 && j == 2)
+	else if (i == 0 && j == 2 || i == 2 && j == 0 )
 	{
 		sum_result.Resize(this->operator[](0).rows); 
 		for (int j=0; j<this->operator[](0).rows; j++)
@@ -406,7 +412,7 @@ TDenseVector TDenseMatrix3D::sum(int i, int j) const
 					sum_result[j] += this->operator()(i,j,k); 
 		}	
 	}
-	else if (i == 1 && j == 2)
+	else if (i == 1 && j == 2 || i == 2 && j == 1)
 	{
 		sum_result.Resize(this->size());
 		for (int i=0; i<(int)this->size(); i++)
@@ -417,7 +423,7 @@ TDenseVector TDenseMatrix3D::sum(int i, int j) const
 		}
 	}
 	else 
-		throw dw_exception("TDenseMatrix3D::sum() : must along one of the 3 dimensions");
+		throw dw_exception("TDenseMatrix3D::sum() : must along two of the 3 dimensions");
 	return sum_result; 
 }
 
@@ -431,18 +437,17 @@ double TDenseMatrix3D::sum()const
 	return sum_result; 
 }
 
-TDenseMatrix3D & TDenseMatrix3D::Clear()
+void TDenseMatrix3D::Clear()
 {
 	for (int i=0; i<(int)(this->size()); i++)
 		this->operator[](i).Resize(0,0); 
-	clear(); 
-	return *this; 
+	this->clear(); 
 }
 
-TDenseMatrix3D & TDenseMatrix3D::Resize(int i, int j, int k)
+void TDenseMatrix3D::Resize(int i, int j, int k)
 {
 	if (this->size() && this->operator[](0).rows == j && this->operator[](0).cols == k)
-		resize(i); 
+		this->resize(i); 
 	else 
 	{
 		Clear(); 
@@ -450,5 +455,4 @@ TDenseMatrix3D & TDenseMatrix3D::Resize(int i, int j, int k)
 		for (int ii=0; ii<i; ii++)
 			this->operator[](ii) = TDenseMatrix(j,k, 0.0); 
 	}
-	return *this; 
 }

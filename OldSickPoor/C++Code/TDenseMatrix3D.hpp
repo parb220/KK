@@ -11,7 +11,7 @@ class TDenseMatrix3D : public std::vector<TDenseMatrix>
 {
 public: 
 	// Construction
-	TDenseMatrix3D(int _d1=0, int _d2=0, int _d3=0);  
+	TDenseMatrix3D(int _d1=0, int _d2=0, int _d3=0, double _v=0.0);  
 	TDenseMatrix3D(const std::vector<TDenseMatrix> & _matrixArray); 
 	TDenseMatrix3D(const TDenseMatrix3D & right); 
 	// Destruction
@@ -55,7 +55,7 @@ public:
 	double sum() const; 
 
 	// others
-	TDenseMatrix3D & Clear(); 
-	TDenseMatrix3D & Resize(int, int, int); 
+	void Clear(); 
+	void Resize(int, int, int); 
 }; 
 #endif
