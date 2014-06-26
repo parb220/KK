@@ -1,12 +1,13 @@
 #include <iostream>
 #include "TDenseMatrix3D.hpp"
 #include "dw_dense_matrix.hpp"
+#include "TDenseMatrix4D.hpp"
 
 using namespace std; 
 
 int main(int argc, char **argv)
 {
-	TDenseMatrix3D matrix3d; 
+	/*TDenseMatrix3D matrix3d; 
 	TDenseMatrix matrix2d; 
 	TDenseVector vector, result;
 	matrix3d.Resize(3,4,5); 
@@ -15,7 +16,7 @@ int main(int argc, char **argv)
 		matrix3d.Set(matrix2d.RandomUniform(4,5),i);
 		cout << matrix3d(i) << endl; 
 	}
-	/*cout << "submatrix " << endl; 
+	cout << "submatrix " << endl; 
 	cout << matrix3d(TIndex(0,2),TIndex(0,1),1) << endl; 
 	cout << matrix3d(0,TIndex(0,2),TIndex(0,3)) << endl; 
 	cout << matrix3d(TIndex(0,1),2,TIndex(0,3)) << endl; 
@@ -51,7 +52,7 @@ int main(int argc, char **argv)
 	cout << matrix3d(1,TIndex(0,2,2),4); 
 
 	cout << matrix3d(0,1,2) << endl; 
-	cout << matrix3d(0,1) << endl; */
+	cout << matrix3d(0,1) << endl;
 
 	cout << "Sum" << endl; 
 	cout << matrix3d.sum(0) << endl; 
@@ -62,6 +63,26 @@ int main(int argc, char **argv)
 	cout << matrix3d.sum(1,2) << endl; 
 	cout << matrix3d.sum() << endl; 
 	matrix3d.Clear(); 
-	cout << matrix3d.Size() << endl; 
+	cout << matrix3d.Size() << endl; */
+
+
+	TDenseMatrix4D matrix4d(2,3,4,5); 
+	TDenseMatrix matrix2d; 
+	for (int i=0; i<matrix4d.Size(0); i++)
+		for (int j=0; j<matrix4d.Size(1); j++)
+			matrix4d.Set(matrix2d.RandomUniform(matrix4d.Size(2),matrix4d.Size(3)), i,j); 
+
+	matrix4d.Set(matrix2d.RandomNormal(matrix4d.Size(0),matrix4d.Size(3)), TIndex(0,matrix4d.Size(0)-1),2,3,TIndex(0,matrix4d.Size(3)-1)); 
+
+	for (int k=0; k<matrix4d.Size(1); k++)
+		for (int l=0; l<matrix4d.Size(2); l++)
+			cout << matrix4d(TIndex(0,matrix4d.Size(0)-1),k,l,TIndex(0,matrix4d.Size(3)-1)) << endl;  
+
+	cout << "Sum" << endl; 
+	cout << matrix4d.sum(0,1) << endl; 
+	cout << matrix4d.sum(0,1,2) << endl; 
+	cout << matrix4d.sum() << endl;
+	matrix4d.Clear(); 
+	cout << matrix4d.Size() << endl; 
 }
 

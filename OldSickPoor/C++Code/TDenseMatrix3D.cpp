@@ -23,7 +23,10 @@ TDenseMatrix3D::TDenseMatrix3D(const TDenseMatrix3D & right) :
 vector<TDenseMatrix>(right.size())
 {
 	for (int i=0; i<(int)(this->size()); i++)
+	{
+		this->operator[](i).Resize(right[i].rows, right[i].cols); 
 		this->operator[](i).Insert(0,0,right[i]); 
+	}
 }
 
 // Destruction
@@ -304,7 +307,10 @@ const TDenseMatrix3D & TDenseMatrix3D::operator=(const TDenseMatrix3D &right)
 {
 	this->resize(right.size()); 
 	for (int i=0; i<(int)(this->size()); i++)
+	{
+		this->operator[](i).Resize(right[i].rows, right[i].cols); 
 		this->operator[](i).Insert(0,0,right[i]); 
+	}
 	return *this; 
 }
 
