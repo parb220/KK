@@ -20,6 +20,7 @@ public:
 
 	// RHS Access
 	int Size() const { return (int)this->size(); } 
+	int Size(int) const; 
 	TDenseMatrix3D operator()(int i) const; 
 	TDenseMatrix operator()(int i, int j) const;
 	TDenseVector operator()(int i, int j, int k) const; 

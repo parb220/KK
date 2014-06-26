@@ -15,7 +15,7 @@ int main(int argc, char **argv)
 		matrix3d.Set(matrix2d.RandomUniform(4,5),i);
 		cout << matrix3d(i) << endl; 
 	}
-	cout << "submatrix " << endl; 
+	/*cout << "submatrix " << endl; 
 	cout << matrix3d(TIndex(0,2),TIndex(0,1),1) << endl; 
 	cout << matrix3d(0,TIndex(0,2),TIndex(0,3)) << endl; 
 	cout << matrix3d(TIndex(0,1),2,TIndex(0,3)) << endl; 
@@ -51,11 +51,15 @@ int main(int argc, char **argv)
 	cout << matrix3d(1,TIndex(0,2,2),4); 
 
 	cout << matrix3d(0,1,2) << endl; 
-	cout << matrix3d(0,1) << endl; 
+	cout << matrix3d(0,1) << endl; */
 
 	cout << "Sum" << endl; 
 	cout << matrix3d.sum(0) << endl; 
+	cout << matrix3d.sum(1) << endl; 
+	cout << matrix3d.sum(2) << endl; 
 	cout << matrix3d.sum(0,1) << endl; 
+	cout << matrix3d.sum(0,2) << endl; 
+	cout << matrix3d.sum(1,2) << endl; 
 	cout << matrix3d.sum() << endl; 
 	matrix3d.Clear(); 
 	cout << matrix3d.Size() << endl; 

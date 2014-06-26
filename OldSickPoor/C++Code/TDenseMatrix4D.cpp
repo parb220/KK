@@ -28,6 +28,19 @@ vector<TDenseMatrix3D>(right.Size())
 
 TDenseMatrix4D::~TDenseMatrix4D() {}
 
+int TDenseMatrix4D::Size(int d) const 
+{
+	if (d == 0) 
+		return (int)this->size(); 
+	else if (d == 1 && this->size()) 
+		return this->operator[](0).Size(0); 
+	else if (d == 2 && this->size()) 
+		return this->operator[](0).Size(1); 
+	else if (d == 3 && this->size()) 
+		return this->operator[](0).Size(2); 
+	else 
+		throw dw_exception("TDenseMatrix4D::Size() must be along one of the 4 dimensions"); 
+}
 
 TDenseMatrix3D TDenseMatrix4D::operator()(int i) const {
 	if (i >= (int)this->size())

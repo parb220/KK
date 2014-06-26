@@ -19,6 +19,7 @@ public:
 
 	// Access
 	int Size() const; 
+	int Size(int ) const; 
 	TDenseMatrix operator()(int i) const; // (i,:,:)
 	TDenseVector operator()(int i, int j) const; // (i,j,:)
 	double operator()(int i, int j, int k) const; // (i,j,k)

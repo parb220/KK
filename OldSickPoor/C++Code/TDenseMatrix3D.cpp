@@ -31,6 +31,17 @@ TDenseMatrix3D::~TDenseMatrix3D() {}
 
 // Access
 int TDenseMatrix3D::Size() const { return (int)size(); }
+int TDenseMatrix3D::Size(int d) const 
+{
+	if (d == 0) 
+		return (int)this->size(); 
+	else if (d == 1 && this->size()) 
+		return this->operator[](0).rows; 
+	else if (d == 2 && this->size()) 
+		return this->operator[](0).cols; 
+	else 
+		throw dw_exception("TDenseMatrix3D :: Size() must along one of the 3 dimensions"); 	
+}
 
 // Access used on rhs (i,:,:)
 TDenseMatrix TDenseMatrix3D::operator()(int i) const {
@@ -432,7 +443,7 @@ double TDenseMatrix3D::sum()const
 	double sum_result = 0; 
 	for (int i=0; i<(int)this->size(); i++)
 		for (int j=0; j<this->operator[](i).rows; j++)
-			for (int k=0; k<this->operator[](k).cols; k++)
+			for (int k=0; k<this->operator[](i).cols; k++)
 				sum_result += this->operator()(i,j,k);
 	return sum_result; 
 }
