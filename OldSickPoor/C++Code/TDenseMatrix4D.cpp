@@ -43,28 +43,28 @@ int TDenseMatrix4D::Size(int d) const
 }
 
 TDenseMatrix3D TDenseMatrix4D::operator()(int i) const {
-	if (i >= (int)this->size())
+	if (i< 0 || i >= (int)this->size())
 		throw dw_exception("TDenseMatrix4D::operator() index exceeds limit"); 
-	return TDenseMatrix3D(this->operator[](i));
+	return this->operator[](i);
 }
 
 TDenseMatrix TDenseMatrix4D::operator()(int i, int j) const
 {
-	if (i >= (int)this->size())
+	if (i< 0 || i >= (int)this->size())
                 throw dw_exception("TDenseMatrix4D::operator() indices exceed limits");
-	return TDenseMatrix(this->operator[](i).operator()(j)); 
+	return this->operator[](i).operator()(j); 
 }
 
 TDenseVector TDenseMatrix4D::operator()(int i, int j, int k) const
 {
-	if (i >= (int)this->size())
+	if (i<0 || i >= (int)this->size())
                 throw dw_exception("TDenseMatrix4D::operator() indices exceed limits");
-        return TDenseVector(this->operator[](i).operator()(j,k));
+        return this->operator[](i).operator()(j,k);
 }
 
 double TDenseMatrix4D::operator()(int i1, int i2, int i3, int i4) const 
 {
-	if (i1 >= (int)this->size())
+	if (i1<0 || i1 >= (int)this->size())
 		throw dw_exception("TDenseMatrix4D::operator() indices exceed limits");
         return this->operator[](i1).operator()(i2,i3,i4);
 }
@@ -73,7 +73,7 @@ double TDenseMatrix4D::operator()(int i1, int i2, int i3, int i4) const
 TDenseMatrix4D TDenseMatrix4D:: operator()(const TIndex &n1, const TIndex &n2, const TIndex &n3, const TIndex &n4) const
 {
 	for (int i1=0; i1<n1.size; i1++) {
-		if (n1[i1] >= (int)this->size())
+		if (n1[i1] <0 || n1[i1] >= (int)this->size())
 			throw dw_exception("TDenseMatrix4D::operator() : indices exceed limits"); 
 	}
 	TDenseMatrix4D matrix(n1.size, n2.size, n3.size, n4.size); 
@@ -92,7 +92,7 @@ TDenseMatrix4D TDenseMatrix4D:: operator()(const TIndex &n1, const TIndex &n2, c
 TDenseMatrix3D TDenseMatrix4D:: operator()(const TIndex &n1, const TIndex &n2, const TIndex &n3, int n4) const
 {
 	for (int i1=0; i1<n1.size; i1++) {
-                if (n1[i1] >= (int)this->size())
+                if (n1[i1]< 0 || n1[i1] >= (int)this->size())
                         throw dw_exception("TDenseMatrix4D::operator() : indices exceed limits");
         }
 	TDenseMatrix3D matrix(n1.size, n2.size, n3.size); 
@@ -111,7 +111,7 @@ TDenseMatrix3D TDenseMatrix4D:: operator()(const TIndex &n1, const TIndex &n2, c
 TDenseMatrix3D TDenseMatrix4D::operator()(const TIndex &n1, const TIndex &n2, int n3, const TIndex &n4) const
 {
 	for (int i1=0; i1<n1.size; i1++) {
-                if (n1[i1] >= (int)this->size())
+                if (n1[i1] <0 || n1[i1] >= (int)this->size())
                         throw dw_exception("TDenseMatrix4D::operator() : indices exceed limits");
         }
         TDenseMatrix3D matrix(n1.size, n2.size, n4.size);
@@ -130,7 +130,7 @@ TDenseMatrix3D TDenseMatrix4D::operator()(const TIndex &n1, const TIndex &n2, in
 TDenseMatrix3D TDenseMatrix4D::operator()(const TIndex &n1, int n2, const TIndex &n3, const TIndex &n4) const 
 {
 	for (int i1=0; i1<n1.size; i1++) {
-                if (n1[i1] >= (int)this->size())
+                if (n1[i1] <0 || n1[i1] >= (int)this->size())
                         throw dw_exception("TDenseMatrix4D::operator() : indices exceed limits");
         }
         TDenseMatrix3D matrix(n1.size, n3.size, n4.size);
@@ -148,7 +148,7 @@ TDenseMatrix3D TDenseMatrix4D::operator()(const TIndex &n1, int n2, const TIndex
 // Access on rhs (i1,i2L:iLR,i3L:i3R,i4L:i4R)
 TDenseMatrix3D TDenseMatrix4D::operator()(int n1, TIndex &n2, const TIndex &n3, const TIndex &n4) const
 {
-	if (n1 >= (int)(this->size()) )
+	if (n1 <0 || n1 >= (int)(this->size()) )
 		throw dw_exception("TDenseMatrix4D::operator() : indices exceed limits");
 	return this->operator[](n1).operator()(n2,n3,n4); 
 }
@@ -157,7 +157,7 @@ TDenseMatrix3D TDenseMatrix4D::operator()(int n1, TIndex &n2, const TIndex &n3, 
 TDenseMatrix TDenseMatrix4D::operator()(const TIndex &n1, const TIndex &n2, int n3, int n4) const
 {
 	for (int i1=0; i1<n1.size; i1++) {
-		if (n1[i1] >= (int)this->size())
+		if (n1[i1] <0 || n1[i1] >= (int)this->size())
 			throw dw_exception("TDenseMatrix4D::operator() : indices exceed limits");
 	}
 	TDenseMatrix matrix(n1.size, n2.size); 
@@ -176,7 +176,7 @@ TDenseMatrix TDenseMatrix4D::operator()(const TIndex &n1, const TIndex &n2, int 
 TDenseMatrix TDenseMatrix4D::operator()(const TIndex &n1, int n2, const TIndex &n3, int n4) const
 {
 	for (int i1=0; i1<n1.size; i1++) {
-		if (n1[i1] >= (int)this->size())
+		if (n1[i1] < 0 || n1[i1] >= (int)this->size())
 			throw dw_exception("TDenseMatrix4D::operator() : indices exceed limits");
 	}
 	TDenseMatrix matrix(n1.size, n3.size); 
@@ -196,7 +196,7 @@ TDenseMatrix TDenseMatrix4D::operator()(const TIndex &n1, int n2, const TIndex &
 TDenseMatrix TDenseMatrix4D::operator()(const TIndex &n1, int n2, int n3, const TIndex &n4) const
 {
 	for (int i1=0; i1<n1.size; i1++) {
-		if (n1[i1] >= (int)this->size())
+		if (n1[i1] < 0 || n1[i1] >= (int)this->size())
 			throw dw_exception("TDenseMatrix4D::operator() : indices exceed limits");
 	}
 	TDenseMatrix matrix(n1.size, n4.size); 
@@ -214,7 +214,7 @@ TDenseMatrix TDenseMatrix4D::operator()(const TIndex &n1, int n2, int n3, const 
 // Access on rhs (n1,n2L:n2R,n3L:n3R,n4)
 TDenseMatrix TDenseMatrix4D::operator()(int n1, const TIndex &n2, const TIndex &n3, int n4) const 
 {
-	if (n1 >= this->size())
+	if (n1 < 0 || n1 >= this->size())
 		throw dw_exception("TDenseMatrix4D::operator() : indices exceed limits");
 	return this->operator[](n1).operator()(n2,n3,n4); 
 }
@@ -222,7 +222,7 @@ TDenseMatrix TDenseMatrix4D::operator()(int n1, const TIndex &n2, const TIndex &
 // Access on rhs (n1,n2L:n2R,n3,n4L:n4R)
 TDenseMatrix TDenseMatrix4D::operator()(int n1, const TIndex &n2, int n3, const TIndex &n4) const 
 {
-	if (n1 >= this->size())
+	if (n1 < 0 || n1 >= this->size())
 		throw dw_exception("TDenseMatrix4D::operator() : indices exceed limits");
 	return this->operator[](n1).operator()(n2,n3,n4); 
 }
@@ -230,7 +230,7 @@ TDenseMatrix TDenseMatrix4D::operator()(int n1, const TIndex &n2, int n3, const 
 // Access on rhs (n1,n2,n3L:n3R,n4L:n4R)
 TDenseMatrix TDenseMatrix4D::operator()(int n1, int n2, const TIndex &n3, const TIndex &n4) const 
 {
-	if (n1 >= this->size())
+	if (n1 < 0 || n1 >= this->size())
 		throw dw_exception("TDenseMatrix4D::operator() : indices exceed limits");
 	return this->operator[](n1).operator()(n2,n3,n4); 
 }
@@ -239,7 +239,7 @@ TDenseMatrix TDenseMatrix4D::operator()(int n1, int n2, const TIndex &n3, const 
 TDenseVector TDenseMatrix4D::operator()(const TIndex &n1,int n2, int n3, int n4) const
 {
 	for (int i1=0; i1<n1.size; i1++) {
-                if (n1[i1] >= (int)this->size() )
+                if (n1[i1] <0 || n1[i1] >= (int)this->size() )
                         throw dw_exception("TDenseMatrix4D::operator() : indices exceed limits");
         }
 	TDenseVector vector(n1.size); 
@@ -258,7 +258,7 @@ TDenseVector TDenseMatrix4D::operator()(const TIndex &n1,int n2, int n3, int n4)
 //Access on rhs (n1,n2L:n2R, n3, n4)
 TDenseVector TDenseMatrix4D::operator()(int n1, const TIndex &n2, int n3, int n4) const
 {
-	if (n1 >= this->size())
+	if (n1 < 0 || n1 >= this->size())
                 throw dw_exception("TDenseMatrix4D::operator() : indices exceed limits");
         return this->operator[](n1).operator()(n2,n3,n4);
 }
@@ -266,7 +266,7 @@ TDenseVector TDenseMatrix4D::operator()(int n1, const TIndex &n2, int n3, int n4
 //Access on rhs (n1,n2, n3L:n3R, n4)
 TDenseVector TDenseMatrix4D::operator()(int n1, int n2, const TIndex &n3, int n4) const
 {
-	if (n1 >= this->size())
+	if (n1 <0 || n1 >= this->size())
                 throw dw_exception("TDenseMatrix4D::operator() : indices exceed limits");
         return this->operator[](n1).operator()(n2,n3,n4);
 }
@@ -274,7 +274,7 @@ TDenseVector TDenseMatrix4D::operator()(int n1, int n2, const TIndex &n3, int n4
 //Access on rhs (n1,n2, n3, n4L:n4R)
 TDenseVector TDenseMatrix4D::operator()(int n1, int n2, int n3, const TIndex &n4) const
 {
-	if (n1 >= this->size())
+	if (n1 <0 || n1 >= this->size())
                 throw dw_exception("TDenseMatrix4D::operator() : indices exceed limits");
         return this->operator[](n1).operator()(n2,n3,n4);
 }
@@ -282,7 +282,7 @@ TDenseVector TDenseMatrix4D::operator()(int n1, int n2, int n3, const TIndex &n4
 // Set values (n1,n2,n3,n4)=v
 void TDenseMatrix4D::Set(double v,int n1, int n2, int n3, int n4)
 {
-	if (n1 >= this->size())
+	if (n1 <0 || n1 >= this->size())
 		throw dw_exception("TDenseMatrix4D::Set() : indices exceed limits"); 
 	this->operator[](n1).Set(v,n2,n3,n4); 
 }
@@ -290,7 +290,7 @@ void TDenseMatrix4D::Set(double v,int n1, int n2, int n3, int n4)
 // Set value (n1,n2,n3,:) = v
 void TDenseMatrix4D::Set(const TDenseVector &v, int n1, int n2, int n3)
 {
-	if (n1 >= this->size())
+	if (n1 <0 || n1 >= this->size())
 		throw dw_exception("TDenseMatrix4D::Set() : indices exceed limits");
 	this->operator[](n1).Set(v,n2,n3);
 }
@@ -298,7 +298,7 @@ void TDenseMatrix4D::Set(const TDenseVector &v, int n1, int n2, int n3)
 // Set value (n1,n2,:,:) = v
 void TDenseMatrix4D::Set(const TDenseMatrix &v, int n1, int n2)
 {
-	if (n1 >= this->size())
+	if (n1 <0 || n1 >= this->size())
                 throw dw_exception("TDenseMatrix4D::Set() : indices exceed limits");
         this->operator[](n1).Set(v,n2);
 }
@@ -306,7 +306,7 @@ void TDenseMatrix4D::Set(const TDenseMatrix &v, int n1, int n2)
 // Set value (n1,:,:,:) = v
 void TDenseMatrix4D::Set(const TDenseMatrix3D &v, int n1)
 {
-	if (n1 >= this->size())
+	if (n1 <0 || n1 >= this->size())
                 throw dw_exception("TDenseMatrix4D::Set() : index exceeds limit");
 	this->operator[](n1) = v;  
 }
@@ -317,7 +317,7 @@ void TDenseMatrix4D::Set(const TDenseMatrix4D &v, const TIndex &n1, const TIndex
 	if (v.Size() != n1.size)
 		throw dw_exception("TDenseMatrix4D::Set() : dimensions of value and indices do not match"); 
 	for (int i1=0; i1<n1.size; i1++) {
-                if (n1[i1] >= (int)this->size())
+                if (n1[i1]<0 || n1[i1] >= (int)this->size())
                         throw dw_exception("TDenseMatrix4D::Set() : indices exceed limits");
         }
 	try {
@@ -335,7 +335,7 @@ void TDenseMatrix4D::Set(const TDenseMatrix3D &v, const TIndex &n1, const TIndex
 	if (v.Size() != n1.size)
 		throw dw_exception("TDenseMatrix4D::Set() : dimensions of value and indices do not match");
 	for (int i1=0; i1<n1.size; i1++) {
-		if (n1[i1] >= (int)this->size())
+		if (n1[i1] <0 || n1[i1] >= (int)this->size())
 			throw dw_exception("TDenseMatrix4D::Set() : indices exceed limits");
 	}
 	try {
@@ -353,7 +353,7 @@ void TDenseMatrix4D::Set(const TDenseMatrix3D &v, const TIndex &n1, const TIndex
 	if (v.Size() != n1.size)
                 throw dw_exception("TDenseMatrix4D::Set() : dimensions of value and indices do not match");
         for (int i1=0; i1<n1.size; i1++) {
-                if (n1[i1] >= (int)this->size())
+                if (n1[i1] <0 || n1[i1] >= (int)this->size())
                         throw dw_exception("TDenseMatrix4D::Set() : indices exceed limits");
         }
         try {
@@ -371,7 +371,7 @@ void TDenseMatrix4D::Set(const TDenseMatrix3D &v, const TIndex &n1, int n2, cons
 	if (v.Size() != n1.size)
                 throw dw_exception("TDenseMatrix4D::Set() : dimensions of value and indices do not match");
         for (int i1=0; i1<n1.size; i1++) {
-                if (n1[i1] >= (int)this->size())
+                if (n1[i1] < 0 || n1[i1] >= (int)this->size())
                         throw dw_exception("TDenseMatrix4D::Set() : indices exceed limits");
         }
         try {
@@ -386,7 +386,7 @@ void TDenseMatrix4D::Set(const TDenseMatrix3D &v, const TIndex &n1, int n2, cons
 // Set value (n1, n2L:n2R,n3L:n3R,n4L:n4R) = v
 void TDenseMatrix4D::Set(const TDenseMatrix3D &v, int n1, const TIndex &n2, const TIndex &n3, const TIndex &n4)
 {
-	if (n1 >= (int)this->size())
+	if (n1 <0 || n1 >= (int)this->size())
 		throw dw_exception("TDenseMatrix4D::Set() : indices exceed limits");
 	try {
 		this->operator[](n1).Set(v,n2,n3,n4);
@@ -402,7 +402,7 @@ void TDenseMatrix4D::Set(const TDenseMatrix &v, const TIndex &n1, const TIndex &
 	if (v.rows != n1.size)
 		throw dw_exception("TDenseMatrix4D::Set() : dimensions of value and indices do not match");
 	for (int i1=0; i1<n1.size; i1++) {
-                if (n1[i1] >= (int)this->size())
+                if (n1[i1]<0 || n1[i1] >= (int)this->size())
                         throw dw_exception("TDenseMatrix4D::Set() : indices exceed limits");
         }
 	try {
@@ -420,7 +420,7 @@ void TDenseMatrix4D::Set(const TDenseMatrix &v, const TIndex &n1, int n2, const 
 	if (v.rows != n1.size)
                 throw dw_exception("TDenseMatrix4D::Set() : dimensions of value and indices do not match");
         for (int i1=0; i1<n1.size; i1++) {
-                if (n1[i1] >= (int)this->size())
+                if (n1[i1]<0 || n1[i1] >= (int)this->size())
                         throw dw_exception("TDenseMatrix4D::Set() : indices exceed limits");
 	}
         try {
@@ -438,7 +438,7 @@ void TDenseMatrix4D::Set(const TDenseMatrix &v, const TIndex &n1, int n2, int n3
 	if (v.rows != n1.size)
                 throw dw_exception("TDenseMatrix4D::Set() : dimensions of value and indices do not match");
         for (int i1=0; i1<n1.size; i1++) {
-                if (n1[i1] >= (int)this->size())
+                if (n1[i1]<0 || n1[i1] >= (int)this->size())
                         throw dw_exception("TDenseMatrix4D::Set() : indices exceed limits");
         }
         try {
@@ -453,7 +453,7 @@ void TDenseMatrix4D::Set(const TDenseMatrix &v, const TIndex &n1, int n2, int n3
 // Set value (n1,n2L:n2R,n3L:n3R,n4)=v;
 void TDenseMatrix4D::Set(const TDenseMatrix &v, int n1, const TIndex &n2, const TIndex &n3, int n4)
 {
-	if (n1 >= (int)this->size())
+	if (n1 <0 || n1 >= (int)this->size())
 		throw dw_exception("TDenseMatrix4D::Set() : indices exceed limits");
 	try{
 		this->operator[](n1).Set(v,n2,n3,n4); 
@@ -466,7 +466,7 @@ void TDenseMatrix4D::Set(const TDenseMatrix &v, int n1, const TIndex &n2, const 
 // Set value (n1,n2L:n2R,n3,n4L:n4R)=v
 void TDenseMatrix4D::Set(const TDenseMatrix &v, int n1, const TIndex &n2, int n3, const TIndex &n4)
 {
-        if (n1 >= (int)this->size())
+        if (n1<0 || n1 >= (int)this->size())
                 throw dw_exception("TDenseMatrix4D::Set() : indices exceed limits");
         try{
                 this->operator[](n1).Set(v,n2,n3,n4);
@@ -479,7 +479,7 @@ void TDenseMatrix4D::Set(const TDenseMatrix &v, int n1, const TIndex &n2, int n3
 // Set value (n1,n2,n3L:n3R,n4L:n4R)=v
 void TDenseMatrix4D::Set(const TDenseMatrix &v, int n1, int n2, const TIndex &n3,  const TIndex &n4)
 {
-        if (n1 >= (int)this->size())
+        if (n1<0 || n1 >= (int)this->size())
                 throw dw_exception("TDenseMatrix4D::Set() : indices exceed limits");
         try{
                 this->operator[](n1).Set(v,n2,n3,n4);
@@ -495,7 +495,7 @@ void TDenseMatrix4D::Set(const TDenseVector &v, const TIndex &n1, int n2, int n3
 	if (v.dim != n1.size)
 		throw dw_exception("TDenseMatrix4D::Set() : dimensions of value and indices do not match"); 
 	for (int i1=0; i1<n1.size; i1++) {
-                if (n1[i1] >= (int)this->size())
+                if (n1[i1] < 0 || n1[i1] >= (int)this->size())
                         throw dw_exception("TDenseMatrix4D::Set() : indices exceed limits");
         }
         try {
@@ -510,7 +510,7 @@ void TDenseMatrix4D::Set(const TDenseVector &v, const TIndex &n1, int n2, int n3
 // Set value (n1,n2L:n2R,n3,n4) = v
 void TDenseMatrix4D::Set(const TDenseVector &v, int n1, const TIndex &n2, int n3, int n4)
 {
-	if (n1 >= (int)this->size())
+	if (n1<0 || n1 >= (int)this->size())
 		throw dw_exception("TDenseMatrix4D::Set() : indices exceed limits");
         try{
                 this->operator[](n1).Set(v,n2,n3,n4);
@@ -523,7 +523,7 @@ void TDenseMatrix4D::Set(const TDenseVector &v, int n1, const TIndex &n2, int n3
 // Set value (n1,n2, n3L:n3R,n4) = v
 void TDenseMatrix4D::Set(const TDenseVector &v, int n1, int n2, const TIndex &n3, int n4)
 {
-	if (n1 >= (int)this->size())
+	if (n1 <0 || n1 >= (int)this->size())
 		throw dw_exception("TDenseMatrix4D::Set() : indices exceed limits");
         try{
                 this->operator[](n1).Set(v,n2,n3,n4);
@@ -536,7 +536,7 @@ void TDenseMatrix4D::Set(const TDenseVector &v, int n1, int n2, const TIndex &n3
 // Set value (n1,n2,n3,n4L:n4R) = v
 void TDenseMatrix4D::Set(const TDenseVector &v, int n1, int n2, int n3, const TIndex &n4)
 {
-	if (n1 >= (int)this->size())
+	if (n1<0 || n1 >= (int)this->size())
 		throw dw_exception("TDenseMatrix4D::Set() : indices exceed limits");
         try{
                 this->operator[](n1).Set(v,n2,n3,n4);
