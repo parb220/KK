@@ -8,7 +8,7 @@ int main(int argc, char **argv)
 {
 	TDenseVector vector; 
 	vector.RandomNormal(10); 
-	TMultiDimArray array(vector); 
+	TMultiDimArray array(10, vector); 
 	cout << array(0) << endl << array << endl;  
 
 	array.Reshape(6,2); 

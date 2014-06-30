@@ -5,6 +5,10 @@
 class TDenseVector; 
 class TIndex; 
 
+// TMultiDimArray are column major arranged. 
+// Given a TMultiDimArray of n0 by n1 by n2, then the corresponding TDenseVector stores
+// 1st n0 elements, 2nd n0 element, ...., n1*n2-th element
+
 class TMultiDimArray : public TDenseVector 
 {
 private: 

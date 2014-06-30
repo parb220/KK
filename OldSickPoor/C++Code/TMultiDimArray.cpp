@@ -268,10 +268,10 @@ void TMultiDimArray::Reshape(int _n)
 		TDenseVector original; 
 		original.CopyContent(*this); 
 		this->Resize(_n); 
-		if (this->dim < _n)
+		if (this->dim >= original.dim)
 			this->Insert(0,original); 
 		else
-			this->Insert(0,original.SubVector(0,_n-1)); 
+			this->Insert(0,original.SubVector(0,this->dim-1)); 
 	}
 }
 
@@ -285,10 +285,10 @@ void TMultiDimArray::Reshape(int _n0, int _n1)
 		TDenseVector original; 
 		original.CopyContent(*this); 
 		this->Resize(_n0*_n1); 
-		if (this->dim < _n0*_n1)
+		if (this->dim >= original.dim)
 			this->Insert(0,original); 
 		else 
-			this->Insert(0,original.SubVector(0,_n0*_n1-1)); 
+			this->Insert(0,original.SubVector(0,this->dim-1)); 
 	}
 }
 
@@ -303,10 +303,10 @@ void TMultiDimArray::Reshape(int _n0, int _n1, int _n2)
 		TDenseVector original; 
 		original.CopyContent(*this); 
 		this->Resize(_n0*_n1*_n2); 
-		if (this->dim < _n0*_n1*_n2)
+		if (this->dim >= original.dim)
 			this->Insert(0,original); 
 		else
-			this->Insert(0,original.SubVector(0,_n0*_n1*_n2-1)); 
+			this->Insert(0,original.SubVector(0,this->dim-1)); 
 	}
 }
 
@@ -322,10 +322,10 @@ void TMultiDimArray::Reshape(int _n0, int _n1, int _n2, int _n3)
 		TDenseVector original; 
 		original.CopyContent(*this); 
 		this->Resize(_n0*_n1*_n2*_n3); 
-		if (this->dim < _n0*_n1*_n2*_n3)
+		if (this->dim >= original.dim)
 			this->Insert(0,original); 
 		else 
-			this->Insert(0,original.SubVector(0,_n0*_n1*_n2*_n3-1)); 
+			this->Insert(0,original.SubVector(0,this->dim-1)); 
 	}
 }
 
@@ -342,10 +342,10 @@ void TMultiDimArray::Reshape(int _n0, int _n1, int _n2, int _n3, int _n4)
 		TDenseVector original; 
 		original.CopyContent(*this); 
 		this->Resize(_n0*_n1*_n2*_n3*_n4); 
-		if (this->dim < _n0*_n1*_n2*_n3*_n4)
+		if (this->dim >= original.dim)
 			this->Insert(0,original); 
 		else
-			this->Insert(0,original.SubVector(0,_n0*_n1*_n2*_n3*_n4-1)); 
+			this->Insert(0,original.SubVector(0,this->dim-1)); 
 	}
 }
 
@@ -363,10 +363,10 @@ void TMultiDimArray::Reshape(int _n0, int _n1, int _n2, int _n3, int _n4, int _n
 		TDenseVector original; 
 		original.CopyContent(*this); 
 		this->Resize(_n0*_n1*_n2*_n3*_n4*_n5); 
-		if (this->dim < _n0*_n1*_n2*_n3*_n4*_n5)
+		if (this->dim >= original.dim)
 			this->Insert(0,original); 
 		else 
-			this->Insert(0,original.SubVector(0,_n0*_n1*_n2*_n3*_n4*_n5-1)); 
+			this->Insert(0,original.SubVector(0,this->dim-1)); 
 	}
 }
 
@@ -385,10 +385,10 @@ void TMultiDimArray::Reshape(int _n0, int _n1, int _n2, int _n3, int _n4, int _n
 		TDenseVector original; 
 		original.CopyContent(*this); 
 		this->Resize(_n0*_n1*_n2*_n3*_n4*_n5*_n6); 
-		if (this->dim < _n0*_n1*_n2*_n3*_n4*_n5*_n6)
+		if (this->dim >= original.dim)
 			this->Insert(0,original); 
 		else
-			this->Insert(0,original.SubVector(0,_n0*_n1*_n2*_n3*_n4*_n5*_n6-1)); 
+			this->Insert(0,original.SubVector(0,this->dim-1)); 
 	}
 }
 
@@ -404,36 +404,6 @@ double TMultiDimArray::operator() (int INDEX) const
 		throw dw_exception("TMultiDimArray::operator() : returning value should not be double but TMultiDimArray"); 
 }
 
-TMultiDimArray TMultiDimArray::operator()(int INDEX, bool scalar_flag) const
-{
-	if (INDEX<0 || INDEX>=size_along_dim[0])
-		throw dw_exception("TMultiDimArray::operator() : index exceeds size");
-	if (scalar_flag = true)
-		throw dw_exception("TMultiDimArray::operator() : flag incorrect"); 
-	TMultiDimArray result((int)this->dim/size_along_dim[0],0.0); 
-	int stride = 1; 
-	for (int j=1; j<Dim(); j++)
-		stride *= size_along_dim[j]; 
-	result.Insert(0, this->SubVector(TIndex(INDEX,stride,this->dim-1))); 
-	return result; 
-}
-
-TMultiDimArray TMultiDimArray::operator()(const TIndex &INDEX) const
-{
-	for (int i=0; i<INDEX.size; i++)
-	{
-		if (INDEX[i]<0 || INDEX[i]>=size_along_dim[0])
-			throw dw_exception("TMultiDimArray::operator() : index exceeds size"); 
-	}
-	TMultiDimArray result((int)this->dim/size_along_dim[0]*INDEX.size,0.0);
-	int stride = 1; 
-	for (int j=1; j<Dim(); j++)
-		stride *= size_along_dim[j]; 
-	for (int i=0; i<INDEX.size; i++)
-		result.Insert(i*stride,this->SubVector(TIndex(INDEX[i],stride,this->dim-1))); 
-	return result;
-}
-
 void TMultiDimArray::Set(double v, int INDEX)
 {
 	if (INDEX<0 || INDEX>=size_along_dim[0])
@@ -444,16 +414,40 @@ void TMultiDimArray::Set(double v, int INDEX)
 		throw dw_exception("TMultiDimArray::Set() : input should not be double but TMultiDimArray."); 
 }
 
+TMultiDimArray TMultiDimArray::operator()(int INDEX, bool scalar_flag) const
+{
+	if (INDEX<0 || INDEX>=size_along_dim[0])
+		throw dw_exception("TMultiDimArray::operator() : index exceeds size");
+	if (scalar_flag == true)
+		throw dw_exception("TMultiDimArray::operator() : flag incorrect"); 
+	int stride = size_along_dim[0]; 
+	TMultiDimArray result(this->dim/stride,0.0); 
+	result.Insert(0, this->SubVector(TIndex(INDEX,stride,this->dim-1))); 
+	return result; 
+}
+
 void TMultiDimArray::Set(const TMultiDimArray &v, int INDEX)
 {
 	if (INDEX<0 || INDEX>=size_along_dim[0])
                 throw dw_exception("TMultiDimArray::Set() : index exceeds size");
-	int stride = 1;
-        for (int j=1; j<Dim(); j++)
-                stride *= size_along_dim[j];
-	if(v.dim != stride)
+	int stride = size_along_dim[0]; 
+	if(v.dim != this->dim/stride)
 		throw dw_exception("TMultiDimArray::Set() : value dimension and sub-matrix dimenstion do not match");
-	this->Insert(TIndex(INDEX,stride,this->dim-1),v);
+	this->Insert(TIndex(INDEX, stride, this->dim-1),v);
+}
+
+TMultiDimArray TMultiDimArray::operator()(const TIndex &INDEX) const
+{
+	for (int i=0; i<INDEX.size; i++)
+	{
+		if (INDEX[i]<0 || INDEX[i]>=size_along_dim[0])
+			throw dw_exception("TMultiDimArray::operator() : index exceeds size"); 
+	}
+	int stride = size_along_dim[0];
+	TMultiDimArray result(INDEX.size, this->dim/stride,0.0);
+	for (int i=0; i<INDEX.size; i++)
+		result.Insert(TIndex(i,INDEX.size,result.dim-1),this->SubVector(TIndex(INDEX[i],stride,this->dim-1))); 
+	return result;
 }
 
 void TMultiDimArray::Set(const TMultiDimArray &v, const TIndex &INDEX)
@@ -463,12 +457,10 @@ void TMultiDimArray::Set(const TMultiDimArray &v, const TIndex &INDEX)
                 if (INDEX[i]<0 || INDEX[i]>=size_along_dim[0])
                         throw dw_exception("TMultiDimArray::Set() : index exceeds size");
         }
-	int stride = 1;
-        for (int j=1; j<Dim(); j++)
-                stride *= size_along_dim[j];
-	if (v.dim != INDEX.size*stride)
+	int stride = size_along_dim[0]; 
+	if (v.dim != this->dim/stride*INDEX.size)
 		throw dw_exception("TMultiDimArray::Set() : value dimension and sub-matrix dimenstion do not match");
 	for (int i=0; i<INDEX.size; i++)
-		this->Insert(TIndex(INDEX[i],stride,this->dim-1),v.SubVector(TIndex(i,stride,v.dim-1))); 
+		this->Insert(TIndex(INDEX[i],stride,this->dim-1),v.SubVector(TIndex(i,INDEX.size, v.dim-1))); 
 }
 
