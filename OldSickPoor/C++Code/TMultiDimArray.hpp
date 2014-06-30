@@ -4,6 +4,7 @@
 #include <vector>
 class TDenseVector; 
 class TIndex; 
+const bool SCALAR = true; 
 
 // TMultiDimArray are column major arranged. 
 // Given a TMultiDimArray of n0 by n1 by n2, then the corresponding TDenseVector stores
@@ -56,26 +57,38 @@ public:
 	void Reshape(const std::vector<int> & _size_spec);
 
 	// With 1 index
-	double operator()(int, bool) const; 
+	double operator()(int, bool) const; // (i)
 	TMultiDimArray operator() (int) const; // (i,:,...)
 	TMultiDimArray operator() (const TIndex &) const; // (i1:i2,:,...)
 	
-	void Set(double v, int i); 
+	void Set(double v, int i); // (i) = v
 	void Set(const TMultiDimArray &, int); // (i,:,...) = v	
 	void Set(const TMultiDimArray &, const TIndex &); // (i1:i2,:,...) = v
 
 	// With 2 indices
-	double operator()(int, int, bool) const; 
+	double operator()(int, int, bool) const; // (i,j) 
 	TMultiDimArray operator()(int, int) const; // (i,j,:,...)
 	TMultiDimArray operator()(const TIndex &, const TIndex &) const ; // (i1:i2,j1:j2,:,...)
 	TMultiDimArray operator()(const TIndex &, int) const; // (i1:,i2, j,:,...)
 	TMultiDimArray operator()(int, const TIndex &) const; // (i, j1:j2,:,...)
 
-	void Set(double v, int, int); 
-	void Set(const TMultiDimArray &v, int I, int J); 
-	void Set(const TMultiDimArray &v, const TIndex &, const TIndex &); 
-	void Set(const TMultiDimArray &v, const TIndex &, int); 
-	void Set(const TMultiDimArray &v, int, const TIndex &); 
+	void Set(double v, int, int); // (i) = v
+	void Set(const TMultiDimArray &v, int I, int J); // (i,j,:,...) = v
+	void Set(const TMultiDimArray &v, const TIndex &, const TIndex &); // (i1:i2,j1:j2,:,...) = v
+	void Set(const TMultiDimArray &v, const TIndex &, int); // (i1:i2,j,:,...) = v
+	void Set(const TMultiDimArray &v, int, const TIndex &); // (i,j1:j2,:,...) = v
+
+	// With 3 indices
+	double operator()(int, int, int, bool) const; // (i,j,k)
+	TMultiDimArray operator()(int, int, int) const; // (i,j,k,:,...)
+	TMultiDimArray operator()(const TIndex &, int, int) const; // (i1:i2,j,k,:,...)
+	TMultiDimArray operator()(int, const TIndex &, int) const; // (i,j1:j2,k,:,...)
+	TMultiDimArray operator()(int, int, const TIndex &) const; // (i,j,k1:k2,:,...)
+	TMultiDimArray operator()(const TIndex &, const TIndex &, int) const; // (i1:i2,j1:j2,k,:,...)
+	TMultiDimArray operator()(const TIndex &, int, const TIndex &) const; // (i1:i2,j,k1:k2,:,...)
+	TMultiDimArray operator()(int, const TIndex &, const TIndex &) const; // (i,j1:j2,k1:k2,:,...)	
+	TMultiDimArray operator()(const TIndex &, const TIndex &, const TIndex &) const; // (i1:i2,j1:j2,k1:k2,...)
+
 	/*
 	TMultiDimArray operator() (const TIndex &i) const; 
 	void Set(const TMultiDimArray &right, const TIndex &i); 
