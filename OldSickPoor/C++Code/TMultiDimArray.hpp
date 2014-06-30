@@ -53,16 +53,29 @@ public:
 	void Reshape(int _n0, int _n1, int _n2, int _n3, int _n4); 
 	void Reshape(int _n0, int _n1, int _n2, int _n3, int _n4, int _n5); 
 	void Reshape(int _n0, int _n1, int _n2, int _n3, int _n4, int _n5, int _n6); 
+	void Reshape(const std::vector<int> & _size_spec);
 
 	// With 1 index
-	double operator() (int ) const; 
-	TMultiDimArray operator() (int, bool) const; // (i,:,...)
+	double operator()(int, bool) const; 
+	TMultiDimArray operator() (int) const; // (i,:,...)
 	TMultiDimArray operator() (const TIndex &) const; // (i1:i2,:,...)
 	
 	void Set(double v, int i); 
 	void Set(const TMultiDimArray &, int); // (i,:,...) = v	
 	void Set(const TMultiDimArray &, const TIndex &); // (i1:i2,:,...) = v
 
+	// With 2 indices
+	double operator()(int, int, bool) const; 
+	TMultiDimArray operator()(int, int) const; // (i,j,:,...)
+	TMultiDimArray operator()(const TIndex &, const TIndex &) const ; // (i1:i2,j1:j2,:,...)
+	TMultiDimArray operator()(const TIndex &, int) const; // (i1:,i2, j,:,...)
+	TMultiDimArray operator()(int, const TIndex &) const; // (i, j1:j2,:,...)
+
+	void Set(double v, int, int); 
+	void Set(const TMultiDimArray &v, int I, int J); 
+	void Set(const TMultiDimArray &v, const TIndex &, const TIndex &); 
+	void Set(const TMultiDimArray &v, const TIndex &, int); 
+	void Set(const TMultiDimArray &v, int, const TIndex &); 
 	/*
 	TMultiDimArray operator() (const TIndex &i) const; 
 	void Set(const TMultiDimArray &right, const TIndex &i); 
