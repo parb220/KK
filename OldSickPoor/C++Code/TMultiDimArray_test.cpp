@@ -43,6 +43,10 @@ int main(int argc, char **argv)
 	cout << sub_array_4.Dim() << endl; 
 	cout << sub_array_4(0) << endl; 
 	cout << sub_array_4(1) << endl; 
+
+	array.Set(TMultiDimArray(3,vector.RandomNormal(3)), 0, 1, TIndex(0,2)); 
+	TMultiDimArray sub_array_5(array(0,1,TIndex(0,2))); 
+	cout << sub_array_5(0) << endl; 
 }
 
 
