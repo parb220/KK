@@ -38,8 +38,8 @@ int main(int argc, char **argv)
 	cout << sub_array_3(0) << endl; 
 	cout << sub_array_3(1) << endl; 
 
-	array.Set(TMultiDimArray(6,vector.RandomUniform(6)),1,TIndex(0,1)); 
-	TMultiDimArray sub_array_4(array(0, TIndex(0,1), TIndex(0,2,2))); 
+	array.Set(TMultiDimArray(4,vector.RandomUniform(4)),TIndex(0,1),TIndex(0,1),2); 
+	TMultiDimArray sub_array_4(array(TIndex(0,1), TIndex(0,1), 2)); 
 	cout << sub_array_4.Dim() << endl; 
 	cout << sub_array_4(0) << endl; 
 	cout << sub_array_4(1) << endl; 
