@@ -89,6 +89,7 @@ public:
 	TMultiDimArray operator()(int, const TIndex &, const TIndex &) const; // (i,j1:j2,k1:k2,:,...)	
 	TMultiDimArray operator()(const TIndex &, const TIndex &, const TIndex &) const; // (i1:i2,j1:j2,k1:k2,...)
 	
+	void Set(const TMultiDimArray &v, const TIndex &I, int J, const TIndex &K);  // (i1:i2,j,k1:k2)=v
 	void Set(const TMultiDimArray &v, int I, const TIndex &J, const TIndex &K); //(i,j1:j2,k1:k2) = v
 	void Set(const TMultiDimArray &v, const TIndex &, const TIndex &, const TIndex &); // (i1:i2,j1:j2,k1:k2) = v 
 
