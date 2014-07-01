@@ -44,9 +44,19 @@ int main(int argc, char **argv)
 	cout << sub_array_4(0) << endl; 
 	cout << sub_array_4(1) << endl; 
 
-	array.Set(TMultiDimArray(3,vector.RandomNormal(3)), 0, 1, TIndex(0,2)); 
-	TMultiDimArray sub_array_5(array(0,1,TIndex(0,2))); 
-	cout << sub_array_5(0) << endl; 
+	array.Set(TMultiDimArray(2,vector.RandomNormal(2)), 0, TIndex(0,1), 2); 
+	TMultiDimArray sub_array_5(array(0,TIndex(0,1),2)); 
+	cout << sub_array_5 << endl; 
+
+	array.Set(TMultiDimArray(2,vector.RandomNormal(2)), TIndex(0,1), 1, 2);
+	TMultiDimArray sub_array_51(array(TIndex(0,1),1,2));
+	cout << sub_array_51 << endl; 
+	
+	TMultiDimArray sub_array_6(array(0,0,1)); 
+	cout << sub_array_6 << endl; 
+
+	array.Set(23,0,1,2); 
+	cout << array(0,1,2,SCALAR); 
 }
 
 
