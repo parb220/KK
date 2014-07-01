@@ -57,6 +57,11 @@ int main(int argc, char **argv)
 
 	array.Set(23,0,1,2); 
 	cout << array(0,1,2,SCALAR); 
+	array.Reshape(3,2,2,2); 
+	array.Set(TMultiDimArray(12,vector.RandomUniform(12)), TIndex(0,2), TIndex(0,1), TIndex(0,1), TIndex(1)); 
+	TMultiDimArray sub_array_7(array(TIndex(0,2), TIndex(0), TIndex(0), TIndex(0,1))); 	
+	cout << sub_array_7.Dim() << endl; 
+	cout << sub_array_7(0,0,0) << endl; 
 }
 
 

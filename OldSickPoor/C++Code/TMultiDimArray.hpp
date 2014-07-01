@@ -99,6 +99,13 @@ public:
 	void Set(const TMultiDimArray &v, int I, const TIndex &J, const TIndex &K); //(i,j1:j2,k1:k2, :, ...) = v
 	void Set(const TMultiDimArray &v, const TIndex &, const TIndex &, const TIndex &); // (i1:i2,j1:j2,k1:k2, :, ...) = v 
 
+	// With 4 indices
+	TMultiDimArray operator()(const TIndex &, const TIndex &, const TIndex &, const TIndex &) const;  // (i1:i2, j1:j2, k1:k2, l1:l2, :, ...)
+
+	void Set(const TMultiDimArray &, const TIndex &, const TIndex &, const TIndex &, const TIndex &); 
+// (i1:i2, j1:j2, k1:k2, l1:l2, :, ...) = v
+
+
 	/*
 	TMultiDimArray operator() (const TIndex &i) const; 
 	void Set(const TMultiDimArray &right, const TIndex &i); 
