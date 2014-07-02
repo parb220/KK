@@ -14,10 +14,15 @@ class TMultiDimArray : public TDenseVector
 {
 private: 
 	std::vector<int> size_along_dim; 
+	bool out_of_range(const TIndex &, int) const; 
 	TMultiDimArray ExtractSubMatrix(const TIndex &) const ; 
 	TMultiDimArray ExtractSubMatrix(const TIndex &, const TIndex &) const ; 
 	TMultiDimArray ExtractSubMatrix(const TIndex &, const TIndex &, const TIndex &) const; 
 	TMultiDimArray ExtractSubMatrix(const TIndex &, const TIndex &, const TIndex &, const TIndex &) const; 
+	TMultiDimArray ExtractSubMatrix(const TIndex &, const TIndex &, const TIndex &, const TIndex &, const TIndex &) const; 
+	TMultiDimArray ExtractSubMatrix(const TIndex &, const TIndex &, const TIndex &, const TIndex &, const TIndex &, const TIndex &) const;
+	TMultiDimArray ExtractSubMatrix(const TIndex &, const TIndex &, const TIndex &, const TIndex &, const TIndex &, const TIndex &, const TIndex &) const;
+
 public: 
 	// Construction
 	TMultiDimArray(int _n, double _v); // 1-d
@@ -141,15 +146,22 @@ public:
 	void Set(const TMultiDimArray &, int, int, int, int); // (i,j,k,l,:,...) = v
 	void Set(double, int, int, int, int); // (i,j,k,l) = v
 	
-	/*
-	TMultiDimArray operator() (const TIndex &i) const; 
-	void Set(const TMultiDimArray &right, const TIndex &i); 
+	// 5 indices
+	TMultiDimArray operator()(const TIndex &, const TIndex &, const TIndex &, const TIndex &, const TIndex &) const;
+	
+	void Set(const TMultiDimArray &, const TIndex &, const TIndex &, const TIndex &, const TIndex &, const TIndex &);  
+	
+	// 6 indices
+	TMultiDimArray operator()(const TIndex &, const TIndex &, const TIndex &, const TIndex &, const TIndex &, const TIndex &) const;	
+	
+	void Set(const TMultiDimArray &, const TIndex &, const TIndex &, const TIndex &, const TIndex &, const TIndex &, const TIndex &);
 
-	// LHS Access 
-	void Set(double v, int i); 
-	void Set(const TDenseMatrix1D &, const TIndex &i); 
+	// 7 indices
+	TMultiDimArray operator()(const TIndex &, const TIndex &, const TIndex &, const TIndex &, const TIndex &, const TIndex &, const TIndex &) const;
 
-	// Operator
+        void Set(const TMultiDimArray &, const TIndex &, const TIndex &, const TIndex &, const TIndex &, const TIndex &, const TIndex &, const TIndex &);	
+
+	/*	// Operator
 	const TDenseMatrix1D & operator=(const TDenseMatrix1D &right); 
 	TDenseMatrix1D operator+(double) const; 
 	TDenseMatrix1D operator+(const TDenseMatrix1D &right) const; 

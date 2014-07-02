@@ -65,7 +65,10 @@ int main(int argc, char **argv)
 
 	array.Set(15, 2,0,1,0); 
 	cout << array(2,0,1,0) << endl; 
-	
+
+	array.Reshape(2,2,3,2,2); 
+	TMultiDimArray sub_array_8(array(TIndex(0), TIndex(1), TIndex(2), TIndex(0,1), TIndex(0))); 
+	cout << sub_array_8.Dim() << endl; 
 }
 
 

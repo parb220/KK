@@ -410,12 +410,21 @@ void TMultiDimArray::Reshape(const std::vector<int> & _size_spec)
 	}
 }
 
+// Check if index is within the legal range
+bool TMultiDimArray::out_of_range(const TIndex &INDEX, int size_limit) const
+{
+	for (int i=0; i<INDEX.size; i++)
+		if (INDEX[i]<0 || INDEX[i] >= size_limit)
+			return true;  
+	return false; 
+}
+
 // Access with 1 index 
 double TMultiDimArray::operator() (int INDEX, bool scalar_flag) const
 {
 	if(!scalar_flag)
 		throw dw_exception("TMultiDimArray::operator() : flag incorrect"); 
-	if (INDEX<0 || INDEX>=size_along_dim[0])
+	if(out_of_range(TIndex(INDEX), size_along_dim[0]) )
 		throw dw_exception("TMultiDimArray::operator(): index exceeds size"); 
 	else if ( Dim()==1 )
 		return TDenseVector::operator()(INDEX); 
@@ -425,7 +434,7 @@ double TMultiDimArray::operator() (int INDEX, bool scalar_flag) const
 
 void TMultiDimArray::Set(double v, int INDEX)
 {
-	if (INDEX<0 || INDEX>=size_along_dim[0])
+	if (out_of_range(TIndex(INDEX), size_along_dim[0]))
 		throw dw_exception("TMultiDimArray::Set() : index exceeds size"); 
 	else if ( Dim() == 1)
 		TDenseVector::SetElement(v,INDEX); 
@@ -435,11 +444,10 @@ void TMultiDimArray::Set(double v, int INDEX)
 
 TMultiDimArray TMultiDimArray::ExtractSubMatrix(const TIndex &INDEX) const
 {
-	for (int i=0; i<INDEX.size; i++)
-	{
-		if (INDEX[i]<0 || INDEX[i]>=size_along_dim[0])
-			throw dw_exception("TMultiDimArray::operator() : index exceeds size"); 
-	}
+	if (Dim() < 1)
+		throw dw_exception("TMultiDimArray::operator() : incorrect number of index");
+	if (out_of_range(INDEX, size_along_dim[0]))
+		throw dw_exception("TMultiDimArray::operator() : index exceeds size"); 
 	int stride = size_along_dim[0];
 	TMultiDimArray result(INDEX.size * this->dim/stride,0.0);
 	for (int i=0; i<INDEX.size; i++)
@@ -449,11 +457,8 @@ TMultiDimArray TMultiDimArray::ExtractSubMatrix(const TIndex &INDEX) const
 
 void TMultiDimArray::Set(const TMultiDimArray &v, const TIndex &INDEX)
 {
-	for (int i=0; i<INDEX.size; i++)
-        {
-                if (INDEX[i]<0 || INDEX[i]>=size_along_dim[0])
-                        throw dw_exception("TMultiDimArray::Set() : index exceeds size");
-        }
+	if (out_of_range(INDEX, size_along_dim[0]))
+        	throw dw_exception("TMultiDimArray::Set() : index exceeds size");
 	int stride = size_along_dim[0]; 
 	if (v.dim != this->dim/stride*INDEX.size)
 		throw dw_exception("TMultiDimArray::Set() : value dimension and sub-matrix dimenstion do not match");
@@ -490,7 +495,7 @@ double TMultiDimArray::operator()(int I, int J, bool scalar_flag) const
 		throw dw_exception("TMultiDimArray::operator() : flag incorrect");
 	if (Dim() != 2)
 		throw dw_exception("TMultiDimArray::operator() : incorrect number of indices"); 
-	if (I<0 || I>=size_along_dim[0] || J<0 || J>=size_along_dim[1])
+	if (out_of_range(TIndex(I),size_along_dim[0]) || out_of_range(TIndex(J),size_along_dim[1]))
 		throw dw_exception("TMultiDimArray::operator() : indices exceed sizes"); 
 	return TDenseVector::operator()(I+J*size_along_dim[0]); 	
 }
@@ -499,7 +504,7 @@ void TMultiDimArray::Set(double v, int I, int J)
 {
 	if (Dim() != 2)
                 throw dw_exception("TMultiDimArray::Set() : incorrect number of indices");
-	if (I<0 || I>=size_along_dim[0] || J<0 || J>=size_along_dim[1])
+	if (out_of_range(TIndex(I),size_along_dim[0]), out_of_range(TIndex(J),size_along_dim[1]))
                 throw dw_exception("TMultiDimArray::Set() : indices exceed sizes");
 	TDenseVector::SetElement(v,I+J*size_along_dim[0]); 
 }
@@ -508,14 +513,8 @@ TMultiDimArray TMultiDimArray::ExtractSubMatrix(const TIndex &I, const TIndex &J
 {
 	if (Dim() < 2)
                 throw dw_exception("TMultiDimArray::operator() : incorrect number of indices");
-	for(int i=0; i<I.size; i++) {
-		if (I[i]<0 || I[i]>=size_along_dim[0])
-			throw dw_exception("TMultiDimArray::operator() : indices exceed sizes");
-	}
-	for (int j=0; j<J.size; j++) {
-		if (J[j]<0 || J[j]>=size_along_dim[1])
-			throw dw_exception("TMultiDimArray::operator() : indices exeed sizes"); 
-	}
+	if (out_of_range(I,size_along_dim[0]) || out_of_range(J,size_along_dim[1]))
+		throw dw_exception("TMultiDimArray::operator() : indices exceed sizes"); 
 	int stride = size_along_dim[0]*size_along_dim[1]; 
 	TMultiDimArray result(this->dim/stride*I.size*J.size,0.0); 
 	for (int j=0; j<I.size; j++) {
@@ -532,14 +531,8 @@ void TMultiDimArray::Set(const TMultiDimArray &v, const TIndex &I, const TIndex 
 	int stride = size_along_dim[0]*size_along_dim[1];
 	if (v.dim != this->dim/stride*I.size*J.size)
 		throw dw_exception("TMultiDimArray::Set() : value dimension and sub-matrix dimenstion do not match");
-        for(int i=0; i<I.size; i++) {
-                if (I[i]<0 || I[i]>=size_along_dim[0])
-                        throw dw_exception("TMultiDimArray::Set() : indices exceed sizes");
-        }
-        for (int j=0; j<J.size; j++) {
-                if (J[j]<0 || J[j]>=size_along_dim[1])
-                        throw dw_exception("TMultiDimArray::Set() : indices exeed sizes");	
-	}
+	if (out_of_range(I,size_along_dim[0]) || out_of_range(J,size_along_dim[1]))
+        	throw dw_exception("TMultiDimArray::Set() : indices exceed sizes");
 	for (int j=0; j<J.size; j++) {
 		for (int i=0; i<I.size; i++)
 			this->Insert(TIndex(I[i]+J[j]*size_along_dim[0],stride,this->dim-1),v.SubVector(TIndex(i+j*I.size,I.size*J.size,v.dim-1))); 
@@ -602,18 +595,8 @@ TMultiDimArray TMultiDimArray::ExtractSubMatrix(const TIndex &I, const TIndex &J
 {
 	if (Dim() < 3)
 		throw dw_exception("TMultiDimArray::operator() : incorrect number of indices"); 
-	for (int i=0; i<I.size; i++) {
-		if (I[i]<0 || I[i]>=size_along_dim[0])
-			throw dw_exception("TMultiDimArray::operator() : indices exeed sizes");
-	}
-	for (int j=0; j<J.size; j++) {
-                if (J[j]<0 || J[j]>=size_along_dim[1])
-                        throw dw_exception("TMultiDimArray::operator() : indices exeed sizes");
-        }
-	for (int k=0; k<K.size; k++) {
-		if (K[k]<0 || K[k]>=size_along_dim[2])
-			throw dw_exception("TMultiDimArray::operator() : indices exeed sizes");
-	}
+	if (out_of_range(I,size_along_dim[0]) || out_of_range(J,size_along_dim[1]) || out_of_range(K,size_along_dim[2]))
+		throw dw_exception("TMultiDimArray::operator() : indices exceed sizes");
 	int stride = size_along_dim[0] * size_along_dim[1] * size_along_dim[2]; 
 	TMultiDimArray result(this->dim/stride*I.size*J.size*K.size,0.0); 
 	for (int k=0; k<K.size; k++)
@@ -630,18 +613,8 @@ void TMultiDimArray::Set(const TMultiDimArray &v, const TIndex &I, const TIndex 
 	int stride = size_along_dim[0] * size_along_dim[1] * size_along_dim[2]; 
 	if(v.dim != this->dim/stride*I.size*J.size*K.size)
 		throw dw_exception("TMultiDimArray::Set() : value dimension and sub-matrix dimenstion do not match");
-	for (int i=0; i<I.size; i++) {
-                if (I[i]<0 || I[i]>=size_along_dim[0])
-                        throw dw_exception("TMultiDimArray::Set() : indices exeed sizes");
-        }
-        for (int j=0; j<J.size; j++) {
-                if (J[j]<0 || J[j]>=size_along_dim[1])
-                        throw dw_exception("TMultiDimArray::Set() : indices exeed sizes");
-        }
-        for (int k=0; k<K.size; k++) {
-                if (K[k]<0 || K[k]>=size_along_dim[2])
-                        throw dw_exception("TMultiDimArray::Set() : indices exeed sizes");
-        }
+	if (out_of_range(I,size_along_dim[0]) || out_of_range(J,size_along_dim[1]) || out_of_range(K,size_along_dim[2]))
+                throw dw_exception("TMultiDimArray::Set() : indices exceed sizes");
 	for (int k=0; k<K.size; k++)
 		for (int j=0; j<J.size; j++)
 			for (int i=0; i<I.size; i++)
@@ -766,7 +739,7 @@ double TMultiDimArray::operator()(int I, int J, int K, bool scalar_flag) const
                 throw dw_exception("TMultiDimArray::operator() : flag incorrect");
         if (Dim() != 3)
                 throw dw_exception("TMultiDimArray::operator() : incorrect number of indices");
-        if (I<0 || I>=size_along_dim[0] || J<0 || J>=size_along_dim[1] || K<0 || K>=size_along_dim[2])
+	if (out_of_range(TIndex(I),size_along_dim[0]) || out_of_range(TIndex(J),size_along_dim[1]) || out_of_range(TIndex(K),size_along_dim[2]))
                 throw dw_exception("TMultiDimArray::operator() : indices exceed sizes");
         return TDenseVector::operator()(I+J*size_along_dim[0]+K*size_along_dim[0]*size_along_dim[1]);
 }
@@ -775,8 +748,8 @@ void TMultiDimArray::Set(double v, int I, int J, int K)
 {
 	if (Dim() != 3)
 		throw dw_exception("TMultiDimArray::Set() : incorrect number of indices");
-	if (I<0 || I>=size_along_dim[0] || J<0 || J>=size_along_dim[1] || K<0 || K>=size_along_dim[2])
-                throw dw_exception("TMultiDimArray::Set() : indices exeed sizes");
+	if (out_of_range(TIndex(I),size_along_dim[0]) || out_of_range(TIndex(J),size_along_dim[1]) || out_of_range(TIndex(K),size_along_dim[2]))
+                throw dw_exception("TMultiDimArray::Set() : indices exceed sizes");
 	TDenseVector::SetElement(v, I+J*size_along_dim[0]+K*size_along_dim[0]*size_along_dim[1]); 
 }
 
@@ -785,22 +758,8 @@ TMultiDimArray TMultiDimArray::ExtractSubMatrix(const TIndex &n0, const TIndex &
 {
 	if (Dim() < 4)
                 throw dw_exception("TMultiDimArray::Set() : incorrect number of indices");
-	for (int i0=0; i0<n0.size; i0++) {
-		if (n0[i0] < 0 || n0[i0] >= size_along_dim[0]) 
-			throw dw_exception("TMultiDimArray::operator() : indices exeed sizes");
-	}
-	for (int i1=0; i1<n1.size; i1++) {
-		if (n1[i1] < 0 || n1[i1] >= size_along_dim[1]) 
-			throw dw_exception("TMultiDimArray::operator() : indices exeed sizes");
-	}
-	for (int i2=0; i2<n2.size; i2++) {
-		if (n2[i2] < 0 || n2[i2] >= size_along_dim[2]) 
-			throw dw_exception("TMultiDimArray::operator() : indices exeed sizes");
-	}
-	for (int i3=0; i3<n3.size; i3++) {
-		if (n3[i3] < 0 || n3[i3] >= size_along_dim[3]) 
-			throw dw_exception("TMultiDimArray::operator() : indices exeed sizes");
-	}
+	if (out_of_range(n0,size_along_dim[0]) || out_of_range(n1,size_along_dim[1]) || out_of_range(n2,size_along_dim[2]) || out_of_range(n3,size_along_dim[3])) 
+		throw dw_exception("TMultiDimArray::operator() : indices exceed sizes");
 	int stride = size_along_dim[3] * size_along_dim[2] * size_along_dim[1] * size_along_dim[0]; 
 	TMultiDimArray result(this->dim/stride*n0.size*n1.size*n2.size*n3.size,0.0); 
 	for (int i3=0; i3<n3.size; i3++)
@@ -977,8 +936,8 @@ double TMultiDimArray::operator()(int n0, int n1, int n2, int n3, bool scalar_fl
 {
 	if(!scalar_flag)
                 throw dw_exception("TMultiDimArray::operator() : flag incorrect");
-        if (n0<0 || n0>=size_along_dim[0] || n1<0 || n1>=size_along_dim[1] || n2<0 || n2>=size_along_dim[2] || n3<0 || n3>=size_along_dim[3])
-                throw dw_exception("TMultiDimArray::operator(): index exceeds size");
+         if (out_of_range(TIndex(n0),size_along_dim[0]) || out_of_range(TIndex(n1),size_along_dim[1]) || out_of_range(TIndex(n2),size_along_dim[2]) || out_of_range(TIndex(n3),size_along_dim[3])) 
+                throw dw_exception("TMultiDimArray::operator(): indices exceed sizes");
         else if ( Dim()==4 )
                 return TDenseVector::operator()(n0+n1*size_along_dim[0]+n2*size_along_dim[0]*size_along_dim[1]+n3*size_along_dim[0]*size_along_dim[1]*size_along_dim[2]);
         else
@@ -992,22 +951,8 @@ void TMultiDimArray::Set(const TMultiDimArray &v, const TIndex &n0, const TIndex
 	int stride = size_along_dim[3] * size_along_dim[2] * size_along_dim[1] * size_along_dim[0];
 	if (v.dim != this->dim/stride*n0.size*n1.size*n2.size*n3.size) 
 		throw dw_exception("TMultiDimArray::Set() : value dimension and sub-matrix dimenstion do not match");	
-	for (int i0=0; i0<n0.size; i0++) {
-                if (n0[i0] < 0 || n0[i0] >= size_along_dim[0])
-                        throw dw_exception("TMultiDimArray::operator() : indices exeed sizes");
-        }
-        for (int i1=0; i1<n1.size; i1++) {
-                if (n1[i1] < 0 || n1[i1] >= size_along_dim[1])
-                        throw dw_exception("TMultiDimArray::operator() : indices exeed sizes");
-        }
-        for (int i2=0; i2<n2.size; i2++) {
-                if (n2[i2] < 0 || n2[i2] >= size_along_dim[2])
-                        throw dw_exception("TMultiDimArray::operator() : indices exeed sizes");
-        }
-        for (int i3=0; i3<n3.size; i3++) {
-                if (n3[i3] < 0 || n3[i3] >= size_along_dim[3])
-                        throw dw_exception("TMultiDimArray::operator() : indices exeed sizes");
-        }	
+	 if (out_of_range(n0,size_along_dim[0]) || out_of_range(n1,size_along_dim[1]) || out_of_range(n2,size_along_dim[2]) || out_of_range(n3,size_along_dim[3])) 
+                throw dw_exception("TMultiDimArray::operator() : indices exceed sizes");
 	for (int i3=0; i3<n3.size; i3++)
                 for (int i2=0; i2<n2.size; i2++)
                         for (int i1=0; i1<n1.size; i1++)
@@ -1092,7 +1037,7 @@ void TMultiDimArray::Set(const TMultiDimArray &v, int n0, int n1, int n2, int n3
 
 void TMultiDimArray::Set(double v, int n0, int n1, int n2, int n3)
 {
-	 if (n0<0 || n0>=size_along_dim[0] || n1<0 || n1>=size_along_dim[1] || n2<0 || n2>=size_along_dim[2] || n3<0 || n3>=size_along_dim[3])
+	 if (out_of_range(TIndex(n0),size_along_dim[0]) || out_of_range(TIndex(n1),size_along_dim[1]) || out_of_range(TIndex(n2),size_along_dim[2]) || out_of_range(TIndex(n3),size_along_dim[3])) 
                 throw dw_exception("TMultiDimArray::Set() : index exceeds size");
         else if ( Dim() == 4)
                 TDenseVector::SetElement(v,n0+n1*size_along_dim[0]+n2*size_along_dim[0]*size_along_dim[1]+n3*size_along_dim[0]*size_along_dim[1]*size_along_dim[2]);
@@ -1100,3 +1045,164 @@ void TMultiDimArray::Set(double v, int n0, int n1, int n2, int n3)
                 throw dw_exception("TMultiDimArray::Set() : input should not be double but TMultiDimArray.");
 
 }
+
+// Access with 5 indices
+TMultiDimArray TMultiDimArray::ExtractSubMatrix(const TIndex &n0, const TIndex &n1, const TIndex &n2, const TIndex &n3, const TIndex &n4) const
+{
+	if (Dim() < 5)
+		 throw dw_exception("TMultiDimArray::operator() : incorrect number of indices");		
+	if (out_of_range(n0,size_along_dim[0]) || out_of_range(n1,size_along_dim[1]) || out_of_range(n2,size_along_dim[2]) || out_of_range(n3,size_along_dim[3]) || out_of_range(n4,size_along_dim[4]) )
+		throw dw_exception("TMultiDimArray::operator() : indices exceed sizes"); 
+
+	int stride = size_along_dim[0]*size_along_dim[1]*size_along_dim[2]*size_along_dim[3]*size_along_dim[4];
+        TMultiDimArray result(this->dim/stride*n0.size*n1.size*n2.size*n3.size*n4.size,0.0);
+	for (int i4=0; i4<n4.size; i4++)
+		for (int i3=0; i3<n3.size; i3++)
+			for (int i2=0; i2<n2.size; i2++)
+				for (int i1=0; i1<n1.size; i1++)
+					for (int i0=0; i0<n0.size; i0++)
+						result.Insert(TIndex(i0+i1*n0.size+i2*n0.size*n1.size+i3*n0.size*n1.size*n2.size+i4*n0.size*n1.size*n2.size*n3.size,n0.size*n1.size*n2.size*n3.size*n4.size,result.dim-1),this->SubVector(TIndex(n0[i0]+n1[i1]*size_along_dim[0]+n2[i2]*size_along_dim[0]*size_along_dim[1]+n3[i3]*size_along_dim[0]*size_along_dim[1]*size_along_dim[2]+n4[i4]*size_along_dim[0]*size_along_dim[1]*size_along_dim[2]*size_along_dim[3], stride, this->dim-1))); 
+
+        return result;
+}
+
+TMultiDimArray TMultiDimArray::operator()(const TIndex &n0, const TIndex &n1, const TIndex &n2, const TIndex &n3, const TIndex &n4) const
+{
+	TMultiDimArray result(ExtractSubMatrix(n0,n1,n2,n3,n4)); 
+	std::vector<int>result_size(size_along_dim.begin()+5, size_along_dim.end()); 
+	result_size.insert(result_size.begin(),n4.size); 
+	result_size.insert(result_size.begin(),n3.size);
+	result_size.insert(result_size.begin(),n2.size);
+	result_size.insert(result_size.begin(),n1.size);
+	result_size.insert(result_size.begin(),n0.size);
+	result.Reshape(result_size); 
+	return result; 
+}
+
+void TMultiDimArray::Set(const TMultiDimArray &v, const TIndex &n0, const TIndex &n1, const TIndex &n2, const TIndex &n3, const TIndex &n4)
+{
+	if (Dim() < 5)
+                throw dw_exception("TMultiDimArray::Set() : incorrect number of indices");
+        int stride = size_along_dim[4] * size_along_dim[3] * size_along_dim[2] * size_along_dim[1] * size_along_dim[0];
+        if (v.dim != this->dim/stride*n0.size*n1.size*n2.size*n3.size*n4.size)
+                throw dw_exception("TMultiDimArray::Set() : value dimension and sub-matrix dimenstion do not match");
+         if (out_of_range(n0,size_along_dim[0]) || out_of_range(n1,size_along_dim[1]) || out_of_range(n2,size_along_dim[2]) || out_of_range(n3,size_along_dim[3]) || out_of_range(n4, size_along_dim[4]))
+                throw dw_exception("TMultiDimArray::operator() : indices exceed sizes");
+	for (int i4=0; i4<n4.size; i4++)
+        	for (int i3=0; i3<n3.size; i3++)
+                	for (int i2=0; i2<n2.size; i2++)
+                        	for (int i1=0; i1<n1.size; i1++)
+                                	for (int i0=0; i0<n0.size; i0++)
+	                                        this->Insert(TIndex(n0[i0]+n1[i1]*size_along_dim[0]+n2[i2]*size_along_dim[0]*size_along_dim[1]+n3[i3]*size_along_dim[0]*size_along_dim[1]*size_along_dim[2]+n4[i4]*size_along_dim[0]*size_along_dim[1]*size_along_dim[2]*size_along_dim[3], stride, this->dim-1), v.SubVector(TIndex(i0+i1*n0.size+i2*n0.size*n1.size+i3*n0.size*n1.size*n2.size+i4*n0.size*n1.size*n2.size*n3.size, n0.size*n1.size*n2.size*n3.size*n4.size, v.dim-1)));
+}
+
+// Access with 6 indices
+TMultiDimArray TMultiDimArray::ExtractSubMatrix(const TIndex &n0, const TIndex &n1, const TIndex &n2, const TIndex &n3, const TIndex &n4, const TIndex &n5) const
+{
+	if (Dim() < 6)
+                 throw dw_exception("TMultiDimArray::operator() : incorrect number of indices");
+        if (out_of_range(n0,size_along_dim[0]) || out_of_range(n1,size_along_dim[1]) || out_of_range(n2,size_along_dim[2]) || out_of_range(n3,size_along_dim[3]) || out_of_range(n4,size_along_dim[4]) || out_of_range(n5,size_along_dim[5]) )
+                throw dw_exception("TMultiDimArray::operator() : indices exceed sizes");
+
+        int stride = size_along_dim[0]*size_along_dim[1]*size_along_dim[2]*size_along_dim[3]*size_along_dim[4]*size_along_dim[5];
+        TMultiDimArray result(this->dim/stride*n0.size*n1.size*n2.size*n3.size*n4.size*n5.size,0.0);
+	for (int i5=0; i5<n5.size; i5++)
+        	for (int i4=0; i4<n4.size; i4++)
+                	for (int i3=0; i3<n3.size; i3++)
+                        	for (int i2=0; i2<n2.size; i2++)
+                                	for (int i1=0; i1<n1.size; i1++)
+                                        	for (int i0=0; i0<n0.size; i0++)
+                                                	result.Insert(TIndex(i0+i1*n0.size+i2*n0.size*n1.size+i3*n0.size*n1.size*n2.size+i4*n0.size*n1.size*n2.size*n3.size+i5*n0.size*n1.size*n2.size*n3.size*n4.size,n0.size*n1.size*n2.size*n3.size*n4.size*n5.size,result.dim-1),this->SubVector(TIndex(n0[i0]+n1[i1]*size_along_dim[0]+n2[i2]*size_along_dim[0]*size_along_dim[1]+n3[i3]*size_along_dim[0]*size_along_dim[1]*size_along_dim[2]+n4[i4]*size_along_dim[0]*size_along_dim[1]*size_along_dim[2]*size_along_dim[3]+n5[i5]*size_along_dim[0]*size_along_dim[1]*size_along_dim[2]*size_along_dim[3]*size_along_dim[4], stride, this->dim-1)));
+
+        return result;
+}
+
+TMultiDimArray TMultiDimArray::operator()(const TIndex &n0, const TIndex &n1, const TIndex &n2, const TIndex &n3, const TIndex &n4, const TIndex &n5) const
+{
+	TMultiDimArray result(ExtractSubMatrix(n0,n1,n2,n3,n4,n5)); 
+	std::vector<int>result_size(size_along_dim.begin()+6, size_along_dim.end());
+	result_size.insert(result_size.begin(),n5.size); 
+        result_size.insert(result_size.begin(),n4.size);
+        result_size.insert(result_size.begin(),n3.size);
+        result_size.insert(result_size.begin(),n2.size);
+        result_size.insert(result_size.begin(),n1.size);
+        result_size.insert(result_size.begin(),n0.size);
+        result.Reshape(result_size);
+        return result;	
+}
+
+void TMultiDimArray::Set(const TMultiDimArray &v, const TIndex &n0, const TIndex &n1, const TIndex &n2, const TIndex &n3, const TIndex &n4, const TIndex &n5)
+{
+	if (Dim() < 6)
+                throw dw_exception("TMultiDimArray::Set() : incorrect number of indices");
+        int stride = size_along_dim[5] * size_along_dim[4] * size_along_dim[3] * size_along_dim[2] * size_along_dim[1] * size_along_dim[0];
+        if (v.dim != this->dim/stride*n0.size*n1.size*n2.size*n3.size*n4.size*n5.size)
+                throw dw_exception("TMultiDimArray::Set() : value dimension and sub-matrix dimenstion do not match");
+         if (out_of_range(n0,size_along_dim[0]) || out_of_range(n1,size_along_dim[1]) || out_of_range(n2,size_along_dim[2]) || out_of_range(n3,size_along_dim[3]) || out_of_range(n4, size_along_dim[4]) || out_of_range(n5,size_along_dim[5]) )
+                throw dw_exception("TMultiDimArray::operator() : indices exceed sizes");
+	for (int i5=0; i5<n5.size; i5++)
+        	for (int i4=0; i4<n4.size; i4++)
+                	for (int i3=0; i3<n3.size; i3++)
+                        	for (int i2=0; i2<n2.size; i2++)
+                                	for (int i1=0; i1<n1.size; i1++)
+                                        	for (int i0=0; i0<n0.size; i0++)
+                                                	this->Insert(TIndex(n0[i0]+n1[i1]*size_along_dim[0]+n2[i2]*size_along_dim[0]*size_along_dim[1]+n3[i3]*size_along_dim[0]*size_along_dim[1]*size_along_dim[2]+n4[i4]*size_along_dim[0]*size_along_dim[1]*size_along_dim[2]*size_along_dim[3]+n5[i5]*size_along_dim[0]*size_along_dim[1]*size_along_dim[2]*size_along_dim[3]*size_along_dim[4], stride, this->dim-1), v.SubVector(TIndex(i0+i1*n0.size+i2*n0.size*n1.size+i3*n0.size*n1.size*n2.size+i4*n0.size*n1.size*n2.size*n3.size+i5*n0.size*n1.size*n2.size*n3.size*n4.size, n0.size*n1.size*n2.size*n3.size*n4.size*n5.size, v.dim-1)));
+}
+
+// Access with 7 indices
+TMultiDimArray TMultiDimArray::ExtractSubMatrix(const TIndex &n0, const TIndex &n1, const TIndex &n2, const TIndex &n3, const TIndex &n4, const TIndex &n5, const TIndex &n6) const
+{
+	if (Dim() < 7)
+                 throw dw_exception("TMultiDimArray::operator() : incorrect number of indices");
+        if (out_of_range(n0,size_along_dim[0]) || out_of_range(n1,size_along_dim[1]) || out_of_range(n2,size_along_dim[2]) || out_of_range(n3,size_along_dim[3]) || out_of_range(n4,size_along_dim[4]) || out_of_range(n5,size_along_dim[5]) || out_of_range(n6,size_along_dim[6]) )
+                throw dw_exception("TMultiDimArray::operator() : indices exceed sizes");
+
+        int stride = size_along_dim[0]*size_along_dim[1]*size_along_dim[2]*size_along_dim[3]*size_along_dim[4]*size_along_dim[5]*size_along_dim[6];
+        TMultiDimArray result(this->dim/stride*n0.size*n1.size*n2.size*n3.size*n4.size*n5.size*n6.size,0.0);
+	for (int i6=0; i6<n6.size; i6++)
+		for (int i5=0; i5<n5.size; i5++)
+        		for (int i4=0; i4<n4.size; i4++)
+                		for (int i3=0; i3<n3.size; i3++)
+                        		for (int i2=0; i2<n2.size; i2++)
+                                		for (int i1=0; i1<n1.size; i1++)
+                                        		for (int i0=0; i0<n0.size; i0++)
+                                                		result.Insert(TIndex(i0+i1*n0.size+i2*n0.size*n1.size+i3*n0.size*n1.size*n2.size+i4*n0.size*n1.size*n2.size*n3.size+i5*n0.size*n1.size*n2.size*n3.size*n4.size+i6*n0.size*n1.size*n2.size*n3.size*n4.size*n5.size, n0.size*n1.size*n2.size*n3.size*n4.size*n5.size*n6.size, result.dim-1),this->SubVector(TIndex(n0[i0]+n1[i1]*size_along_dim[0]+n2[i2]*size_along_dim[0]*size_along_dim[1]+n3[i3]*size_along_dim[0]*size_along_dim[1]*size_along_dim[2]+n4[i4]*size_along_dim[0]*size_along_dim[1]*size_along_dim[2]*size_along_dim[3]+n5[i5]*size_along_dim[0]*size_along_dim[1]*size_along_dim[2]*size_along_dim[3]*size_along_dim[4]+n6[i6]*size_along_dim[0]*size_along_dim[1]*size_along_dim[2]*size_along_dim[3]*size_along_dim[4]*size_along_dim[5], stride, this->dim-1)));
+
+        return result;
+}
+
+TMultiDimArray TMultiDimArray::operator()(const TIndex &n0, const TIndex &n1, const TIndex &n2, const TIndex &n3, const TIndex &n4, const TIndex &n5, const TIndex &n6) const
+{
+	TMultiDimArray result(ExtractSubMatrix(n0,n1,n2,n3,n4,n5,n6)); 
+	std::vector<int>result_size(size_along_dim.begin()+7, size_along_dim.end());
+	result_size.insert(result_size.begin(),n6.size); 
+	result_size.insert(result_size.begin(),n5.size); 
+        result_size.insert(result_size.begin(),n4.size);
+        result_size.insert(result_size.begin(),n3.size);
+        result_size.insert(result_size.begin(),n2.size);
+        result_size.insert(result_size.begin(),n1.size);
+        result_size.insert(result_size.begin(),n0.size);
+        result.Reshape(result_size);
+        return result;	
+}
+
+void TMultiDimArray::Set(const TMultiDimArray &v, const TIndex &n0, const TIndex &n1, const TIndex &n2, const TIndex &n3, const TIndex &n4, const TIndex &n5, const TIndex &n6)
+{
+	if (Dim() < 7)
+                throw dw_exception("TMultiDimArray::Set() : incorrect number of indices");
+        int stride = size_along_dim[6] * size_along_dim[5] * size_along_dim[4] * size_along_dim[3] * size_along_dim[2] * size_along_dim[1] * size_along_dim[0];
+        if (v.dim != this->dim/stride*n0.size*n1.size*n2.size*n3.size*n4.size*n5.size*n6.size)
+                throw dw_exception("TMultiDimArray::Set() : value dimension and sub-matrix dimenstion do not match");
+         if (out_of_range(n0,size_along_dim[0]) || out_of_range(n1,size_along_dim[1]) || out_of_range(n2,size_along_dim[2]) || out_of_range(n3,size_along_dim[3]) || out_of_range(n4, size_along_dim[4]) || out_of_range(n5,size_along_dim[5]) || out_of_range(n6,size_along_dim[6]) )
+                throw dw_exception("TMultiDimArray::operator() : indices exceed sizes");
+	for (int i6=0; i6<n6.size; i6++)
+		for (int i5=0; i5<n5.size; i5++)
+        		for (int i4=0; i4<n4.size; i4++)
+                		for (int i3=0; i3<n3.size; i3++)
+                        		for (int i2=0; i2<n2.size; i2++)
+                                		for (int i1=0; i1<n1.size; i1++)
+                                        		for (int i0=0; i0<n0.size; i0++)
+                                                		this->Insert(TIndex(n0[i0]+n1[i1]*size_along_dim[0]+n2[i2]*size_along_dim[0]*size_along_dim[1]+n3[i3]*size_along_dim[0]*size_along_dim[1]*size_along_dim[2]+n4[i4]*size_along_dim[0]*size_along_dim[1]*size_along_dim[2]*size_along_dim[3]+n5[i5]*size_along_dim[0]*size_along_dim[1]*size_along_dim[2]*size_along_dim[3]*size_along_dim[4]+n6[i6]*size_along_dim[0]*size_along_dim[1]*size_along_dim[2]*size_along_dim[3]*size_along_dim[4]*size_along_dim[5], stride, this->dim-1), v.SubVector(TIndex(i0+i1*n0.size+i2*n0.size*n1.size+i3*n0.size*n1.size*n2.size+i4*n0.size*n1.size*n2.size*n3.size+i5*n0.size*n1.size*n2.size*n3.size*n4.size+i6*n0.size*n1.size*n2.size*n3.size*n4.size*n5.size, n0.size*n1.size*n2.size*n3.size*n4.size*n5.size*n6.size, v.dim-1)));
+}
+
+
