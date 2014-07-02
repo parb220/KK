@@ -148,6 +148,34 @@ public:
 	
 	// 5 indices
 	TMultiDimArray operator()(const TIndex &, const TIndex &, const TIndex &, const TIndex &, const TIndex &) const;
+	TMultiDimArray operator()(int, const TIndex &, const TIndex &, const TIndex &, const TIndex &) const; 
+	TMultiDimArray operator()(const TIndex &, int, const TIndex &, const TIndex &, const TIndex &) const;
+	TMultiDimArray operator()(const TIndex &, const TIndex &, int, const TIndex &, const TIndex &) const;
+	TMultiDimArray operator()(const TIndex &, const TIndex &, const TIndex &, int, const TIndex &) const;
+	TMultiDimArray operator()(const TIndex &, const TIndex &, const TIndex &, const TIndex &, int) const;
+	
+	TMultiDimArray operator()(int, int, const TIndex &, const TIndex &, const TIndex &) const;
+	TMultiDimArray operator()(int, const TIndex &, int, const TIndex &, const TIndex &) const;
+	TMultiDimArray operator()(int, const TIndex &, const TIndex &, int, const TIndex &) const;
+	TMultiDimArray operator()(int, const TIndex &, const TIndex &, const TIndex &, int) const;
+	TMultiDimArray operator()(const TIndex &, int, int, const TIndex &, const TIndex &) const;
+	TMultiDimArray operator()(const TIndex &, int, const TIndex &, int, const TIndex &) const;
+	TMultiDimArray operator()(const TIndex &, int, const TIndex &, const TIndex &, int) const;
+	TMultiDimArray operator()(const TIndex &, const TIndex &, int, int, const TIndex &) const;
+	TMultiDimArray operator()(const TIndex &, const TIndex &, int, const TIndex &, int) const;
+	TMultiDimArray operator()(const TIndex &, const TIndex &, const TIndex &, int, int) const;
+
+	TMultiDimArray operator()(const TIndex &, const TIndex &, int, int, int) const;
+	TMultiDimArray operator()(const TIndex &, int, const TIndex &, int, int) const;
+	TMultiDimArray operator()(const TIndex &, int, int, const TIndex &, int) const;
+	TMultiDimArray operator()(const TIndex &, int, int, int, const TIndex &) const;
+	TMultiDimArray operator()(int, const TIndex &, const TIndex &, int, int) const;
+	TMultiDimArray operator()(int, const TIndex &, int, const TIndex &, int) const;
+	TMultiDimArray operator()(int, const TIndex &, int, int, const TIndex &) const;
+	TMultiDimArray operator()(int, int, const TIndex &, const TIndex &, int) const;
+	TMultiDimArray operator()(int, int, const TIndex &, int, const TIndex &) const;
+	TMultiDimArray operator()(int, int, int, const TIndex &, const TIndex &) const;
+
 	
 	void Set(const TMultiDimArray &, const TIndex &, const TIndex &, const TIndex &, const TIndex &, const TIndex &);  
 	
