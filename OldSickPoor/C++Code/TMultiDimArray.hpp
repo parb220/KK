@@ -107,12 +107,39 @@ public:
 	TMultiDimArray operator()(const TIndex &, const TIndex &, const TIndex &, const TIndex &) const;  // (i1:i2, j1:j2, k1:k2, l1:l2, :, ...)
 	TMultiDimArray operator()(const TIndex &, const TIndex &, const TIndex &, int) const; // (i1:i2,j1:j2,k1:k2,l,:,...)
 	TMultiDimArray operator()(const TIndex &, const TIndex &, int, const TIndex &) const; // (i1:i2,j1:j2,k,l1:l2,:,...)
+	TMultiDimArray operator()(const TIndex &, int, const TIndex &, const TIndex &) const; // (i1:i2, j, k1:k2, l1:l2,:,...)
+	TMultiDimArray operator()(int, const TIndex &, const TIndex &, const TIndex &) const; // (i,j1:j2,k1:k2,l1:l2,...)
+	TMultiDimArray operator()(const TIndex &, const TIndex &, int, int) const; // (i1:i2,j1:j2,k,l,:,...) 
+	TMultiDimArray operator()(const TIndex &, int, const TIndex &, int) const; // (i1:i2,j,k1:k2,l,:,...)
+	TMultiDimArray operator()(const TIndex &, int, int, const TIndex &) const; // (i1:i2,j,k,l1:l2,:,...)
+	TMultiDimArray operator()(int, const TIndex &, const TIndex &, int) const; // (i,j1:j2,k1:k2,l,:,...)
+	TMultiDimArray operator()(int, const TIndex &, int, const TIndex &) const; // (i,j1:j2,k,l1:l2,:,...)
+	TMultiDimArray operator()(int, int, const TIndex &, const TIndex &) const; // (i,j,k1:k2,l1:l2,:,...)
+	TMultiDimArray operator()(int, int, int, const TIndex &) const;	//(i,j,k,l1:l2,:,...)
+	TMultiDimArray operator()(int, int, const TIndex &, int) const; //(i,j,k1:k2,l,:,...)
+	TMultiDimArray operator()(int, const TIndex &, int, int) const; //(i,j1:j2,k,l,:,...)
+	TMultiDimArray operator()(const TIndex &, int, int, int) const; //(i1:i2,j,k,l,:,...)
+	TMultiDimArray operator()(int, int, int, int) const; // (i,j,k,l,:,...)
+	double operator()(int, int, int, int, bool) const; // (i,j,k,l)
 
 	void Set(const TMultiDimArray &, const TIndex &, const TIndex &, const TIndex &, const TIndex &); 
 // (i1:i2, j1:j2, k1:k2, l1:l2, :, ...) = v
 	void Set(const TMultiDimArray &, const TIndex &, const TIndex &, const TIndex &, int K); // (i1:i2,j1:j2,k1:k2,l,:,...) = v
-	void Set(const TMultiDimArray &, const TIndex &, const TIndex &, int, const TIndex &);
-// (i1:i2, j1:j2, k1:k2, l1:l2, :, ...) = v
+	void Set(const TMultiDimArray &, const TIndex &, const TIndex &, int, const TIndex &); // (i1:i2, j1:j2, k1:k2, l1:l2, :, ...) = v
+	void Set(const TMultiDimArray &, const TIndex &, int, const TIndex &, const TIndex &); // (i1:i2,j,k1:k2,l1:l2,:,...) = v
+	void Set(const TMultiDimArray &, int, const TIndex &, const TIndex &, const TIndex &); // (i,j1:j2,k1:k2,l1:l2,:,...) = v
+	void Set(const TMultiDimArray &, const TIndex &, const TIndex &, int, int); // (i1:i2,j1:j2,k,l,:,...)=v 
+	void Set(const TMultiDimArray &, const TIndex &, int, const TIndex &, int); // (i1:i2,j,k1:k2,l,:,...)=v
+        void Set(const TMultiDimArray &, const TIndex &, int, int, const TIndex &); // (i1:i2,j,k,l1:l2,:,...)=v
+        void Set(const TMultiDimArray &, int, const TIndex &, const TIndex &, int); // (i,j1:j2,k1:k2,l,:,...)=v; 
+        void Set(const TMultiDimArray &, int, const TIndex &, int, const TIndex &); // (i,j1:j2,k,l1:l2,:,...)=v
+        void Set(const TMultiDimArray &, int, int, const TIndex &, const TIndex &); // (i,j,k1:k2,l1:l2,:,...)=v
+	void Set(const TMultiDimArray &, int, int, int, const TIndex &); //(i,j,k,l1:l2,:,...) = v
+        void Set(const TMultiDimArray &, int, int, const TIndex &, int); //(i,j,k1:k2,l,:,...) = v
+        void Set(const TMultiDimArray &, int, const TIndex &, int, int); //(i,j1:j2,k,l,:,...) = v
+        void Set(const TMultiDimArray &, const TIndex &, int, int, int); //(i1:i2,j,k,l,:,...) = v
+	void Set(const TMultiDimArray &, int, int, int, int); // (i,j,k,l,:,...) = v
+	void Set(double, int, int, int, int); // (i,j,k,l) = v
 	
 	/*
 	TMultiDimArray operator() (const TIndex &i) const; 

@@ -447,28 +447,6 @@ TMultiDimArray TMultiDimArray::ExtractSubMatrix(const TIndex &INDEX) const
 	return result; 
 }
 
-TMultiDimArray TMultiDimArray::operator()(int INDEX) const
-{
-	TMultiDimArray result(ExtractSubMatrix(TIndex(INDEX))); 
-	std::vector<int> result_size_along_dim(this->size_along_dim.begin()+1, this->size_along_dim.end());
-	result.Reshape(result_size_along_dim);  
-	return result; 
-}
-
-void TMultiDimArray::Set(const TMultiDimArray &v, int INDEX)
-{
-	Set(v,TIndex(INDEX)); 
-}
-
-TMultiDimArray TMultiDimArray::operator()(const TIndex &INDEX) const
-{
-	TMultiDimArray result(ExtractSubMatrix(INDEX)); 
-	std::vector<int> result_size_along_dim(this->size_along_dim.begin()+1, this->size_along_dim.end());
-        result_size_along_dim.insert(result_size_along_dim.begin(),INDEX.size);
-	result.Reshape(result_size_along_dim); 
-	return result; 
-}
-
 void TMultiDimArray::Set(const TMultiDimArray &v, const TIndex &INDEX)
 {
 	for (int i=0; i<INDEX.size; i++)
@@ -481,6 +459,28 @@ void TMultiDimArray::Set(const TMultiDimArray &v, const TIndex &INDEX)
 		throw dw_exception("TMultiDimArray::Set() : value dimension and sub-matrix dimenstion do not match");
 	for (int i=0; i<INDEX.size; i++)
 		this->Insert(TIndex(INDEX[i],stride,this->dim-1),v.SubVector(TIndex(i,INDEX.size, v.dim-1))); 
+}
+
+TMultiDimArray TMultiDimArray::operator()(int INDEX) const
+{
+	TMultiDimArray result(ExtractSubMatrix(TIndex(INDEX))); 
+	std::vector<int> result_size_along_dim(this->size_along_dim.begin()+1, this->size_along_dim.end());
+	result.Reshape(result_size_along_dim);  
+	return result; 
+}
+
+void TMultiDimArray::Set(const TMultiDimArray &v, int INDEX)
+{
+	Set(v,TIndex(INDEX));
+}
+
+TMultiDimArray TMultiDimArray::operator()(const TIndex &INDEX) const
+{
+	TMultiDimArray result(ExtractSubMatrix(INDEX));  
+	std::vector<int> result_size_along_dim(this->size_along_dim.begin()+1, this->size_along_dim.end());
+        result_size_along_dim.insert(result_size_along_dim.begin(),INDEX.size);
+	result.Reshape(result_size_along_dim); 
+	return result; 
 }
 
 // Access with 2 indices
@@ -504,19 +504,6 @@ void TMultiDimArray::Set(double v, int I, int J)
 	TDenseVector::SetElement(v,I+J*size_along_dim[0]); 
 }
 
-TMultiDimArray TMultiDimArray::operator()(int I, int J) const // (i,j,:,...)
-{
-	TMultiDimArray result(ExtractSubMatrix(TIndex(I),TIndex(J)));
-	std::vector<int> result_size(this->size_along_dim.begin()+2,this->size_along_dim.end()); 
-	result.Reshape(result_size);
-	return result; 
-}
-
-void TMultiDimArray::Set(const TMultiDimArray &v, int I, int J) 
-{
-	Set(v,TIndex(I),TIndex(J)); 
-}
-
 TMultiDimArray TMultiDimArray::ExtractSubMatrix(const TIndex &I, const TIndex &J) const // (i1:i2,j1:j2,:,...)
 {
 	if (Dim() < 2)
@@ -535,16 +522,6 @@ TMultiDimArray TMultiDimArray::ExtractSubMatrix(const TIndex &I, const TIndex &J
 		for (int i=0; i<I.size; i++) 
 			result.Insert(TIndex(i+j*I.size,I.size*J.size,result.dim-1),this->SubVector(TIndex(I[i]+J[j]*size_along_dim[0],stride,this->dim-1))); 
 	}
-	return result; 
-}
-
-TMultiDimArray TMultiDimArray::operator()(const TIndex &I, const TIndex &J) const
-{
-	TMultiDimArray result(ExtractSubMatrix(I,J)); 
-	std::vector<int> result_size(this->size_along_dim.begin()+2,this->size_along_dim.end()); 
-	result_size.insert(result_size.begin(), J.size); 
-	result_size.insert(result_size.begin(), I.size);
-	result.Reshape(result_size); 
 	return result; 
 }
 
@@ -567,6 +544,29 @@ void TMultiDimArray::Set(const TMultiDimArray &v, const TIndex &I, const TIndex 
 		for (int i=0; i<I.size; i++)
 			this->Insert(TIndex(I[i]+J[j]*size_along_dim[0],stride,this->dim-1),v.SubVector(TIndex(i+j*I.size,I.size*J.size,v.dim-1))); 
 	}
+}
+
+TMultiDimArray TMultiDimArray::operator()(int I, int J) const // (i,j,:,...)
+{
+	TMultiDimArray result(ExtractSubMatrix(TIndex(I),TIndex(J)));
+	std::vector<int> result_size(this->size_along_dim.begin()+2,this->size_along_dim.end()); 
+	result.Reshape(result_size);
+	return result; 
+}
+
+void TMultiDimArray::Set(const TMultiDimArray &v, int I, int J) 
+{
+	Set(v,TIndex(I),TIndex(J)); 
+}
+
+TMultiDimArray TMultiDimArray::operator()(const TIndex &I, const TIndex &J) const
+{
+	TMultiDimArray result(ExtractSubMatrix(I,J)); 
+	std::vector<int> result_size(this->size_along_dim.begin()+2,this->size_along_dim.end()); 
+	result_size.insert(result_size.begin(), J.size); 
+	result_size.insert(result_size.begin(), I.size);
+	result.Reshape(result_size); 
+	return result; 
 }
 
 TMultiDimArray TMultiDimArray::operator()(const TIndex &I, int J) const
@@ -623,17 +623,6 @@ TMultiDimArray TMultiDimArray::ExtractSubMatrix(const TIndex &I, const TIndex &J
 	return result; 
 }
 
-TMultiDimArray TMultiDimArray::operator()(const TIndex &I, const TIndex &J, const TIndex &K) const
-{
-	TMultiDimArray result(ExtractSubMatrix(I,J,K)); 
-	std::vector<int> result_size(size_along_dim.begin()+3,size_along_dim.end()); 
-	result_size.insert(result_size.begin(),K.size); 
-	result_size.insert(result_size.begin(),J.size); 
-	result_size.insert(result_size.begin(),I.size); 
-	result.Reshape(result_size); 
-	return result;  
-}
-
 void TMultiDimArray::Set(const TMultiDimArray &v, const TIndex &I, const TIndex &J, const TIndex &K)
 {
 	if (Dim() < 3)
@@ -657,6 +646,17 @@ void TMultiDimArray::Set(const TMultiDimArray &v, const TIndex &I, const TIndex 
 		for (int j=0; j<J.size; j++)
 			for (int i=0; i<I.size; i++)
 				this->Insert(TIndex(I[i]+J[j]*size_along_dim[0]+K[k]*size_along_dim[0]*size_along_dim[1], stride, this->dim-1), v.SubVector(TIndex(i+j*I.size+k*I.size*J.size, I.size*J.size*K.size, v.dim-1))); 
+}
+
+TMultiDimArray TMultiDimArray::operator()(const TIndex &I, const TIndex &J, const TIndex &K) const
+{
+	TMultiDimArray result(ExtractSubMatrix(I,J,K)); 
+	std::vector<int> result_size(size_along_dim.begin()+3,size_along_dim.end()); 
+	result_size.insert(result_size.begin(),K.size); 
+	result_size.insert(result_size.begin(),J.size); 
+	result_size.insert(result_size.begin(),I.size); 
+	result.Reshape(result_size); 
+	return result;  
 }
 
 TMultiDimArray TMultiDimArray::operator()(int I, const TIndex &J, const TIndex &K) const
@@ -847,6 +847,144 @@ TMultiDimArray TMultiDimArray::operator()(const TIndex &n0, const TIndex &n1, in
         return result;
 }
 
+TMultiDimArray TMultiDimArray::operator()(const TIndex &n0, int n1, const TIndex &n2, const TIndex &n3) const
+{
+	TMultiDimArray result(ExtractSubMatrix(n0,TIndex(n1),n2,n3)); 
+	std::vector<int> result_size(size_along_dim.begin()+4,size_along_dim.end()); 
+	result_size.insert(result_size.begin(),n3.size); 
+	result_size.insert(result_size.begin(),n2.size); 
+	result_size.insert(result_size.begin(),n0.size); 
+	result.Reshape(result_size); 
+	return result; 
+}
+
+TMultiDimArray TMultiDimArray::operator()(int n0, const TIndex &n1, const TIndex &n2, const TIndex &n3) const
+{
+	TMultiDimArray result(ExtractSubMatrix(TIndex(n0),n1,n2,n3)); 
+	std::vector<int> result_size(size_along_dim.begin()+4,size_along_dim.end()); 
+	result_size.insert(result_size.begin(),n3.size); 
+	result_size.insert(result_size.begin(),n2.size); 
+	result_size.insert(result_size.begin(),n1.size); 
+	result.Reshape(result_size); 
+	return result; 
+}
+
+TMultiDimArray TMultiDimArray::operator()(const TIndex &n0, const TIndex &n1, int n2, int n3) const
+{
+	TMultiDimArray result(ExtractSubMatrix(n0,n1,TIndex(n2),TIndex(n3))); 
+	std::vector<int>result_size(size_along_dim.begin()+4,size_along_dim.end()); 
+	result_size.insert(result_size.begin(),n1.size); 
+	result_size.insert(result_size.begin(),n0.size); 
+	result.Reshape(result_size); 
+	return result; 
+}
+
+TMultiDimArray TMultiDimArray::operator()(const TIndex &n0, int n1, const TIndex &n2, int n3) const
+{
+	TMultiDimArray result(ExtractSubMatrix(n0,TIndex(n1),n2,TIndex(n3)));
+        std::vector<int>result_size(size_along_dim.begin()+4,size_along_dim.end());
+        result_size.insert(result_size.begin(),n2.size);
+        result_size.insert(result_size.begin(),n0.size);
+        result.Reshape(result_size);
+        return result;
+}
+
+TMultiDimArray TMultiDimArray::operator()(const TIndex &n0, int n1, int n2, const TIndex &n3) const
+{
+	TMultiDimArray result(ExtractSubMatrix(n0,TIndex(n1),TIndex(n2),n3));
+        std::vector<int>result_size(size_along_dim.begin()+4,size_along_dim.end());
+        result_size.insert(result_size.begin(),n3.size);
+        result_size.insert(result_size.begin(),n0.size);
+        result.Reshape(result_size);
+        return result;
+}
+
+TMultiDimArray TMultiDimArray::operator()(int n0, const TIndex &n1, const TIndex &n2, int n3) const
+{
+	TMultiDimArray result(ExtractSubMatrix(TIndex(n0),n1,n2,TIndex(n3)));
+        std::vector<int>result_size(size_along_dim.begin()+4,size_along_dim.end());
+        result_size.insert(result_size.begin(),n2.size);
+        result_size.insert(result_size.begin(),n1.size);
+        result.Reshape(result_size);
+        return result;
+}
+
+TMultiDimArray TMultiDimArray::operator()(int n0, const TIndex &n1, int n2, const TIndex &n3) const
+{
+	TMultiDimArray result(ExtractSubMatrix(TIndex(n0),n1,TIndex(n2),n3));
+        std::vector<int>result_size(size_along_dim.begin()+4,size_along_dim.end());
+        result_size.insert(result_size.begin(),n3.size);
+        result_size.insert(result_size.begin(),n1.size);
+        result.Reshape(result_size);
+        return result;
+}
+
+TMultiDimArray TMultiDimArray::operator()(int n0, int n1, const TIndex &n2, const TIndex &n3) const
+{
+	TMultiDimArray result(ExtractSubMatrix(TIndex(n0),TIndex(n1),n2,n3));
+        std::vector<int>result_size(size_along_dim.begin()+4,size_along_dim.end());
+        result_size.insert(result_size.begin(),n3.size);
+        result_size.insert(result_size.begin(),n2.size);
+        result.Reshape(result_size);
+        return result;
+}
+
+TMultiDimArray TMultiDimArray::operator()(int n0, int n1, int n2, const TIndex &n3) const
+{
+	TMultiDimArray result(ExtractSubMatrix(TIndex(n0),TIndex(n1),TIndex(n2),n3)); 
+	std::vector<int>result_size(size_along_dim.begin()+4,size_along_dim.end()); 
+	result_size.insert(result_size.begin(),n3.size); 
+	result.Reshape(result_size); 
+	return result; 
+}
+
+TMultiDimArray TMultiDimArray::operator()(int n0, int n1, const TIndex & n2, int n3) const
+{
+	TMultiDimArray result(ExtractSubMatrix(TIndex(n0),TIndex(n1),n2,TIndex(n3)));
+        std::vector<int>result_size(size_along_dim.begin()+4,size_along_dim.end());
+        result_size.insert(result_size.begin(),n2.size);
+        result.Reshape(result_size);
+        return result;
+}
+
+TMultiDimArray TMultiDimArray::operator()(int n0, const TIndex &n1, int n2, int n3) const
+{
+	TMultiDimArray result(ExtractSubMatrix(TIndex(n0),n1,TIndex(n2),TIndex(n3)));
+        std::vector<int>result_size(size_along_dim.begin()+4,size_along_dim.end());
+        result_size.insert(result_size.begin(),n1.size);
+        result.Reshape(result_size);
+        return result;
+}
+
+TMultiDimArray TMultiDimArray::operator()(const TIndex &n0, int n1, int n2, int n3) const 
+{
+	TMultiDimArray result(ExtractSubMatrix(n0,TIndex(n1),TIndex(n2),TIndex(n3)));
+        std::vector<int>result_size(size_along_dim.begin()+4,size_along_dim.end());
+        result_size.insert(result_size.begin(),n0.size);
+        result.Reshape(result_size);
+        return result;
+}
+
+TMultiDimArray TMultiDimArray::operator()(int n0, int n1, int n2, int n3) const
+{
+	TMultiDimArray result(ExtractSubMatrix(TIndex(n0),TIndex(n1),TIndex(n2),TIndex(n3))); 
+	std::vector<int>result_size(size_along_dim.begin()+4,size_along_dim.end());
+	result.Reshape(result_size);
+        return result;
+}
+
+double TMultiDimArray::operator()(int n0, int n1, int n2, int n3, bool scalar_flag) const
+{
+	if(!scalar_flag)
+                throw dw_exception("TMultiDimArray::operator() : flag incorrect");
+        if (n0<0 || n0>=size_along_dim[0] || n1<0 || n1>=size_along_dim[1] || n2<0 || n2>=size_along_dim[2] || n3<0 || n3>=size_along_dim[3])
+                throw dw_exception("TMultiDimArray::operator(): index exceeds size");
+        else if ( Dim()==4 )
+                return TDenseVector::operator()(n0+n1*size_along_dim[0]+n2*size_along_dim[0]*size_along_dim[1]+n3*size_along_dim[0]*size_along_dim[1]*size_along_dim[2]);
+        else
+                throw dw_exception("TMultiDimArray::operator() : returning value should not be double but TMultiDimArray");
+}
+
 void TMultiDimArray::Set(const TMultiDimArray &v, const TIndex &n0, const TIndex &n1, const TIndex &n2, const TIndex &n3)
 {
 	if (Dim() < 4)
@@ -885,4 +1023,80 @@ void TMultiDimArray::Set(const TMultiDimArray &v, const TIndex &n0, const TIndex
 void TMultiDimArray::Set(const TMultiDimArray &v, const TIndex &n0, const TIndex &n1, int n2, const TIndex &n3)
 {
 	Set(v,n0,n1,TIndex(n2),n3); 
+}
+
+void TMultiDimArray::Set(const TMultiDimArray &v, const TIndex &n0, int n1, const TIndex &n2, const TIndex &n3)
+{
+	Set(v,n0,TIndex(n1),n2,n3); 
+}
+
+void TMultiDimArray::Set(const TMultiDimArray &v, int n0, const TIndex &n1, const TIndex &n2, const TIndex &n3)
+{
+	Set(v,TIndex(n0),n1,n2,n3); 
+}
+
+void TMultiDimArray::Set(const TMultiDimArray &v, const TIndex &n0, const TIndex &n1, int n2, int n3)
+{
+	Set(v,n0,n1,TIndex(n2),TIndex(n3)); 
+}
+
+void TMultiDimArray::Set(const TMultiDimArray &v, const TIndex &n0, int n1, const TIndex &n2, int n3)
+{
+	Set(v,n0,TIndex(n1),n2,TIndex(n3));
+}
+
+void TMultiDimArray::Set(const TMultiDimArray &v, const TIndex &n0, int n1, int n2, const TIndex &n3)
+{
+	Set(v,n0,TIndex(n1),TIndex(n2),n3); 
+}
+
+void TMultiDimArray::Set(const TMultiDimArray &v, int n0, const TIndex &n1, const TIndex &n2, int n3)
+{
+	Set(v,TIndex(n0),n1,n2,TIndex(n3)); 
+}
+
+void TMultiDimArray::Set(const TMultiDimArray &v, int n0, const TIndex &n1, int n2, const TIndex &n3)
+{
+	Set(v,TIndex(n0),n1,TIndex(n2),n3); 
+}
+
+void TMultiDimArray::Set(const TMultiDimArray &v, int n0, int n1, const TIndex &n2, const TIndex &n3)
+{
+	Set(v,TIndex(n0),TIndex(n1),n2,n3);
+}
+
+void TMultiDimArray::Set(const TMultiDimArray &v, int n0, int n1, int n2, const TIndex &n3)
+{
+	Set(v,TIndex(n0),TIndex(n1),TIndex(n2),n3); 
+}
+
+void TMultiDimArray::Set(const TMultiDimArray &v, int n0, int n1, const TIndex &n2, int n3)
+{
+	Set(v,TIndex(n0),TIndex(n1),n2,TIndex(n3)); 
+}
+
+void TMultiDimArray::Set(const TMultiDimArray &v, int n0, const TIndex &n1, int n2, int n3)
+{
+	Set(v,TIndex(n0),n1,TIndex(n2),TIndex(n3)); 
+}
+
+void TMultiDimArray::Set(const TMultiDimArray &v, const TIndex &n0, int n1, int n2, int n3)
+{
+	Set(v,n0,TIndex(n1),TIndex(n2),TIndex(n3)); 
+}
+
+void TMultiDimArray::Set(const TMultiDimArray &v, int n0, int n1, int n2, int n3)
+{
+	Set(v,TIndex(n0),TIndex(n1),TIndex(n2),TIndex(n3)); 
+}
+
+void TMultiDimArray::Set(double v, int n0, int n1, int n2, int n3)
+{
+	 if (n0<0 || n0>=size_along_dim[0] || n1<0 || n1>=size_along_dim[1] || n2<0 || n2>=size_along_dim[2] || n3<0 || n3>=size_along_dim[3])
+                throw dw_exception("TMultiDimArray::Set() : index exceeds size");
+        else if ( Dim() == 4)
+                TDenseVector::SetElement(v,n0+n1*size_along_dim[0]+n2*size_along_dim[0]*size_along_dim[1]+n3*size_along_dim[0]*size_along_dim[1]*size_along_dim[2]);
+        else
+                throw dw_exception("TMultiDimArray::Set() : input should not be double but TMultiDimArray.");
+
 }
