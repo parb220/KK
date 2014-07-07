@@ -1380,6 +1380,697 @@ void TMultiDimArray::Set(double v, int n0, int n1, int n2, int n3, int n4, int n
                 throw dw_exception("TMultiDimArray::Set() : input should not be double but TMultiDimArray.");
 }
 
+TMultiDimArray TMultiDimArray::operator()(int n0, const TIndex &n1, const TIndex &n2, const TIndex &n3, const TIndex &n4, const TIndex &n5) const
+{
+	TMultiDimArray result(ExtractSubMatrix(TIndex(n0),n1,n2,n3,n4,n5)); 
+	std::vector<int> result_size(size_along_dim.begin()+1,size_along_dim.end()); 
+	result_size.insert(result_size.begin(),n5.size); 	
+	result_size.insert(result_size.begin(),n4.size); 	
+	result_size.insert(result_size.begin(),n3.size); 	
+	result_size.insert(result_size.begin(),n2.size); 	
+	result_size.insert(result_size.begin(),n1.size); 	
+	result.Reshape(result_size); 
+	return result; 
+}          
+        
+TMultiDimArray TMultiDimArray::operator()(const TIndex &n0, int n1, const TIndex &n2, const TIndex &n3, const TIndex &n4, const TIndex &n5) const 
+{
+	TMultiDimArray result(ExtractSubMatrix(n0,TIndex(n1),n2,n3,n4,n5)); 
+	std::vector<int> result_size(size_along_dim.begin()+1,size_along_dim.end()); 
+	result_size.insert(result_size.begin(),n5.size); 	
+	result_size.insert(result_size.begin(),n4.size); 	
+	result_size.insert(result_size.begin(),n3.size); 	
+	result_size.insert(result_size.begin(),n2.size); 	
+	result_size.insert(result_size.begin(),n0.size); 	
+	result.Reshape(result_size); 
+	return result; 
+}
+         
+TMultiDimArray TMultiDimArray::operator()(const TIndex &n0, const TIndex &n1, int n2, const TIndex &n3, const TIndex &n4, const TIndex &n5) const          
+{
+	TMultiDimArray result(ExtractSubMatrix(n0,n1,TIndex(n2),n3,n4,n5)); 
+	std::vector<int> result_size(size_along_dim.begin()+1,size_along_dim.end()); 
+	result_size.insert(result_size.begin(),n5.size); 	
+	result_size.insert(result_size.begin(),n4.size); 	
+	result_size.insert(result_size.begin(),n3.size); 	
+	result_size.insert(result_size.begin(),n1.size); 	
+	result_size.insert(result_size.begin(),n0.size); 	
+	result.Reshape(result_size); 
+	return result; 
+}         
+
+TMultiDimArray TMultiDimArray::operator()(const TIndex &n0, const TIndex &n1, const TIndex &n2, int n3, const TIndex &n4, const TIndex &n5) const          
+{
+	TMultiDimArray result(ExtractSubMatrix(n0,n1,n2,TIndex(n3),n4,n5)); 
+	std::vector<int> result_size(size_along_dim.begin()+1,size_along_dim.end()); 
+	result_size.insert(result_size.begin(),n5.size); 	
+	result_size.insert(result_size.begin(),n4.size); 	
+	result_size.insert(result_size.begin(),n2.size); 	
+	result_size.insert(result_size.begin(),n1.size); 	
+	result_size.insert(result_size.begin(),n0.size); 	
+	result.Reshape(result_size); 
+	return result; 
+}         
+
+TMultiDimArray TMultiDimArray::operator()(const TIndex &n0, const TIndex &n1, const TIndex &n2, const TIndex &n3, int n4, const TIndex &n5) const
+{
+	TMultiDimArray result(ExtractSubMatrix(n0,n1,n2,n3,TIndex(n4),n5)); 
+	std::vector<int> result_size(size_along_dim.begin()+1,size_along_dim.end()); 
+	result_size.insert(result_size.begin(),n5.size); 	
+	result_size.insert(result_size.begin(),n3.size); 	
+	result_size.insert(result_size.begin(),n2.size); 	
+	result_size.insert(result_size.begin(),n1.size); 	
+	result_size.insert(result_size.begin(),n0.size); 	
+	result.Reshape(result_size); 
+	return result; 
+}          
+
+TMultiDimArray TMultiDimArray::operator()(const TIndex &n0, const TIndex &n1, const TIndex &n2, const TIndex &n3, const TIndex &n4, int n5) const
+{
+	TMultiDimArray result(ExtractSubMatrix(n0,n1,n2,n3,n4,TIndex(n5))); 
+	std::vector<int> result_size(size_along_dim.begin()+1,size_along_dim.end()); 
+	result_size.insert(result_size.begin(),n4.size); 	
+	result_size.insert(result_size.begin(),n3.size); 	
+	result_size.insert(result_size.begin(),n2.size); 	
+	result_size.insert(result_size.begin(),n1.size); 	
+	result_size.insert(result_size.begin(),n0.size); 	
+	result.Reshape(result_size); 
+	return result; 
+}
+
+TMultiDimArray TMultiDimArray::operator()(int n0, int n1, const TIndex &n2, const TIndex &n3, const TIndex &n4, const TIndex &n5) const
+{
+	TMultiDimArray result(ExtractSubMatrix(TIndex(n0),TIndex(n1),n2,n3,n4,n5)); 
+	std::vector<int> result_size(size_along_dim.begin()+2,size_along_dim.end()); 
+	result_size.insert(result_size.begin(),n5.size); 
+	result_size.insert(result_size.begin(),n4.size); 
+	result_size.insert(result_size.begin(),n3.size); 
+	result_size.insert(result_size.begin(),n2.size); 
+	result.Reshape(result_size); 
+	return result; 
+}
+
+TMultiDimArray TMultiDimArray::operator()(int n0, const TIndex &n1, int n2, const TIndex &n3, const TIndex &n4, const TIndex &n5) const 
+{
+	TMultiDimArray result(ExtractSubMatrix(TIndex(n0),n1,TIndex(n2),n3,n4,n5)); 
+	std::vector<int> result_size(size_along_dim.begin()+2,size_along_dim.end()); 
+	result_size.insert(result_size.begin(),n5.size); 
+	result_size.insert(result_size.begin(),n4.size); 
+	result_size.insert(result_size.begin(),n3.size); 
+	result_size.insert(result_size.begin(),n1.size); 
+	result.Reshape(result_size); 
+	return result; 
+}
+
+TMultiDimArray TMultiDimArray::operator()(int n0, const TIndex &n1, const TIndex &n2, int n3, const TIndex &n4, const TIndex &n5) const           
+{
+	TMultiDimArray result(ExtractSubMatrix(TIndex(n0),n1,n2,TIndex(n3),n4,n5)); 
+	std::vector<int> result_size(size_along_dim.begin()+2,size_along_dim.end()); 
+	result_size.insert(result_size.begin(),n5.size); 
+	result_size.insert(result_size.begin(),n4.size); 
+	result_size.insert(result_size.begin(),n2.size); 
+	result_size.insert(result_size.begin(),n1.size); 
+	result.Reshape(result_size); 
+	return result; 
+}
+
+TMultiDimArray TMultiDimArray::operator()(int n0, const TIndex &n1, const TIndex &n2, const TIndex &n3, int n4, const TIndex &n5) const   
+{
+	TMultiDimArray result(ExtractSubMatrix(TIndex(n0),n1,n2,n3,TIndex(n4),n5)); 
+	std::vector<int> result_size(size_along_dim.begin()+2,size_along_dim.end()); 
+	result_size.insert(result_size.begin(),n5.size); 
+	result_size.insert(result_size.begin(),n3.size); 
+	result_size.insert(result_size.begin(),n2.size); 
+	result_size.insert(result_size.begin(),n1.size); 
+	result.Reshape(result_size); 
+	return result; 
+}
+
+TMultiDimArray TMultiDimArray::operator()(int n0, const TIndex &n1, const TIndex &n2, const TIndex &n3, const TIndex &n4, int n5) const           
+{
+	TMultiDimArray result(ExtractSubMatrix(TIndex(n0),n1,n2,n3,n4,TIndex(n5))); 
+	std::vector<int> result_size(size_along_dim.begin()+2,size_along_dim.end()); 
+	result_size.insert(result_size.begin(),n4.size); 
+	result_size.insert(result_size.begin(),n3.size); 
+	result_size.insert(result_size.begin(),n2.size); 
+	result_size.insert(result_size.begin(),n1.size); 
+	result.Reshape(result_size); 
+	return result; 
+}
+
+TMultiDimArray TMultiDimArray::operator()(const TIndex &n0, int n1, int n2, const TIndex &n3, const TIndex &n4, const TIndex &n5) const
+{
+	TMultiDimArray result(ExtractSubMatrix(n0,TIndex(n1),TIndex(n2),n3,n4,n5)); 
+	std::vector<int>result_size(size_along_dim.begin()+2,size_along_dim.end()); 
+	result_size.insert(result_size.begin(),n5.size); 
+	result_size.insert(result_size.begin(),n4.size); 
+	result_size.insert(result_size.begin(),n3.size); 
+	result_size.insert(result_size.begin(),n0.size); 
+	result.Reshape(result_size); 
+	return result; 
+}
+    
+TMultiDimArray TMultiDimArray::operator()(const TIndex &n0, int n1, const TIndex &n2, int n3, const TIndex &n4, const TIndex &n5) const           
+{
+	TMultiDimArray result(ExtractSubMatrix(n0,TIndex(n1),n2,TIndex(n3),n4,n5)); 
+	std::vector<int>result_size(size_along_dim.begin()+2,size_along_dim.end()); 
+	result_size.insert(result_size.begin(),n5.size); 
+	result_size.insert(result_size.begin(),n4.size); 
+	result_size.insert(result_size.begin(),n2.size); 
+	result_size.insert(result_size.begin(),n0.size); 
+	result.Reshape(result_size); 
+	return result; 
+}
+    
+TMultiDimArray TMultiDimArray::operator()(const TIndex &n0, int n1, const TIndex &n2, const TIndex &n3, int n4, const TIndex &n5) const           
+{
+	TMultiDimArray result(ExtractSubMatrix(n0,TIndex(n1),n2,n3,TIndex(n4),n5)); 
+	std::vector<int>result_size(size_along_dim.begin()+2,size_along_dim.end()); 
+	result_size.insert(result_size.begin(),n5.size); 
+	result_size.insert(result_size.begin(),n3.size); 
+	result_size.insert(result_size.begin(),n2.size); 
+	result_size.insert(result_size.begin(),n0.size); 
+	result.Reshape(result_size); 
+	return result; 
+}
+    
+TMultiDimArray TMultiDimArray::operator()(const TIndex &n0, int n1, const TIndex &n2, const TIndex &n3, const TIndex &n4, int n5) const           
+{
+	TMultiDimArray result(ExtractSubMatrix(n0,TIndex(n1),n2,n3,n4,TIndex(n5))); 
+	std::vector<int>result_size(size_along_dim.begin()+2,size_along_dim.end()); 
+	result_size.insert(result_size.begin(),n4.size); 
+	result_size.insert(result_size.begin(),n3.size); 
+	result_size.insert(result_size.begin(),n2.size); 
+	result_size.insert(result_size.begin(),n0.size); 
+	result.Reshape(result_size); 
+	return result; 
+}
+    
+TMultiDimArray TMultiDimArray::operator()(const TIndex &n0, const TIndex &n1, int n2, int n3, const TIndex &n4, const TIndex &n5) const           
+{
+	TMultiDimArray result(ExtractSubMatrix(n0,n1, TIndex(n2),TIndex(n3),n4,n5)); 
+	std::vector<int>result_size(size_along_dim.begin()+2,size_along_dim.end()); 
+	result_size.insert(result_size.begin(),n5.size); 
+	result_size.insert(result_size.begin(),n4.size); 
+	result_size.insert(result_size.begin(),n1.size); 
+	result_size.insert(result_size.begin(),n0.size); 
+	result.Reshape(result_size); 
+	return result; 
+}
+    
+TMultiDimArray TMultiDimArray::operator()(const TIndex &n0, const TIndex &n1, int n2, const TIndex &n3, int n4, const TIndex &n5) const           
+{
+	TMultiDimArray result(ExtractSubMatrix(n0,n1, TIndex(n2),n3, TIndex(n4),n5)); 
+	std::vector<int>result_size(size_along_dim.begin()+2,size_along_dim.end()); 
+	result_size.insert(result_size.begin(),n5.size); 
+	result_size.insert(result_size.begin(),n3.size); 
+	result_size.insert(result_size.begin(),n1.size); 
+	result_size.insert(result_size.begin(),n0.size); 
+	result.Reshape(result_size); 
+	return result; 
+}
+    
+TMultiDimArray TMultiDimArray::operator()(const TIndex &n0, const TIndex &n1, int n2, const TIndex &n3, const TIndex &n4, int n5) const           
+{
+	TMultiDimArray result(ExtractSubMatrix(n0,n1, TIndex(n2),n3, n4,TIndex(n5))); 
+	std::vector<int>result_size(size_along_dim.begin()+2,size_along_dim.end()); 
+	result_size.insert(result_size.begin(),n4.size); 
+	result_size.insert(result_size.begin(),n3.size); 
+	result_size.insert(result_size.begin(),n1.size); 
+	result_size.insert(result_size.begin(),n0.size); 
+	result.Reshape(result_size); 
+	return result; 
+}
+    
+TMultiDimArray TMultiDimArray::operator()(const TIndex &n0, const TIndex &n1, const TIndex &n2, int n3, int n4, const TIndex &n5) const           
+{
+	TMultiDimArray result(ExtractSubMatrix(n0,n1, n2, TIndex(n3), TIndex(n4),n5)); 
+	std::vector<int>result_size(size_along_dim.begin()+2,size_along_dim.end()); 
+	result_size.insert(result_size.begin(),n5.size); 
+	result_size.insert(result_size.begin(),n2.size); 
+	result_size.insert(result_size.begin(),n1.size); 
+	result_size.insert(result_size.begin(),n0.size); 
+	result.Reshape(result_size); 
+	return result; 
+}
+    
+TMultiDimArray TMultiDimArray::operator()(const TIndex &n0, const TIndex &n1, const TIndex &n2, int n3, const TIndex &n4, int n5) const  
+{
+	TMultiDimArray result(ExtractSubMatrix(n0,n1, n2, TIndex(n3), n4, TIndex(n5))); 
+	std::vector<int>result_size(size_along_dim.begin()+2,size_along_dim.end()); 
+	result_size.insert(result_size.begin(),n4.size); 
+	result_size.insert(result_size.begin(),n2.size); 
+	result_size.insert(result_size.begin(),n1.size); 
+	result_size.insert(result_size.begin(),n0.size); 
+	result.Reshape(result_size); 
+	return result; 
+}
+    
+TMultiDimArray TMultiDimArray::operator()(const TIndex &n0, const TIndex &n1, const TIndex &n2, const TIndex &n3, int n4, int n5) const
+{
+	TMultiDimArray result(ExtractSubMatrix(n0,n1, n2, n3, TIndex(n4), TIndex(n5))); 
+	std::vector<int>result_size(size_along_dim.begin()+2,size_along_dim.end()); 
+	result_size.insert(result_size.begin(),n3.size); 
+	result_size.insert(result_size.begin(),n2.size); 
+	result_size.insert(result_size.begin(),n1.size); 
+	result_size.insert(result_size.begin(),n0.size); 
+	result.Reshape(result_size); 
+	return result; 
+}
+    
+TMultiDimArray TMultiDimArray::operator()(int n0, int n1, int n2, const TIndex &n3, const TIndex &n4, const TIndex &n5) const
+{
+	TMultiDimArray result(ExtractSubMatrix(TIndex(n0),TIndex(n1),TIndex(n2),n3,n4,n5)); 
+	std::vector<int>result_size(size_along_dim.begin()+3,size_along_dim.end()); 
+	result_size.insert(result_size.begin(),n5.size); 
+	result_size.insert(result_size.begin(),n4.size); 
+	result_size.insert(result_size.begin(),n3.size); 
+	result.Reshape(result_size); 
+	return result; 
+} 
+
+TMultiDimArray TMultiDimArray::operator()(int n0, int n1, const TIndex &n2, int n3, const TIndex &n4, const TIndex &n5) const
+{
+	TMultiDimArray result(ExtractSubMatrix(TIndex(n0),TIndex(n1),n2,TIndex(n3),n4,n5)); 
+	std::vector<int>result_size(size_along_dim.begin()+3,size_along_dim.end()); 
+	result_size.insert(result_size.begin(),n5.size); 
+	result_size.insert(result_size.begin(),n4.size); 
+	result_size.insert(result_size.begin(),n2.size); 
+	result.Reshape(result_size); 
+	return result; 
+}
+
+TMultiDimArray TMultiDimArray::operator()(int n0, int n1, const TIndex &n2, const TIndex &n3, int n4, const TIndex &n5) const
+{
+	TMultiDimArray result(ExtractSubMatrix(TIndex(n0),TIndex(n1),n2,n3,TIndex(n4),n5)); 
+	std::vector<int>result_size(size_along_dim.begin()+3,size_along_dim.end()); 
+	result_size.insert(result_size.begin(),n5.size); 
+	result_size.insert(result_size.begin(),n3.size); 
+	result_size.insert(result_size.begin(),n2.size); 
+	result.Reshape(result_size); 
+	return result; 
+}
+
+TMultiDimArray TMultiDimArray::operator()(int n0, int n1, const TIndex &n2, const TIndex &n3, const TIndex &n4, int n5) const
+{
+	TMultiDimArray result(ExtractSubMatrix(TIndex(n0),TIndex(n1),n2,n3,n4,TIndex(n5))); 
+	std::vector<int>result_size(size_along_dim.begin()+3,size_along_dim.end()); 
+	result_size.insert(result_size.begin(),n4.size); 
+	result_size.insert(result_size.begin(),n3.size); 
+	result_size.insert(result_size.begin(),n2.size); 
+	result.Reshape(result_size); 
+	return result; 
+}
+
+TMultiDimArray TMultiDimArray::operator()(int n0, const TIndex &n1, int n2, int n3, const TIndex &n4, const TIndex &n5) const
+{
+	TMultiDimArray result(ExtractSubMatrix(TIndex(n0),n1,TIndex(n2),TIndex(n3),n4,n5));
+	std::vector<int>result_size(size_along_dim.begin()+3,size_along_dim.end()); 
+	result_size.insert(result_size.begin(),n5.size); 
+	result_size.insert(result_size.begin(),n4.size); 
+	result_size.insert(result_size.begin(),n1.size); 
+	result.Reshape(result_size); 
+	return result; 
+}
+
+TMultiDimArray TMultiDimArray::operator()(int n0, const TIndex &n1, int n2, const TIndex &n3, int n4, const TIndex &n5) const
+{
+	TMultiDimArray result(ExtractSubMatrix(TIndex(n0),n1,TIndex(n2),n3,TIndex(n4),n5));
+	std::vector<int>result_size(size_along_dim.begin()+3,size_along_dim.end()); 
+	result_size.insert(result_size.begin(),n5.size); 
+	result_size.insert(result_size.begin(),n3.size); 
+	result_size.insert(result_size.begin(),n1.size); 
+	result.Reshape(result_size); 
+	return result; 
+}
+
+TMultiDimArray TMultiDimArray::operator()(int n0, const TIndex &n1, int n2, const TIndex &n3, const TIndex &n4, int n5) const
+{
+	TMultiDimArray result(ExtractSubMatrix(TIndex(n0),n1,TIndex(n2),n3,n4,TIndex(n5)));
+	std::vector<int>result_size(size_along_dim.begin()+3,size_along_dim.end()); 
+	result_size.insert(result_size.begin(),n4.size); 
+	result_size.insert(result_size.begin(),n3.size); 
+	result_size.insert(result_size.begin(),n1.size); 
+	result.Reshape(result_size); 
+	return result; 
+}
+
+TMultiDimArray TMultiDimArray::operator()(int n0, const TIndex &n1, const TIndex &n2, int n3, int n4, const TIndex &n5) const
+{
+	TMultiDimArray result(ExtractSubMatrix(TIndex(n0),n1,n2,TIndex(n3),TIndex(n4),n5));
+	std::vector<int>result_size(size_along_dim.begin()+3,size_along_dim.end()); 
+	result_size.insert(result_size.begin(),n5.size); 
+	result_size.insert(result_size.begin(),n2.size); 
+	result_size.insert(result_size.begin(),n1.size); 
+	result.Reshape(result_size); 
+	return result; 
+}
+
+TMultiDimArray TMultiDimArray::operator()(int n0, const TIndex &n1, const TIndex &n2, int n3, const TIndex &n4, int n5) const
+{
+	TMultiDimArray result(ExtractSubMatrix(TIndex(n0),n1,n2,TIndex(n3),n4,TIndex(n5)));
+	std::vector<int>result_size(size_along_dim.begin()+3,size_along_dim.end()); 
+	result_size.insert(result_size.begin(),n4.size); 
+	result_size.insert(result_size.begin(),n2.size); 
+	result_size.insert(result_size.begin(),n1.size); 
+	result.Reshape(result_size); 
+	return result; 
+}
+
+TMultiDimArray TMultiDimArray::operator()(int n0, const TIndex &n1, const TIndex &n2, const TIndex &n3, int n4, int n5) const
+{
+	TMultiDimArray result(ExtractSubMatrix(TIndex(n0),n1,n2,n3,TIndex(n4),TIndex(n5)));
+	std::vector<int>result_size(size_along_dim.begin()+3,size_along_dim.end()); 
+	result_size.insert(result_size.begin(),n3.size); 
+	result_size.insert(result_size.begin(),n2.size); 
+	result_size.insert(result_size.begin(),n1.size); 
+	result.Reshape(result_size); 
+	return result; 
+}
+
+TMultiDimArray TMultiDimArray::operator()(const TIndex &n0, int n1, int n2, int n3, const TIndex &n4, const TIndex &n5) const
+{
+	TMultiDimArray result(ExtractSubMatrix(n0,TIndex(n1),TIndex(n2),TIndex(n3),n4,n5));
+	std::vector<int>result_size(size_along_dim.begin()+3,size_along_dim.end()); 
+	result_size.insert(result_size.begin(),n5.size); 
+	result_size.insert(result_size.begin(),n4.size); 
+	result_size.insert(result_size.begin(),n0.size); 
+	result.Reshape(result_size); 
+	return result; 
+}
+
+TMultiDimArray TMultiDimArray::operator()(const TIndex &n0, int n1, int n2, const TIndex &n3, int n4, const TIndex &n5) const
+{
+	TMultiDimArray result(ExtractSubMatrix(n0,TIndex(n1),TIndex(n2),n3,TIndex(n4),n5));
+	std::vector<int>result_size(size_along_dim.begin()+3,size_along_dim.end()); 
+	result_size.insert(result_size.begin(),n5.size); 
+	result_size.insert(result_size.begin(),n3.size); 
+	result_size.insert(result_size.begin(),n0.size); 
+	result.Reshape(result_size); 
+	return result; 
+}
+
+TMultiDimArray TMultiDimArray::operator()(const TIndex &n0, int n1, int n2, const TIndex &n3, const TIndex &n4, int n5) const
+{
+	TMultiDimArray result(ExtractSubMatrix(n0,TIndex(n1),TIndex(n2),n3,n4,TIndex(n5)));
+	std::vector<int>result_size(size_along_dim.begin()+3,size_along_dim.end()); 
+	result_size.insert(result_size.begin(),n4.size); 
+	result_size.insert(result_size.begin(),n3.size); 
+	result_size.insert(result_size.begin(),n0.size); 
+	result.Reshape(result_size); 
+	return result; 
+}
+
+TMultiDimArray TMultiDimArray::operator()(const TIndex &n0, int n1, const TIndex &n2, int n3, int n4, const TIndex &n5) const
+{
+	TMultiDimArray result(ExtractSubMatrix(n0,TIndex(n1),n2,TIndex(n3),TIndex(n4),n5));
+	std::vector<int>result_size(size_along_dim.begin()+3,size_along_dim.end()); 
+	result_size.insert(result_size.begin(),n5.size); 
+	result_size.insert(result_size.begin(),n2.size); 
+	result_size.insert(result_size.begin(),n0.size); 
+	result.Reshape(result_size); 
+	return result; 
+}
+
+TMultiDimArray TMultiDimArray::operator()(const TIndex &n0, int n1, const TIndex &n2, int n3, const TIndex &n4, int n5) const
+{
+	TMultiDimArray result(ExtractSubMatrix(n0,TIndex(n1),n2,TIndex(n3),n4,TIndex(n5)));
+	std::vector<int>result_size(size_along_dim.begin()+3,size_along_dim.end()); 
+	result_size.insert(result_size.begin(),n4.size); 
+	result_size.insert(result_size.begin(),n2.size); 
+	result_size.insert(result_size.begin(),n0.size); 
+	result.Reshape(result_size); 
+	return result; 
+}
+
+TMultiDimArray TMultiDimArray::operator()(const TIndex &n0, const TIndex &n1, int n2, int n3, int n4, const TIndex &n5) const
+{
+	TMultiDimArray result(ExtractSubMatrix(n0,n1,TIndex(n2),TIndex(n3),TIndex(n4),n5));
+	std::vector<int>result_size(size_along_dim.begin()+3,size_along_dim.end()); 
+	result_size.insert(result_size.begin(),n5.size); 
+	result_size.insert(result_size.begin(),n1.size); 
+	result_size.insert(result_size.begin(),n0.size); 
+	result.Reshape(result_size); 
+	return result; 
+}
+
+TMultiDimArray TMultiDimArray::operator()(const TIndex &n0, const TIndex &n1, int n2, int n3, const TIndex &n4, int n5) const
+{
+	TMultiDimArray result(ExtractSubMatrix(n0,n1,TIndex(n2),TIndex(n3),n4,TIndex(n5)));
+	std::vector<int>result_size(size_along_dim.begin()+3,size_along_dim.end()); 
+	result_size.insert(result_size.begin(),n4.size); 
+	result_size.insert(result_size.begin(),n1.size); 
+	result_size.insert(result_size.begin(),n0.size); 
+	result.Reshape(result_size); 
+	return result; 
+}
+
+TMultiDimArray TMultiDimArray::operator()(const TIndex &n0, const TIndex &n1, const TIndex &n2, int n3, int n4, int n5) const
+{
+	TMultiDimArray result(ExtractSubMatrix(n0,n1,n2,TIndex(n3),TIndex(n4),TIndex(n5)));
+	std::vector<int>result_size(size_along_dim.begin()+3,size_along_dim.end()); 
+	result_size.insert(result_size.begin(),n2.size); 
+	result_size.insert(result_size.begin(),n1.size); 
+	result_size.insert(result_size.begin(),n0.size); 
+	result.Reshape(result_size); 
+	return result; 
+}
+
+TMultiDimArray TMultiDimArray::operator()(const TIndex &n0, int n1, const TIndex &n2, const TIndex &n3, int n4, int n5) const
+{
+	TMultiDimArray result(ExtractSubMatrix(n0,TIndex(n1),n2,n3,TIndex(n4),TIndex(n5)));
+	std::vector<int>result_size(size_along_dim.begin()+3,size_along_dim.end()); 
+	result_size.insert(result_size.begin(),n3.size); 
+	result_size.insert(result_size.begin(),n2.size); 
+	result_size.insert(result_size.begin(),n0.size); 
+	result.Reshape(result_size); 
+	return result; 
+}
+
+TMultiDimArray TMultiDimArray::operator()(const TIndex &n0, const TIndex &n1, int n2, const TIndex &n3, int n4, int n5) const
+{
+	TMultiDimArray result(ExtractSubMatrix(n0,n1,TIndex(n2),n3,TIndex(n4),TIndex(n5)));
+	std::vector<int>result_size(size_along_dim.begin()+3,size_along_dim.end()); 
+	result_size.insert(result_size.begin(),n3.size); 
+	result_size.insert(result_size.begin(),n1.size); 
+	result_size.insert(result_size.begin(),n0.size); 
+	result.Reshape(result_size); 
+	return result; 
+}
+
+TMultiDimArray TMultiDimArray::operator()(const TIndex&n0, const TIndex&n1, int n2, int n3, int n4, int n5) const
+{
+	TMultiDimArray result(ExtractSubMatrix(n0,n1,TIndex(n2),TIndex(n3),TIndex(n4),TIndex(n5)));
+	std::vector<int>result_size(size_along_dim.begin()+4,size_along_dim.end());
+	result_size.insert(result_size.begin(),n1.size);
+	result_size.insert(result_size.begin(),n0.size);
+	result.Reshape(result_size); 
+	return result;		
+}
+
+TMultiDimArray TMultiDimArray::operator()(const TIndex&n0, int n1, const TIndex&n2, int n3, int n4, int n5) const
+{
+	TMultiDimArray result(ExtractSubMatrix(n0,TIndex(n1),n2,TIndex(n3),TIndex(n4),TIndex(n5)));
+	std::vector<int>result_size(size_along_dim.begin()+4,size_along_dim.end());
+	result_size.insert(result_size.begin(),n2.size);
+	result_size.insert(result_size.begin(),n0.size);
+	result.Reshape(result_size); 
+	return result;		
+}
+
+TMultiDimArray TMultiDimArray::operator()(const TIndex&n0, int n1, int n2, const TIndex&n3, int n4, int n5) const
+{
+	TMultiDimArray result(ExtractSubMatrix(n0,TIndex(n1),TIndex(n2),n3,TIndex(n4),TIndex(n5)));
+	std::vector<int>result_size(size_along_dim.begin()+4,size_along_dim.end());
+	result_size.insert(result_size.begin(),n3.size);
+	result_size.insert(result_size.begin(),n0.size);
+	result.Reshape(result_size); 
+	return result;		
+}
+
+TMultiDimArray TMultiDimArray::operator()(const TIndex&n0, int n1, int n2, int n3, const TIndex&n4, int n5) const
+{
+	TMultiDimArray result(ExtractSubMatrix(n0,TIndex(n1),TIndex(n2),TIndex(n3),n4,TIndex(n5)));
+	std::vector<int>result_size(size_along_dim.begin()+4,size_along_dim.end());
+	result_size.insert(result_size.begin(),n4.size);
+	result_size.insert(result_size.begin(),n0.size);
+	result.Reshape(result_size); 
+	return result;		
+}
+
+TMultiDimArray TMultiDimArray::operator()(const TIndex&n0, int n1, int n2, int n3, int n4, const TIndex&n5) const
+{
+	TMultiDimArray result(ExtractSubMatrix(n0,TIndex(n1),TIndex(n2),TIndex(n3),TIndex(n4),n5));
+	std::vector<int>result_size(size_along_dim.begin()+4,size_along_dim.end());
+	result_size.insert(result_size.begin(),n5.size);
+	result_size.insert(result_size.begin(),n0.size);
+	result.Reshape(result_size); 
+	return result;		
+}
+
+TMultiDimArray TMultiDimArray::operator()(int n0, const TIndex&n1, const TIndex&n2, int n3, int n4, int n5) const
+{
+	TMultiDimArray result(ExtractSubMatrix(TIndex(n0),n1,n2,TIndex(n3),TIndex(n4),TIndex(n5)));
+	std::vector<int>result_size(size_along_dim.begin()+4,size_along_dim.end());
+	result_size.insert(result_size.begin(),n2.size);
+	result_size.insert(result_size.begin(),n1.size);
+	result.Reshape(result_size); 
+	return result;		
+}
+
+TMultiDimArray TMultiDimArray::operator()(int n0, const TIndex&n1, int n2, const TIndex&n3, int n4, int n5) const
+{
+	TMultiDimArray result(ExtractSubMatrix(TIndex(n0),n1,TIndex(n2),n3,TIndex(n4),TIndex(n5)));
+	std::vector<int>result_size(size_along_dim.begin()+4,size_along_dim.end());
+	result_size.insert(result_size.begin(),n3.size);
+	result_size.insert(result_size.begin(),n1.size);
+	result.Reshape(result_size); 
+	return result;		
+}
+
+TMultiDimArray TMultiDimArray::operator()(int n0, const TIndex&n1, int n2, int n3, const TIndex&n4, int n5) const
+{
+	TMultiDimArray result(ExtractSubMatrix(TIndex(n0),n1,TIndex(n2),TIndex(n3),n4,TIndex(n5)));
+	std::vector<int>result_size(size_along_dim.begin()+4,size_along_dim.end());
+	result_size.insert(result_size.begin(),n4.size);
+	result_size.insert(result_size.begin(),n1.size);
+	result.Reshape(result_size); 
+	return result;		
+}
+
+TMultiDimArray TMultiDimArray::operator()(int n0, const TIndex&n1, int n2, int n3, int n4, const TIndex&n5) const
+{
+	TMultiDimArray result(ExtractSubMatrix(TIndex(n0),n1,TIndex(n2),TIndex(n3),TIndex(n4),n5));
+	std::vector<int>result_size(size_along_dim.begin()+4,size_along_dim.end());
+	result_size.insert(result_size.begin(),n5.size);
+	result_size.insert(result_size.begin(),n1.size);
+	result.Reshape(result_size); 
+	return result;		
+}
+
+TMultiDimArray TMultiDimArray::operator()(int n0, int n1, const TIndex&n2, const TIndex&n3, int n4, int n5) const
+{
+	TMultiDimArray result(ExtractSubMatrix(TIndex(n0),TIndex(n1),n2,n3,TIndex(n4),TIndex(n5)));
+	std::vector<int>result_size(size_along_dim.begin()+4,size_along_dim.end());
+	result_size.insert(result_size.begin(),n3.size);
+	result_size.insert(result_size.begin(),n2.size);
+	result.Reshape(result_size); 
+	return result;		
+}
+
+TMultiDimArray TMultiDimArray::operator()(int n0, int n1, const TIndex&n2, int n3, const TIndex&n4, int n5) const
+{
+	TMultiDimArray result(ExtractSubMatrix(TIndex(n0),TIndex(n1),n2,TIndex(n3),n4,TIndex(n5)));
+	std::vector<int>result_size(size_along_dim.begin()+4,size_along_dim.end());
+	result_size.insert(result_size.begin(),n4.size);
+	result_size.insert(result_size.begin(),n2.size);
+	result.Reshape(result_size); 
+	return result;		
+}
+
+TMultiDimArray TMultiDimArray::operator()(int n0, int n1, const TIndex&n2, int n3, int n4, const TIndex&n5) const
+{
+	TMultiDimArray result(ExtractSubMatrix(TIndex(n0),TIndex(n1),n2,TIndex(n3),TIndex(n4),n5));
+	std::vector<int>result_size(size_along_dim.begin()+4,size_along_dim.end());
+	result_size.insert(result_size.begin(),n5.size);
+	result_size.insert(result_size.begin(),n2.size);
+	result.Reshape(result_size); 
+	return result;		
+}
+
+TMultiDimArray TMultiDimArray::operator()(int n0, int n1, int n2, const TIndex&n3, const TIndex&n4, int n5) const
+{
+	TMultiDimArray result(ExtractSubMatrix(TIndex(n0),TIndex(n1),TIndex(n2),n3,n4,TIndex(n5)));
+	std::vector<int>result_size(size_along_dim.begin()+4,size_along_dim.end());
+	result_size.insert(result_size.begin(),n4.size);
+	result_size.insert(result_size.begin(),n3.size);
+	result.Reshape(result_size); 
+	return result;		
+}
+
+TMultiDimArray TMultiDimArray::operator()(int n0, int n1, int n2, const TIndex&n3, int n4, const TIndex&n5) const
+{
+	TMultiDimArray result(ExtractSubMatrix(TIndex(n0),TIndex(n1),TIndex(n2),n3,TIndex(n4),n5));
+	std::vector<int>result_size(size_along_dim.begin()+4,size_along_dim.end());
+	result_size.insert(result_size.begin(),n5.size);
+	result_size.insert(result_size.begin(),n3.size);
+	result.Reshape(result_size); 
+	return result;		
+}
+
+TMultiDimArray TMultiDimArray::operator()(int n0, int n1, int n2, int n3, const TIndex&n4, const TIndex&n5) const
+{
+	TMultiDimArray result(ExtractSubMatrix(TIndex(n0),TIndex(n1),TIndex(n2),TIndex(n3),n4,n5));
+	std::vector<int>result_size(size_along_dim.begin()+4,size_along_dim.end());
+	result_size.insert(result_size.begin(),n5.size);
+	result_size.insert(result_size.begin(),n4.size);
+	result.Reshape(result_size); 
+	return result;		
+}
+
+TMultiDimArray TMultiDimArray::operator()(const TIndex &n0, int n1, int n2, int n3, int n4, int n5) const
+{
+	TMultiDimArray result(ExtractSubMatrix(n0,TIndex(n1),TIndex(n2),TIndex(n3),TIndex(n4),TIndex(n5)));
+	std::vector<int>result_size(size_along_dim.begin()+5,size_along_dim.end());
+	result_size.insert(result_size.begin(),n0.size);
+	result.Reshape(result_size);
+	return result;
+}
+
+TMultiDimArray TMultiDimArray::operator()(int n0, const TIndex &n1, int n2, int n3, int n4, int n5) const
+{
+	TMultiDimArray result(ExtractSubMatrix(TIndex(n0), n1, TIndex(n2),TIndex(n3),TIndex(n4),TIndex(n5)));
+	std::vector<int>result_size(size_along_dim.begin()+5,size_along_dim.end());
+	result_size.insert(result_size.begin(),n1.size);
+	result.Reshape(result_size);
+	return result;
+}
+
+TMultiDimArray TMultiDimArray::operator()(int n0, int n1, const TIndex &n2, int n3, int n4, int n5) const
+{
+	TMultiDimArray result(ExtractSubMatrix(TIndex(n0), TIndex(n1), n2,TIndex(n3),TIndex(n4),TIndex(n5)));
+	std::vector<int>result_size(size_along_dim.begin()+5,size_along_dim.end());
+	result_size.insert(result_size.begin(),n2.size);
+	result.Reshape(result_size);
+	return result;
+}
+
+TMultiDimArray TMultiDimArray::operator()(int n0, int n1, int n2, const TIndex &n3, int n4, int n5) const
+{
+	TMultiDimArray result(ExtractSubMatrix(TIndex(n0), TIndex(n1), TIndex(n2), n3, TIndex(n4),TIndex(n5)));
+	std::vector<int>result_size(size_along_dim.begin()+5,size_along_dim.end());
+	result_size.insert(result_size.begin(),n3.size);
+	result.Reshape(result_size);
+	return result; 
+}
+
+TMultiDimArray TMultiDimArray::operator()(int n0, int n1, int n2, int n3, const TIndex &n4, int n5) const
+{
+	TMultiDimArray result(ExtractSubMatrix(TIndex(n0), TIndex(n1), TIndex(n2), TIndex(n3), n4, TIndex(n5)));
+	std::vector<int>result_size(size_along_dim.begin()+5,size_along_dim.end());
+	result_size.insert(result_size.begin(),n4.size);
+	result.Reshape(result_size);
+	return result; 
+}
+
+TMultiDimArray TMultiDimArray::operator()(int n0, int n1, int n2, int n3, int n4, const TIndex &n5) const
+{
+	TMultiDimArray result(ExtractSubMatrix(TIndex(n0), TIndex(n1), TIndex(n2), TIndex(n3), TIndex(n4), n5));
+	std::vector<int>result_size(size_along_dim.begin()+5,size_along_dim.end());
+	result_size.insert(result_size.begin(),n5.size);
+	result.Reshape(result_size);
+	return result; 
+}
+
+TMultiDimArray TMultiDimArray::operator()(int n0, int n1, int n2, int n3, int n4, int n5) const
+{
+	TMultiDimArray result(ExtractSubMatrix(TIndex(n0), TIndex(n1), TIndex(n2), TIndex(n3), TIndex(n4), TIndex(n5)));
+	std::vector<int>result_size(size_along_dim.begin()+5,size_along_dim.end());
+	result.Reshape(result_size);
+	return result; 
+}
+
+
 // Access with 7 indices
 TMultiDimArray TMultiDimArray::ExtractSubMatrix(const TIndex &n0, const TIndex &n1, const TIndex &n2, const TIndex &n3, const TIndex &n4, const TIndex &n5, const TIndex &n6) const
 {
