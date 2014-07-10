@@ -69,6 +69,13 @@ int main(int argc, char **argv)
 	array.Reshape(2,2,3,2,2); 
 	TMultiDimArray sub_array_8(array(0, 1, TIndex(0,2), 1, 0)); 
 	cout << sub_array_8.Dim() << endl; 
+
+	TMultiDimArray sum_1(array.sum(0)); 
+	TMultiDimArray sum_2(array.sum(2)); 
+	TMultiDimArray sum_3(array.sum(1,3));
+
+	cout << array.sum() << endl; 
+	 
 }
 
 

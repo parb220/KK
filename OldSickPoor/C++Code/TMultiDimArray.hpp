@@ -23,11 +23,13 @@ private:
 	TMultiDimArray ExtractSubMatrix(const TIndex &, const TIndex &, const TIndex &, const TIndex &, const TIndex &) const; 
 	TMultiDimArray ExtractSubMatrix(const TIndex &, const TIndex &, const TIndex &, const TIndex &, const TIndex &, const TIndex &) const;
 	TMultiDimArray ExtractSubMatrix(const TIndex &, const TIndex &, const TIndex &, const TIndex &, const TIndex &, const TIndex &, const TIndex &) const;
+	TMultiDimArray ExtractSubMatrix(const std::vector<TIndex> &) const; 
 
 public: 
 	// Construction
 	TMultiDimArray(int _n, double _v); // 1-d
 	TMultiDimArray(int _n); 
+	TMultiDimArray(const TDenseVector &); 
 	TMultiDimArray(int _n, const TDenseVector &); 
 	TMultiDimArray(int _n0, int _n1, double _v); // 2-d 
 	TMultiDimArray(int _n0, int _n1); 
@@ -227,6 +229,7 @@ public:
 
 	// 6 indices
 	TMultiDimArray operator()(const TIndex &n0, const TIndex &n1, const TIndex &n2, const TIndex &n3, const TIndex &n4, const TIndex &n5) const; 
+	double operator()(int n0, int n1, int n2, int n3, int n4, int n5, bool flag_scalar) const; 
 
 	TMultiDimArray operator()(int n0, const TIndex &n1, const TIndex &n2, const TIndex &n3, const TIndex &n4, const TIndex &n5) const; 
 	TMultiDimArray operator()(const TIndex &n0, int n1, const TIndex &n2, const TIndex &n3, const TIndex &n4, const TIndex &n5) const; 
@@ -371,22 +374,306 @@ public:
 	
 	// 7 indices
 	TMultiDimArray operator()(const TIndex &, const TIndex &, const TIndex &, const TIndex &, const TIndex &, const TIndex &, const TIndex &) const;
+	double operator()(int n0, int n1, int n2, int n3, int n4, int n5, int n6, bool scalar_flag) const; 
 
-        void Set(const TMultiDimArray &, const TIndex &, const TIndex &, const TIndex &, const TIndex &, const TIndex &, const TIndex &, const TIndex &);	
+        TMultiDimArray operator()(const TIndex &n0, const TIndex &n1, const TIndex &n2, const TIndex &n3, const TIndex &n4, const TIndex &n5, int n6) const;
+        TMultiDimArray operator()(const TIndex &n0, const TIndex &n1, const TIndex &n2, const TIndex &n3, const TIndex &n4, int n5, const TIndex &n6) const;
+        TMultiDimArray operator()(const TIndex &n0, const TIndex &n1, const TIndex &n2, const TIndex &n3, int n4, const TIndex &n5, const TIndex &n6) const;
+        TMultiDimArray operator()(const TIndex &n0, const TIndex &n1, const TIndex &n2, int n3, const TIndex &n4, const TIndex &n5, const TIndex &n6) const; 
+        TMultiDimArray operator()(const TIndex &n0, const TIndex &n1, int n2, const TIndex &n3, const TIndex &n4, const TIndex &n5, const TIndex &n6) const; 
+        TMultiDimArray operator()(const TIndex &n0, int n1, const TIndex &n2, const TIndex &n3, const TIndex &n4, const TIndex &n5, const TIndex &n6) const; 
+        TMultiDimArray operator()(int n0, const TIndex &n1, const TIndex &n2, const TIndex &n3, const TIndex &n4, const TIndex &n5, const TIndex &n6) const; 
+        
+        TMultiDimArray operator()(const TIndex &n0, const TIndex &n1, const TIndex &n2, const TIndex &n3, const TIndex &n4, int n5, int n6) const; 
+        TMultiDimArray operator()(const TIndex &n0, const TIndex &n1, const TIndex &n2, const TIndex &n3, int n4, const TIndex &n5, int n6) const; 
+        TMultiDimArray operator()(const TIndex &n0, const TIndex &n1, const TIndex &n2, int n3, const TIndex &n4, const TIndex &n5, int n6) const; 
+        TMultiDimArray operator()(const TIndex &n0, const TIndex &n1, int n2, const TIndex &n3, const TIndex &n4, const TIndex &n5, int n6) const; 
+        TMultiDimArray operator()(const TIndex &n0, int n1, const TIndex &n2, const TIndex &n3, const TIndex &n4, const TIndex &n5, int n6) const; 
+        TMultiDimArray operator()(int n0, const TIndex &n1, const TIndex &n2, const TIndex &n3, const TIndex &n4, const TIndex &n5, int n6) const; 
+        TMultiDimArray operator()(const TIndex &n0, const TIndex &n1, const TIndex &n2, const TIndex &n3, int n4, int n5, const TIndex &n6) const; 
+        TMultiDimArray operator()(const TIndex &n0, const TIndex &n1, const TIndex &n2, int n3, const TIndex &n4, int n5, const TIndex &n6) const; 
+        TMultiDimArray operator()(const TIndex &n0, const TIndex &n1, int n2, const TIndex &n3, const TIndex &n4, int n5, const TIndex &n6) const; 
+        TMultiDimArray operator()(const TIndex &n0, int n1, const TIndex &n2, const TIndex &n3, const TIndex &n4, int n5, const TIndex &n6) const; 
+        TMultiDimArray operator()(int n0, const TIndex &n1, const TIndex &n2, const TIndex &n3, const TIndex &n4, int n5, const TIndex &n6) const; 
+        TMultiDimArray operator()(const TIndex &n0, const TIndex &n1, const TIndex &n2, int n3, int n4, const TIndex &n5, const TIndex &n6) const; 
+        TMultiDimArray operator()(const TIndex &n0, const TIndex &n1, int n2, const TIndex &n3, int n4, const TIndex &n5, const TIndex &n6) const; 
+        TMultiDimArray operator()(const TIndex &n0, int n1, const TIndex &n2, const TIndex &n3, int n4, const TIndex &n5, const TIndex &n6) const; 
+	TMultiDimArray operator()(int n0, const TIndex &n1, const TIndex &n2, const TIndex &n3, int n4, const TIndex &n5, const TIndex &n6) const;
+        TMultiDimArray operator()(const TIndex &n0, const TIndex &n1, int n2, int n3, const TIndex &n4, const TIndex &n5, const TIndex &n6) const;
+        TMultiDimArray operator()(const TIndex &n0, int n1, const TIndex &n2, int n3, const TIndex &n4, const TIndex &n5, const TIndex &n6) const; 
+        TMultiDimArray operator()(int n0, const TIndex &n1, const TIndex &n2, int n3, const TIndex &n4, const TIndex &n5, const TIndex &n6) const; 
+        TMultiDimArray operator()(const TIndex &n0, int n1, int n2, const TIndex &n3, const TIndex &n4, const TIndex &n5, const TIndex &n6) const; 
+        TMultiDimArray operator()(int n0, const TIndex &n1, int n2, const TIndex &n3, const TIndex &n4, const TIndex &n5, const TIndex &n6) const; 
+        TMultiDimArray operator()(int n0, int n1, const TIndex &n2, const TIndex &n3, const TIndex &n4, const TIndex &n5, const TIndex &n6) const; 
 
-	/*	// Operator
-	const TDenseMatrix1D & operator=(const TDenseMatrix1D &right); 
-	TDenseMatrix1D operator+(double) const; 
-	TDenseMatrix1D operator+(const TDenseMatrix1D &right) const; 
-	TDenseMatrix1D operator*(double) const;
-        TDenseMatrix1D operator*(const TDenseMatrix1D &right) const;
+	TMultiDimArray operator()(const TIndex &n0, const TIndex &n1, const TIndex &n2, const TIndex &n3, int n4, int n5, int n6) const;
+        TMultiDimArray operator()(const TIndex &n0, const TIndex &n1, const TIndex &n2, int n3, const TIndex &n4, int n5, int n6) const; 
+        TMultiDimArray operator()(const TIndex &n0, const TIndex &n1, int n2, const TIndex &n3, const TIndex &n4, int n5, int n6) const;  
+        TMultiDimArray operator()(const TIndex &n0, int n1, const TIndex &n2, const TIndex &n3, const TIndex &n4, int n5, int n6) const;
+        TMultiDimArray operator()(int n0, const TIndex &n1, const TIndex &n2, const TIndex &n3, const TIndex &n4, int n5, int n6) const; 
+	TMultiDimArray operator()(const TIndex &n0, const TIndex &n1, const TIndex &n2, int n3, int n4, const TIndex &n5, int n6) const;  
+	TMultiDimArray operator()(const TIndex &n0, const TIndex &n1, int n2, const TIndex &n3, int n4, const TIndex &n5, int n6) const;  
+	TMultiDimArray operator()(const TIndex &n0, int n1, const TIndex &n2, const TIndex &n3, int n4, const TIndex &n5, int n6) const;  
+	TMultiDimArray operator()(int n0, const TIndex &n1, const TIndex &n2, const TIndex &n3, int n4, const TIndex &n5, int n6) const;  
+        TMultiDimArray operator()(const TIndex &n0, const TIndex &n1, int n2, int n3, const TIndex &n4, const TIndex &n5, int n6) const;  
+        TMultiDimArray operator()(const TIndex &n0, int n1, const TIndex &n2, int n3, const TIndex &n4, const TIndex &n5, int n6) const;  
+        TMultiDimArray operator()(int n0, const TIndex &n1, const TIndex &n2, int n3, const TIndex &n4, const TIndex &n5, int n6) const;  
+	TMultiDimArray operator()(const TIndex &n0, int n1, int n2, const TIndex &n3, const TIndex &n4, const TIndex &n5, int n6) const;  
+	TMultiDimArray operator()(int n0, const TIndex &n1, int n2, const TIndex &n3, const TIndex &n4, const TIndex &n5, int n6) const;  
+	TMultiDimArray operator()(int n0, int n1, const TIndex &n2, const TIndex &n3, const TIndex &n4, const TIndex &n5, int n6) const;  
+	TMultiDimArray operator()(const TIndex &n0, const TIndex &n1, const TIndex &n2, int n3, int n4, int n5, const TIndex &n6) const;  
+	TMultiDimArray operator()(const TIndex &n0, const TIndex &n1, int n2, const TIndex &n3, int n4, int n5, const TIndex &n6) const;  
+	TMultiDimArray operator()(const TIndex &n0, int n1, const TIndex &n2, const TIndex &n3, int n4, int n5, const TIndex &n6) const;
+	TMultiDimArray operator()(int n0, const TIndex &n1, const TIndex &n2, const TIndex &n3, int n4, int n5, const TIndex &n6) const; 
+	TMultiDimArray operator()(const TIndex &n0, const TIndex &n1, int n2, int n3, const TIndex &n4, int n5, const TIndex &n6) const; 
+	TMultiDimArray operator()(const TIndex &n0, int n1, const TIndex &n2, int n3, const TIndex &n4, int n5, const TIndex &n6) const; 
+	TMultiDimArray operator()(int n0, const TIndex &n1, const TIndex &n2, int n3, const TIndex &n4, int n5, const TIndex &n6) const; 
+	TMultiDimArray operator()(const TIndex &n0, int n1, int n2, const TIndex &n3, const TIndex &n4, int n5, const TIndex &n6) const; 
+	TMultiDimArray operator()(int n0, const TIndex &n1, int n2, const TIndex &n3, const TIndex &n4, int n5, const TIndex &n6) const; 
+	TMultiDimArray operator()(int n0, int n1, const TIndex &n2, const TIndex &n3, const TIndex &n4, int n5, const TIndex &n6) const; 
+        TMultiDimArray operator()(const TIndex &n0, const TIndex &n1, int n2, int n3, int n4, const TIndex &n5, const TIndex &n6) const; 
+        TMultiDimArray operator()(const TIndex &n0, int n1, const TIndex &n2, int n3, int n4, const TIndex &n5, const TIndex &n6) const; 
+        TMultiDimArray operator()(int n0, const TIndex &n1, const TIndex &n2, int n3, int n4, const TIndex &n5, const TIndex &n6) const; 
+	TMultiDimArray operator()(const TIndex &n0, int n1, int n2, const TIndex &n3, int n4, const TIndex &n5, const TIndex &n6) const; 
+	TMultiDimArray operator()(int n0, const TIndex &n1, int n2, const TIndex &n3, int n4, const TIndex &n5, const TIndex &n6) const; 
+	TMultiDimArray operator()(int n0, int n1, const TIndex &n2, const TIndex &n3, int n4, const TIndex &n5, const TIndex &n6) const; 
+	TMultiDimArray operator()(const TIndex &n0, int n1, int n2, int n3, const TIndex &n4, const TIndex &n5, const TIndex &n6) const; 
+	TMultiDimArray operator()(int n0, const TIndex &n1, int n2, int n3, const TIndex &n4, const TIndex &n5, const TIndex &n6) const; 
+	TMultiDimArray operator()(int n0, int n1, const TIndex &n2, int n3, const TIndex &n4, const TIndex &n5, const TIndex &n6) const; 
+	TMultiDimArray operator()(int n0, int n1, int n2, const TIndex &n3, const TIndex &n4, const TIndex &n5, const TIndex &n6) const; 
+	
+	TMultiDimArray operator()(int n0, int n1, int n2, int n3, const TIndex &n4, const TIndex &n5, const TIndex &n6) const; 
+        TMultiDimArray operator()(int n0, int n1, int n2, const TIndex &n3, int n4, const TIndex &n5, const TIndex &n6) const; 
+        TMultiDimArray operator()(int n0, int n1, const TIndex &n2, int n3, int n4, const TIndex &n5, const TIndex &n6) const; 
+        TMultiDimArray operator()(int n0, const TIndex &n1, int n2, int n3, int n4, const TIndex &n5, const TIndex &n6) const; 
+        TMultiDimArray operator()(const TIndex &n0, int n1, int n2, int n3, int n4, const TIndex &n5, const TIndex &n6) const; 
+	TMultiDimArray operator()(int n0, int n1, int n2, const TIndex &n3, const TIndex &n4, int n5, const TIndex &n6) const; 
+	TMultiDimArray operator()(int n0, int n1, const TIndex &n2, int n3, const TIndex &n4, int n5, const TIndex &n6) const; 
+	TMultiDimArray operator()(int n0, const TIndex &n1, int n2, int n3, const TIndex &n4, int n5, const TIndex &n6) const; 
+	TMultiDimArray operator()(const TIndex &n0, int n1, int n2, int n3, const TIndex &n4, int n5, const TIndex &n6) const; 
+        TMultiDimArray operator()(int n0, int n1, const TIndex &n2, const TIndex &n3, int n4, int n5, const TIndex &n6) const; 
+        TMultiDimArray operator()(int n0, const TIndex &n1, int n2, const TIndex &n3, int n4, int n5, const TIndex &n6) const; 
+        TMultiDimArray operator()(const TIndex &n0, int n1, int n2, const TIndex &n3, int n4, int n5, const TIndex &n6) const; 
+	TMultiDimArray operator()(int n0, const TIndex &n1, const TIndex &n2, int n3, int n4, int n5, const TIndex &n6) const; 
+	TMultiDimArray operator()(const TIndex &n0, int n1, const TIndex &n2, int n3, int n4, int n5, const TIndex &n6) const;  
+	TMultiDimArray operator()(const TIndex &n0, const TIndex &n1, int n2, int n3, int n4, int n5, const TIndex &n6) const; 
+	TMultiDimArray operator()(int n0, int n1, int n2, const TIndex &n3, const TIndex &n4, const TIndex &n5, int n6) const;  
+	TMultiDimArray operator()(int n0, int n1, const TIndex &n2, int n3, const TIndex &n4, const TIndex &n5, int n6) const;  
+	TMultiDimArray operator()(int n0, const TIndex &n1, int n2, int n3, const TIndex &n4, const TIndex &n5, int n6) const;  
+	TMultiDimArray operator()(const TIndex &n0, int n1, int n2, int n3, const TIndex &n4, const TIndex &n5, int n6) const;  
+	TMultiDimArray operator()(int n0, int n1, const TIndex &n2, const TIndex &n3, int n4, const TIndex &n5, int n6) const;  
+	TMultiDimArray operator()(int n0, const TIndex &n1, int n2, const TIndex &n3, int n4, const TIndex &n5, int n6) const;  
+	TMultiDimArray operator()(const TIndex &n0, int n1, int n2, const TIndex &n3, int n4, const TIndex &n5, int n6) const;  
+	TMultiDimArray operator()(int n0, const TIndex &n1, const TIndex &n2, int n3, int n4, const TIndex &n5, int n6) const;  
+	TMultiDimArray operator()(const TIndex &n0, int n1, const TIndex &n2, int n3, int n4, const TIndex &n5, int n6) const;  
+	TMultiDimArray operator()(const TIndex &n0, const TIndex &n1, int n2, int n3, int n4, const TIndex &n5, int n6) const;  
+        TMultiDimArray operator()(int n0, int n1, const TIndex &n2, const TIndex &n3, const TIndex &n4, int n5, int n6) const;  
+        TMultiDimArray operator()(int n0, const TIndex &n1, int n2, const TIndex &n3, const TIndex &n4, int n5, int n6) const;  
+        TMultiDimArray operator()(const TIndex &n0, int n1, int n2, const TIndex &n3, const TIndex &n4, int n5, int n6) const;  
+	TMultiDimArray operator()(int n0, const TIndex &n1, const TIndex &n2, int n3, const TIndex &n4, int n5, int n6) const;  
+	TMultiDimArray operator()(const TIndex &n0, int n1, const TIndex &n2, int n3, const TIndex &n4, int n5, int n6) const;  
+	TMultiDimArray operator()(const TIndex &n0, const TIndex &n1, int n2, int n3, const TIndex &n4, int n5, int n6) const;  
+	TMultiDimArray operator()(int n0, const TIndex &n1, const TIndex &n2, const TIndex &n3, int n4, int n5, int n6) const;  
+	TMultiDimArray operator()(const TIndex &n0, int n1, const TIndex &n2, const TIndex &n3, int n4, int n5, int n6) const;  
+	TMultiDimArray operator()(const TIndex &n0, const TIndex &n1, int n2, const TIndex &n3, int n4, int n5, int n6) const;  
+	TMultiDimArray operator()(const TIndex &n0, const TIndex &n1, const TIndex &n2, int n3, int n4, int n5, int n6) const; 
+
+        TMultiDimArray operator()(int n0, int n1, int n2, int n3, int n4, const TIndex &n5, const TIndex &n6) const; 
+        TMultiDimArray operator()(int n0, int n1, int n2, int n3, const TIndex &n4, int n5, const TIndex &n6) const; 
+        TMultiDimArray operator()(int n0, int n1, int n2, const TIndex &n3, int n4, int n5, const TIndex &n6) const; 
+        TMultiDimArray operator()(int n0, int n1, const TIndex &n2, int n3, int n4, int n5, const TIndex &n6) const;
+        TMultiDimArray operator()(int n0, const TIndex &n1, int n2, int n3, int n4, int n5, const TIndex &n6) const; 
+        TMultiDimArray operator()(const TIndex &n0, int n1, int n2, int n3, int n4, int n5, const TIndex &n6) const; 
+        TMultiDimArray operator()(int n0, int n1, int n2, int n3, const TIndex &n4, const TIndex &n5, int n6) const; 
+        TMultiDimArray operator()(int n0, int n1, int n2, const TIndex &n3, int n4, const TIndex &n5, int n6) const; 
+        TMultiDimArray operator()(int n0, int n1, const TIndex &n2, int n3, int n4, const TIndex &n5, int n6) const; 
+        TMultiDimArray operator()(int n0, const TIndex &n1, int n2, int n3, int n4, const TIndex &n5, int n6) const; 
+        TMultiDimArray operator()(const TIndex &n0, int n1, int n2, int n3, int n4, const TIndex &n5, int n6) const; 
+        TMultiDimArray operator()(int n0, int n1, int n2, const TIndex &n3, const TIndex &n4, int n5, int n6) const; 
+        TMultiDimArray operator()(int n0, int n1, const TIndex &n2, int n3, const TIndex &n4, int n5, int n6) const; 
+        TMultiDimArray operator()(int n0, const TIndex &n1, int n2, int n3, const TIndex &n4, int n5, int n6) const; 
+        TMultiDimArray operator()(const TIndex &n0, int n1, int n2, int n3, const TIndex &n4, int n5, int n6) const; 
+        TMultiDimArray operator()(int n0, int n1, const TIndex &n2, const TIndex &n3, int n4, int n5, int n6) const; 
+        TMultiDimArray operator()(int n0, const TIndex &n1, int n2, const TIndex &n3, int n4, int n5, int n6) const; 
+        TMultiDimArray operator()(const TIndex &n0, int n1, int n2, const TIndex &n3, int n4, int n5, int n6) const; 
+        TMultiDimArray operator()(int n0, const TIndex &n1, const TIndex &n2, int n3, int n4, int n5, int n6) const; 
+        TMultiDimArray operator()(const TIndex &n0, int n1, const TIndex &n2, int n3, int n4, int n5, int n6) const; 
+        TMultiDimArray operator()(const TIndex &n0, const TIndex &n1, int n2, int n3, int n4, int n5, int n6) const; 
+	
+        TMultiDimArray operator()(const TIndex &n0, int n1, int n2, int n3, int n4, int n5, int n6) const;
+        TMultiDimArray operator()(int n0, const TIndex &n1, int n2, int n3, int n4, int n5, int n6) const; 
+        TMultiDimArray operator()(int n0, int n1, const TIndex &n2, int n3, int n4, int n5, int n6) const; 
+        TMultiDimArray operator()(int n0, int n1, int n2, const TIndex &n3, int n4, int n5, int n6) const;
+        TMultiDimArray operator()(int n0, int n1, int n2, int n3, const TIndex &n4, int n5, int n6) const;
+        TMultiDimArray operator()(int n0, int n1, int n2, int n3, int n4, const TIndex &n5, int n6) const;
+        TMultiDimArray operator()(int n0, int n1, int n2, int n3, int n4, int n5, const TIndex &n6) const; 
+	
+	TMultiDimArray operator()(int n0, int n1, int n2, int n3, int n4, int n5, int n6) const; 
+	
+	void Set(const TMultiDimArray &, const TIndex &, const TIndex &, const TIndex &, const TIndex &, const TIndex &, const TIndex &, const TIndex &);
+	void Set(double v, int n0, int n1, int n2, int n3, int n4, int n5, int n6);
+
+        void Set(const TMultiDimArray &v, const TIndex &n0, const TIndex &n1, const TIndex &n2, const TIndex &n3, const TIndex &n4, const TIndex &n5, int n6) { Set(v,n0,n1,n2,n3,n4,n5,TIndex(n6)); }
+        void Set(const TMultiDimArray &v, const TIndex &n0, const TIndex &n1, const TIndex &n2, const TIndex &n3, const TIndex &n4, int n5, const TIndex &n6) { Set(v,n0,n1,n2,n3,n4,TIndex(n5),n6); }
+        void Set(const TMultiDimArray &v, const TIndex &n0, const TIndex &n1, const TIndex &n2, const TIndex &n3, int n4, const TIndex &n5, const TIndex &n6) { Set(v,n0,n1,n2,n3,TIndex(n4),n5,n6); }
+        void Set(const TMultiDimArray &v, const TIndex &n0, const TIndex &n1, const TIndex &n2, int n3, const TIndex &n4, const TIndex &n5, const TIndex &n6) { Set(v,n0,n1,n2,TIndex(n3),n4,n5,n6); }
+        void Set(const TMultiDimArray &v, const TIndex &n0, const TIndex &n1, int n2, const TIndex &n3, const TIndex &n4, const TIndex &n5, const TIndex &n6) { Set(v,n0,n1,TIndex(n2),n3,n4,n5,n6); }
+        void Set(const TMultiDimArray &v, const TIndex &n0, int n1, const TIndex &n2, const TIndex &n3, const TIndex &n4, const TIndex &n5, const TIndex &n6) { Set(v,n0,TIndex(n1),n2,n3,n4,n5,n6); }
+        void Set(const TMultiDimArray &v, int n0, const TIndex &n1, const TIndex &n2, const TIndex &n3, const TIndex &n4, const TIndex &n5, const TIndex &n6) { Set(v,TIndex(n0),n1,n2,n3,n4,n5,n6); }
+	
+        void Set(const TMultiDimArray &v, const TIndex &n0, const TIndex &n1, const TIndex &n2, const TIndex &n3, const TIndex &n4, int n5, int n6) { Set(v,n0,n1,n2,n3,n4,TIndex(n5),TIndex(n6)); }
+        void Set(const TMultiDimArray &v, const TIndex &n0, const TIndex &n1, const TIndex &n2, const TIndex &n3, int n4, const TIndex &n5, int n6) { Set(v,n0,n1,n2,n3,TIndex(n4),n5,TIndex(n6)); }
+        void Set(const TMultiDimArray &v, const TIndex &n0, const TIndex &n1, const TIndex &n2, int n3, const TIndex &n4, const TIndex &n5, int n6) { Set(v,n0,n1,n2,TIndex(n3),n4,n5,TIndex(n6)); }
+        void Set(const TMultiDimArray &v, const TIndex &n0, const TIndex &n1, int n2, const TIndex &n3, const TIndex &n4, const TIndex &n5, int n6) { Set(v,n0,n1,TIndex(n2),n3,n4,n5,TIndex(n6)); }
+        void Set(const TMultiDimArray &v, const TIndex &n0, int n1, const TIndex &n2, const TIndex &n3, const TIndex &n4, const TIndex &n5, int n6) { Set(v,n0,TIndex(n1),n2,n3,n4,n5,TIndex(n6)); }
+        void Set(const TMultiDimArray &v, int n0, const TIndex &n1, const TIndex &n2, const TIndex &n3, const TIndex &n4, const TIndex &n5, int n6) { Set(v,TIndex(n0),n1,n2,n3,n4,n5,TIndex(n6)); }
+        void Set(const TMultiDimArray &v, const TIndex &n0, const TIndex &n1, const TIndex &n2, const TIndex &n3, int n4, int n5, const TIndex &n6) { Set(v,n0,n1,n2,n3,TIndex(n4),TIndex(n5),n6); }
+        void Set(const TMultiDimArray &v, const TIndex &n0, const TIndex &n1, const TIndex &n2, int n3, const TIndex &n4, int n5, const TIndex &n6) { Set(v,n0,n1,n2,TIndex(n3),n4,TIndex(n5),n6); }
+        void Set(const TMultiDimArray &v, const TIndex &n0, const TIndex &n1, int n2, const TIndex &n3, const TIndex &n4, int n5, const TIndex &n6) { Set(v,n0,n1,TIndex(n2),n3,n4,TIndex(n5),n6); }
+        void Set(const TMultiDimArray &v, const TIndex &n0, int n1, const TIndex &n2, const TIndex &n3, const TIndex &n4, int n5, const TIndex &n6) { Set(v,n0,TIndex(n1),n2,n3,n4,TIndex(n5),n6); }
+        void Set(const TMultiDimArray &v, int n0, const TIndex &n1, const TIndex &n2, const TIndex &n3, const TIndex &n4, int n5, const TIndex &n6) { Set(v,TIndex(n0),n1,n2,n3,n4,TIndex(n5),n6); }
+        void Set(const TMultiDimArray &v, const TIndex &n0, const TIndex &n1, const TIndex &n2, int n3, int n4, const TIndex &n5, const TIndex &n6) { Set(v,n0,n1,n2,TIndex(n3),TIndex(n4),n5,n6); }
+        void Set(const TMultiDimArray &v, const TIndex &n0, const TIndex &n1, int n2, const TIndex &n3, int n4, const TIndex &n5, const TIndex &n6) { Set(v,n0,n1,TIndex(n2),n3,TIndex(n4),n5,n6); }
+        void Set(const TMultiDimArray &v, const TIndex &n0, int n1, const TIndex &n2, const TIndex &n3, int n4, const TIndex &n5, const TIndex &n6) { Set(v,n0,TIndex(n1),n2,n3,TIndex(n4),n5,n6); }
+        void Set(const TMultiDimArray &v, int n0, const TIndex &n1, const TIndex &n2, const TIndex &n3, int n4, const TIndex &n5, const TIndex &n6) { Set(v,TIndex(n0),n1,n2,n3,TIndex(n4),n5,n6); }
+        void Set(const TMultiDimArray &v, const TIndex &n0, const TIndex &n1, int n2, int n3, const TIndex &n4, const TIndex &n5, const TIndex &n6) { Set(v,n0,n1,TIndex(n2),TIndex(n3),n4,n5,n6); }
+        void Set(const TMultiDimArray &v, const TIndex &n0, int n1, const TIndex &n2, int n3, const TIndex &n4, const TIndex &n5, const TIndex &n6) { Set(v,n0,TIndex(n1),n2,TIndex(n3),n4,n5,n6); }
+        void Set(const TMultiDimArray &v, int n0, const TIndex &n1, const TIndex &n2, int n3, const TIndex &n4, const TIndex &n5, const TIndex &n6) { Set(v,TIndex(n0),n1,n2,TIndex(n3),n4,n5,n6); }
+        void Set(const TMultiDimArray &v, const TIndex &n0, int n1, int n2, const TIndex &n3, const TIndex &n4, const TIndex &n5, const TIndex &n6) { Set(v,n0,TIndex(n1),TIndex(n2),n3,n4,n5,n6); }
+        void Set(const TMultiDimArray &v, int n0, const TIndex &n1, int n2, const TIndex &n3, const TIndex &n4, const TIndex &n5, const TIndex &n6) { Set(v,TIndex(n0),n1,TIndex(n2),n3,n4,n5,n6); }
+        void Set(const TMultiDimArray &v, int n0, int n1, const TIndex &n2, const TIndex &n3, const TIndex &n4, const TIndex &n5, const TIndex &n6) { Set(v,TIndex(n0),TIndex(n1),n2,n3,n4,n5,n6); }
+        
+	void Set(const TMultiDimArray &v, const TIndex &n0, const TIndex &n1, const TIndex &n2, const TIndex &n3, int n4, int n5, int n6) { Set(v,n0,n1,n2,n3,TIndex(n4),TIndex(n5),TIndex(n6)); }
+        void Set(const TMultiDimArray &v, const TIndex &n0, const TIndex &n1, const TIndex &n2, int n3, const TIndex &n4, int n5, int n6) { Set(v,n0,n1,n2,TIndex(n3),n4,TIndex(n5),TIndex(n6)); }
+        void Set(const TMultiDimArray &v, const TIndex &n0, const TIndex &n1, int n2, const TIndex &n3, const TIndex &n4, int n5, int n6) { Set(v,n0,n1,TIndex(n2),n3,n4,TIndex(n5),TIndex(n6)); }
+        void Set(const TMultiDimArray &v, const TIndex &n0, int n1, const TIndex &n2, const TIndex &n3, const TIndex &n4, int n5, int n6) { Set(v,n0,TIndex(n1),n2,n3,n4,TIndex(n5),TIndex(n6)); }
+        void Set(const TMultiDimArray &v, int n0, const TIndex &n1, const TIndex &n2, const TIndex &n3, const TIndex &n4, int n5, int n6) { Set(v,TIndex(n0),n1,n2,n3,n4,TIndex(n5),TIndex(n6)); }
+	void Set(const TMultiDimArray &v, const TIndex &n0, const TIndex &n1, const TIndex &n2, int n3, int n4, const TIndex &n5, int n6) { Set(v,n0,n1,n2,TIndex(n3),TIndex(n4),n5,TIndex(n6)); }
+	void Set(const TMultiDimArray &v, const TIndex &n0, const TIndex &n1, int n2, const TIndex &n3, int n4, const TIndex &n5, int n6) { Set(v,n0,n1,TIndex(n2),n3,TIndex(n4),n5,TIndex(n6)); }
+	void Set(const TMultiDimArray &v, const TIndex &n0, int n1, const TIndex &n2, const TIndex &n3, int n4, const TIndex &n5, int n6) { Set(v,n0,TIndex(n1),n2,n3,TIndex(n4),n5,TIndex(n6)); }
+	void Set(const TMultiDimArray &v, int n0, const TIndex &n1, const TIndex &n2, const TIndex &n3, int n4, const TIndex &n5, int n6) { Set(v,TIndex(n0),n1,n2,n3,TIndex(n4),n5,TIndex(n6)); }
+        void Set(const TMultiDimArray &v, const TIndex &n0, const TIndex &n1, int n2, int n3, const TIndex &n4, const TIndex &n5, int n6) { Set(v,n0,n1,TIndex(n2),TIndex(n3),n4,n5,TIndex(n6)); }
+        void Set(const TMultiDimArray &v, const TIndex &n0, int n1, const TIndex &n2, int n3, const TIndex &n4, const TIndex &n5, int n6) { Set(v,n0,TIndex(n1),n2,TIndex(n3),n4,n5,TIndex(n6)); }
+        void Set(const TMultiDimArray &v, int n0, const TIndex &n1, const TIndex &n2, int n3, const TIndex &n4, const TIndex &n5, int n6) { Set(v,TIndex(n0),n1,n2,TIndex(n3),n4,n5,TIndex(n6)); }
+	void Set(const TMultiDimArray &v, const TIndex &n0, int n1, int n2, const TIndex &n3, const TIndex &n4, const TIndex &n5, int n6) { Set(v,n0,TIndex(n1),TIndex(n2),n3,n4,n5,TIndex(n6)); }
+	void Set(const TMultiDimArray &v, int n0, const TIndex &n1, int n2, const TIndex &n3, const TIndex &n4, const TIndex &n5, int n6) { Set(v,TIndex(n0),n1,TIndex(n2),n3,n4,n5,TIndex(n6)); }
+	void Set(const TMultiDimArray &v, int n0, int n1, const TIndex &n2, const TIndex &n3, const TIndex &n4, const TIndex &n5, int n6) { Set(v,TIndex(n0),TIndex(n1),n2,n3,n4,n5,TIndex(n6)); }
+	void Set(const TMultiDimArray &v, const TIndex &n0, const TIndex &n1, const TIndex &n2, int n3, int n4, int n5, const TIndex &n6) { Set(v,n0,n1,n2,TIndex(n3),TIndex(n4),TIndex(n5),n6); }
+	void Set(const TMultiDimArray &v, const TIndex &n0, const TIndex &n1, int n2, const TIndex &n3, int n4, int n5, const TIndex &n6) { Set(v,n0,n1,TIndex(n2),n3,TIndex(n4),TIndex(n5),n6); }
+	void Set(const TMultiDimArray &v, const TIndex &n0, int n1, const TIndex &n2, const TIndex &n3, int n4, int n5, const TIndex &n6) { Set(v,n0,TIndex(n1),n2,n3,TIndex(n4),TIndex(n5),n6); }
+	void Set(const TMultiDimArray &v, int n0, const TIndex &n1, const TIndex &n2, const TIndex &n3, int n4, int n5, const TIndex &n6) { Set(v,TIndex(n0),n1,n2,n3,TIndex(n4),TIndex(n5),n6); }
+	void Set(const TMultiDimArray &v, const TIndex &n0, const TIndex &n1, int n2, int n3, const TIndex &n4, int n5, const TIndex &n6) { Set(v,n0,n1,TIndex(n2),TIndex(n3),n4,TIndex(n5),n6); }
+	void Set(const TMultiDimArray &v, const TIndex &n0, int n1, const TIndex &n2, int n3, const TIndex &n4, int n5, const TIndex &n6) { Set(v,n0,TIndex(n1),n2,TIndex(n3),n4,TIndex(n5),n6); }
+	void Set(const TMultiDimArray &v, int n0, const TIndex &n1, const TIndex &n2, int n3, const TIndex &n4, int n5, const TIndex &n6) { Set(v,TIndex(n0),n1,n2,TIndex(n3),n4,TIndex(n5),n6); }
+	void Set(const TMultiDimArray &v, const TIndex &n0, int n1, int n2, const TIndex &n3, const TIndex &n4, int n5, const TIndex &n6) { Set(v,n0,TIndex(n1),TIndex(n2),n3,n4,TIndex(n5),n6); }
+	void Set(const TMultiDimArray &v, int n0, const TIndex &n1, int n2, const TIndex &n3, const TIndex &n4, int n5, const TIndex &n6) { Set(v,TIndex(n0),n1,TIndex(n2),n3,n4,TIndex(n5),n6); }
+	void Set(const TMultiDimArray &v, int n0, int n1, const TIndex &n2, const TIndex &n3, const TIndex &n4, int n5, const TIndex &n6) { Set(v,TIndex(n0),TIndex(n1),n2,n3,n4,TIndex(n5),n6); }
+        void Set(const TMultiDimArray &v, const TIndex &n0, const TIndex &n1, int n2, int n3, int n4, const TIndex &n5, const TIndex &n6) { Set(v,n0,n1,TIndex(n2),TIndex(n3),TIndex(n4),n5,n6); }
+        void Set(const TMultiDimArray &v, const TIndex &n0, int n1, const TIndex &n2, int n3, int n4, const TIndex &n5, const TIndex &n6) { Set(v,n0,TIndex(n1),n2,TIndex(n3),TIndex(n4),n5,n6); }
+        void Set(const TMultiDimArray &v, int n0, const TIndex &n1, const TIndex &n2, int n3, int n4, const TIndex &n5, const TIndex &n6) { Set(v,TIndex(n0),n1,n2,TIndex(n3),TIndex(n4),n5,n6); }
+	void Set(const TMultiDimArray &v, const TIndex &n0, int n1, int n2, const TIndex &n3, int n4, const TIndex &n5, const TIndex &n6) { Set(v,n0,TIndex(n1),TIndex(n2),n3,TIndex(n4),n5,n6); }
+	void Set(const TMultiDimArray &v, int n0, const TIndex &n1, int n2, const TIndex &n3, int n4, const TIndex &n5, const TIndex &n6) { Set(v,TIndex(n0),n1,TIndex(n2),n3,TIndex(n4),n5,n6); }
+	void Set(const TMultiDimArray &v, int n0, int n1, const TIndex &n2, const TIndex &n3, int n4, const TIndex &n5, const TIndex &n6) { Set(v,TIndex(n0),TIndex(n1),n2,n3,TIndex(n4),n5,n6); }
+	void Set(const TMultiDimArray &v, const TIndex &n0, int n1, int n2, int n3, const TIndex &n4, const TIndex &n5, const TIndex &n6) { Set(v,n0,TIndex(n1),TIndex(n2),TIndex(n3),n4,n5,n6); }
+	void Set(const TMultiDimArray &v, int n0, const TIndex &n1, int n2, int n3, const TIndex &n4, const TIndex &n5, const TIndex &n6) { Set(v,TIndex(n0),n1,TIndex(n2),TIndex(n3),n4,n5,n6); }
+	void Set(const TMultiDimArray &v, int n0, int n1, const TIndex &n2, int n3, const TIndex &n4, const TIndex &n5, const TIndex &n6) { Set(v,TIndex(n0),TIndex(n1),n2,TIndex(n3),n4,n5,n6); }
+	void Set(const TMultiDimArray &v, int n0, int n1, int n2, const TIndex &n3, const TIndex &n4, const TIndex &n5, const TIndex &n6) { Set(v,TIndex(n0),TIndex(n1),TIndex(n2),n3,n4,n5,n6); }
+	
+	void Set(const TMultiDimArray &v, int n0, int n1, int n2, int n3, const TIndex &n4, const TIndex &n5, const TIndex &n6) { Set(v,TIndex(n0),TIndex(n1),TIndex(n2),TIndex(n3),n4,n5,n6); }
+        void Set(const TMultiDimArray &v, int n0, int n1, int n2, const TIndex &n3, int n4, const TIndex &n5, const TIndex &n6) { Set(v,TIndex(n0),TIndex(n1),TIndex(n2),n3,TIndex(n4),n5,n6); }
+        void Set(const TMultiDimArray &v, int n0, int n1, const TIndex &n2, int n3, int n4, const TIndex &n5, const TIndex &n6) { Set(v,TIndex(n0),TIndex(n1),n2,TIndex(n3),TIndex(n4),n5,n6); }
+        void Set(const TMultiDimArray &v, int n0, const TIndex &n1, int n2, int n3, int n4, const TIndex &n5, const TIndex &n6) { Set(v,TIndex(n0),n1,TIndex(n2),TIndex(n3),TIndex(n4),n5,n6); }
+        void Set(const TMultiDimArray &v, const TIndex &n0, int n1, int n2, int n3, int n4, const TIndex &n5, const TIndex &n6) { Set(v,n0,TIndex(n1),TIndex(n2),TIndex(n3),TIndex(n4),n5,n6); }
+	void Set(const TMultiDimArray &v, int n0, int n1, int n2, const TIndex &n3, const TIndex &n4, int n5, const TIndex &n6) { Set(v,TIndex(n0),TIndex(n1),TIndex(n2),n3,n4,TIndex(n5),n6); }
+	void Set(const TMultiDimArray &v, int n0, int n1, const TIndex &n2, int n3, const TIndex &n4, int n5, const TIndex &n6) { Set(v,TIndex(n0),TIndex(n1),n2,TIndex(n3),n4,TIndex(n5),n6); }
+	void Set(const TMultiDimArray &v, int n0, const TIndex &n1, int n2, int n3, const TIndex &n4, int n5, const TIndex &n6) { Set(v,TIndex(n0),n1,TIndex(n2),TIndex(n3),n4,TIndex(n5),n6); }
+	void Set(const TMultiDimArray &v, const TIndex &n0, int n1, int n2, int n3, const TIndex &n4, int n5, const TIndex &n6) { Set(v,n0,TIndex(n1),TIndex(n2),TIndex(n3),n4,TIndex(n5),n6); }
+        void Set(const TMultiDimArray &v, int n0, int n1, const TIndex &n2, const TIndex &n3, int n4, int n5, const TIndex &n6) { Set(v,TIndex(n0),TIndex(n1),n2,n3,TIndex(n4),TIndex(n5),n6); }
+        void Set(const TMultiDimArray &v, int n0, const TIndex &n1, int n2, const TIndex &n3, int n4, int n5, const TIndex &n6) { Set(v,TIndex(n0),n1,TIndex(n2),n3,TIndex(n4),TIndex(n5),n6); }
+        void Set(const TMultiDimArray &v, const TIndex &n0, int n1, int n2, const TIndex &n3, int n4, int n5, const TIndex &n6) { Set(v,n0,TIndex(n1),TIndex(n2),n3,TIndex(n4),TIndex(n5),n6); }
+	void Set(const TMultiDimArray &v, int n0, const TIndex &n1, const TIndex &n2, int n3, int n4, int n5, const TIndex &n6) { Set(v,TIndex(n0),n1,n2,TIndex(n3),TIndex(n4),TIndex(n5),n6); }
+	void Set(const TMultiDimArray &v, const TIndex &n0, int n1, const TIndex &n2, int n3, int n4, int n5, const TIndex &n6) { Set(v,n0,TIndex(n1),n2,TIndex(n3),TIndex(n4),TIndex(n5),n6); }
+	void Set(const TMultiDimArray &v, const TIndex &n0, const TIndex &n1, int n2, int n3, int n4, int n5, const TIndex &n6) { Set(v,n0,n1,TIndex(n2),TIndex(n3),TIndex(n4),TIndex(n5),n6); }
+	void Set(const TMultiDimArray &v, int n0, int n1, int n2, const TIndex &n3, const TIndex &n4, const TIndex &n5, int n6) { Set(v,TIndex(n0),TIndex(n1),TIndex(n2),n3,n4,n5,TIndex(n6)); }
+	void Set(const TMultiDimArray &v, int n0, int n1, const TIndex &n2, int n3, const TIndex &n4, const TIndex &n5, int n6) { Set(v,TIndex(n0),TIndex(n1),n2,TIndex(n3),n4,n5,TIndex(n6)); }
+	void Set(const TMultiDimArray &v, int n0, const TIndex &n1, int n2, int n3, const TIndex &n4, const TIndex &n5, int n6) { Set(v,TIndex(n0),n1,TIndex(n2),TIndex(n3),n4,n5,TIndex(n6)); }
+	void Set(const TMultiDimArray &v, const TIndex &n0, int n1, int n2, int n3, const TIndex &n4, const TIndex &n5, int n6) { Set(v,n0,TIndex(n1),TIndex(n2),TIndex(n3),n4,n5,TIndex(n6)); }
+	void Set(const TMultiDimArray &v, int n0, int n1, const TIndex &n2, const TIndex &n3, int n4, const TIndex &n5, int n6) { Set(v,TIndex(n0),TIndex(n1),n2,n3,TIndex(n4),n5,TIndex(n6)); }
+	void Set(const TMultiDimArray &v, int n0, const TIndex &n1, int n2, const TIndex &n3, int n4, const TIndex &n5, int n6) { Set(v,TIndex(n0),n1,TIndex(n2),n3,TIndex(n4),n5,TIndex(n6)); }
+	void Set(const TMultiDimArray &v, const TIndex &n0, int n1, int n2, const TIndex &n3, int n4, const TIndex &n5, int n6) { Set(v,n0,TIndex(n1),TIndex(n2),n3,TIndex(n4),n5,TIndex(n6)); }
+	void Set(const TMultiDimArray &v, int n0, const TIndex &n1, const TIndex &n2, int n3, int n4, const TIndex &n5, int n6) { Set(v,TIndex(n0),n1,n2,TIndex(n3),TIndex(n4),n5,TIndex(n6)); }
+	void Set(const TMultiDimArray &v, const TIndex &n0, int n1, const TIndex &n2, int n3, int n4, const TIndex &n5, int n6) { Set(v,n0,TIndex(n1),n2,TIndex(n3),TIndex(n4),n5,TIndex(n6)); }
+	void Set(const TMultiDimArray &v, const TIndex &n0, const TIndex &n1, int n2, int n3, int n4, const TIndex &n5, int n6) { Set(v,n0,n1,TIndex(n2),TIndex(n3),TIndex(n4),n5,TIndex(n6)); }
+        void Set(const TMultiDimArray &v, int n0, int n1, const TIndex &n2, const TIndex &n3, const TIndex &n4, int n5, int n6) { Set(v,TIndex(n0),TIndex(n1),n2,n3,n4,TIndex(n5),TIndex(n6)); }
+        void Set(const TMultiDimArray &v, int n0, const TIndex &n1, int n2, const TIndex &n3, const TIndex &n4, int n5, int n6) { Set(v,TIndex(n0),n1,TIndex(n2),n3,n4,TIndex(n5),TIndex(n6)); }
+        void Set(const TMultiDimArray &v, const TIndex &n0, int n1, int n2, const TIndex &n3, const TIndex &n4, int n5, int n6) { Set(v,n0,TIndex(n1),TIndex(n2),n3,n4,TIndex(n5),TIndex(n6)); }
+	void Set(const TMultiDimArray &v, int n0, const TIndex &n1, const TIndex &n2, int n3, const TIndex &n4, int n5, int n6) { Set(v,TIndex(n0),n1,n2,TIndex(n3),n4,TIndex(n5),TIndex(n6)); }
+	void Set(const TMultiDimArray &v, const TIndex &n0, int n1, const TIndex &n2, int n3, const TIndex &n4, int n5, int n6) { Set(v,n0,TIndex(n1),n2,TIndex(n3),n4,TIndex(n5),TIndex(n6)); }
+	void Set(const TMultiDimArray &v, const TIndex &n0, const TIndex &n1, int n2, int n3, const TIndex &n4, int n5, int n6) { Set(v,n0,n1,TIndex(n2),TIndex(n3),n4,TIndex(n5),TIndex(n6)); }
+	void Set(const TMultiDimArray &v, int n0, const TIndex &n1, const TIndex &n2, const TIndex &n3, int n4, int n5, int n6) { Set(v,TIndex(n0),n1,n2,n3,TIndex(n4),TIndex(n5),TIndex(n6)); }
+	void Set(const TMultiDimArray &v, const TIndex &n0, int n1, const TIndex &n2, const TIndex &n3, int n4, int n5, int n6) { Set(v,n0,TIndex(n1),n2,n3,TIndex(n4),TIndex(n5),TIndex(n6)); }
+	void Set(const TMultiDimArray &v, const TIndex &n0, const TIndex &n1, int n2, const TIndex &n3, int n4, int n5, int n6) { Set(v,n0,n1,TIndex(n2),n3,TIndex(n4),TIndex(n5),TIndex(n6)); }
+	void Set(const TMultiDimArray &v, const TIndex &n0, const TIndex &n1, const TIndex &n2, int n3, int n4, int n5, int n6) { Set(v,n0,n1,n2,TIndex(n3),TIndex(n4),TIndex(n5),TIndex(n6)); }
+	
+        void Set(const TMultiDimArray &v, int n0, int n1, int n2, int n3, int n4, const TIndex &n5, const TIndex &n6) { Set(v,TIndex(n0),TIndex(n1),TIndex(n2),TIndex(n3),TIndex(n4),n5,n6); }
+        void Set(const TMultiDimArray &v, int n0, int n1, int n2, int n3, const TIndex &n4, int n5, const TIndex &n6) { Set(v,TIndex(n0),TIndex(n1),TIndex(n2),TIndex(n3),n4,TIndex(n5),n6); }
+        void Set(const TMultiDimArray &v, int n0, int n1, int n2, const TIndex &n3, int n4, int n5, const TIndex &n6) { Set(v,TIndex(n0),TIndex(n1),TIndex(n2),n3,TIndex(n4),TIndex(n5),n6); }
+        void Set(const TMultiDimArray &v, int n0, int n1, const TIndex &n2, int n3, int n4, int n5, const TIndex &n6) { Set(v,TIndex(n0),TIndex(n1),n2,TIndex(n3),TIndex(n4),TIndex(n5),n6); }
+        void Set(const TMultiDimArray &v, int n0, const TIndex &n1, int n2, int n3, int n4, int n5, const TIndex &n6) { Set(v,TIndex(n0),n1,TIndex(n2),TIndex(n3),TIndex(n4),TIndex(n5),n6); }
+        void Set(const TMultiDimArray &v, const TIndex &n0, int n1, int n2, int n3, int n4, int n5, const TIndex &n6) { Set(v,n0,TIndex(n1),TIndex(n2),TIndex(n3),TIndex(n4),TIndex(n5),n6); }
+        void Set(const TMultiDimArray &v, int n0, int n1, int n2, int n3, const TIndex &n4, const TIndex &n5, int n6) { Set(v,TIndex(n0),TIndex(n1),TIndex(n2),TIndex(n3),n4,n5,TIndex(n6)); }
+        void Set(const TMultiDimArray &v, int n0, int n1, int n2, const TIndex &n3, int n4, const TIndex &n5, int n6) { Set(v,TIndex(n0),TIndex(n1),TIndex(n2),n3,TIndex(n4),n5,TIndex(n6)); }
+        void Set(const TMultiDimArray &v, int n0, int n1, const TIndex &n2, int n3, int n4, const TIndex &n5, int n6) { Set(v,TIndex(n0),TIndex(n1),n2,TIndex(n3),TIndex(n4),n5,TIndex(n6)); }
+        void Set(const TMultiDimArray &v, int n0, const TIndex &n1, int n2, int n3, int n4, const TIndex &n5, int n6) { Set(v,TIndex(n0),n1,TIndex(n2),TIndex(n3),TIndex(n4),n5,TIndex(n6)); }
+        void Set(const TMultiDimArray &v, const TIndex &n0, int n1, int n2, int n3, int n4, const TIndex &n5, int n6) { Set(v,n0,TIndex(n1),TIndex(n2),TIndex(n3),TIndex(n4),n5,TIndex(n6)); }
+        void Set(const TMultiDimArray &v, int n0, int n1, int n2, const TIndex &n3, const TIndex &n4, int n5, int n6) { Set(v,TIndex(n0),TIndex(n1),TIndex(n2),n3,n4,TIndex(n5),TIndex(n6)); }
+        void Set(const TMultiDimArray &v, int n0, int n1, const TIndex &n2, int n3, const TIndex &n4, int n5, int n6) { Set(v,TIndex(n0),TIndex(n1),n2,TIndex(n3),n4,TIndex(n5),TIndex(n6)); }
+        void Set(const TMultiDimArray &v, int n0, const TIndex &n1, int n2, int n3, const TIndex &n4, int n5, int n6) { Set(v,TIndex(n0),n1,TIndex(n2),TIndex(n3),n4,TIndex(n5),TIndex(n6)); }
+        void Set(const TMultiDimArray &v, const TIndex &n0, int n1, int n2, int n3, const TIndex &n4, int n5, int n6) { Set(v,n0,TIndex(n1),TIndex(n2),TIndex(n3),n4,TIndex(n5),TIndex(n6)); }
+        void Set(const TMultiDimArray &v, int n0, int n1, const TIndex &n2, const TIndex &n3, int n4, int n5, int n6) { Set(v,TIndex(n0),TIndex(n1),n2,n3,TIndex(n4),TIndex(n5),TIndex(n6)); }
+        void Set(const TMultiDimArray &v, int n0, const TIndex &n1, int n2, const TIndex &n3, int n4, int n5, int n6) { Set(v,TIndex(n0),n1,TIndex(n2),n3,TIndex(n4),TIndex(n5),TIndex(n6)); }
+        void Set(const TMultiDimArray &v, const TIndex &n0, int n1, int n2, const TIndex &n3, int n4, int n5, int n6) { Set(v,n0,TIndex(n1),TIndex(n2),n3,TIndex(n4),TIndex(n5),TIndex(n6)); }
+        void Set(const TMultiDimArray &v, int n0, const TIndex &n1, const TIndex &n2, int n3, int n4, int n5, int n6) { Set(v,TIndex(n0),n1,n2,TIndex(n3),TIndex(n4),TIndex(n5),TIndex(n6)); }
+        void Set(const TMultiDimArray &v, const TIndex &n0, int n1, const TIndex &n2, int n3, int n4, int n5, int n6) { Set(v,n0,TIndex(n1),n2,TIndex(n3),TIndex(n4),TIndex(n5),TIndex(n6)); }
+        void Set(const TMultiDimArray &v, const TIndex &n0, const TIndex &n1, int n2, int n3, int n4, int n5, int n6) { Set(v,n0,n1,TIndex(n2),TIndex(n3),TIndex(n4),TIndex(n5),TIndex(n6)); }
+
+        void Set(const TMultiDimArray &v, const TIndex &n0, int n1, int n2, int n3, int n4, int n5, int n6) { Set(v,n0,TIndex(n1),TIndex(n2),TIndex(n3),TIndex(n4),TIndex(n5),TIndex(n6)); }
+        void Set(const TMultiDimArray &v, int n0, const TIndex &n1, int n2, int n3, int n4, int n5, int n6) { Set(v,TIndex(n0),n1,TIndex(n2),TIndex(n3),TIndex(n4),TIndex(n5),TIndex(n6)); }
+        void Set(const TMultiDimArray &v, int n0, int n1, const TIndex &n2, int n3, int n4, int n5, int n6) { Set(v,TIndex(n0),TIndex(n1),n2,TIndex(n3),TIndex(n4),TIndex(n5),TIndex(n6)); }
+        void Set(const TMultiDimArray &v, int n0, int n1, int n2, const TIndex &n3, int n4, int n5, int n6) { Set(v,TIndex(n0),TIndex(n1),TIndex(n2),n3,TIndex(n4),TIndex(n5),TIndex(n6)); }
+        void Set(const TMultiDimArray &v, int n0, int n1, int n2, int n3, const TIndex &n4, int n5, int n6) { Set(v,TIndex(n0),TIndex(n1),TIndex(n2),TIndex(n3),n4,TIndex(n5),TIndex(n6)); }
+        void Set(const TMultiDimArray &v, int n0, int n1, int n2, int n3, int n4, const TIndex &n5, int n6) { Set(v,TIndex(n0),TIndex(n1),TIndex(n2),TIndex(n3),TIndex(n4),n5,TIndex(n6)); }
+        void Set(const TMultiDimArray &v, int n0, int n1, int n2, int n3, int n4, int n5, const TIndex &n6) { Set(v,TIndex(n0),TIndex(n1),TIndex(n2),TIndex(n3),TIndex(n4),TIndex(n5),n6); }
+
+        void Set(const TMultiDimArray &v, int n0, int n1, int n2, int n3, int n4, int n5, int n6) { Set(v,TIndex(n0),TIndex(n1),TIndex(n2),TIndex(n3),TIndex(n4),TIndex(n5),TIndex(n6)); }
+
+	// Operator
+	const TMultiDimArray & operator=(const TMultiDimArray &right); 
+	TMultiDimArray operator+(double) const; 
+	const TMultiDimArray& operator+=(double); 
+	TMultiDimArray operator+(const TMultiDimArray &right) const; 
+	const TMultiDimArray& operator+=(const TMultiDimArray &right); 
+	TMultiDimArray operator*(double) const;
+	const TMultiDimArray& operator*=(double); 
+        TMultiDimArray operator*(const TMultiDimArray &right) const;
+	const TMultiDimArray& operator*=(const TMultiDimArray &right); 
+	TMultiDimArray operator-(double v) const { return operator+(-1.0*v); }
+	const TMultiDimArray& operator-=(double v) { return operator+=(-1.0*v); } 
+	TMultiDimArray operator-(const TMultiDimArray &right) const { return operator+(right*(-1.0)); }
+	const TMultiDimArray& operator-=(const TMultiDimArray &right) { return operator+=(right*(-1.0)); }
 
 	// Sum
-	double sum(int d) const; 
-	double sum() const { return this->sum(0); }
+	double sum() const; 
+	TMultiDimArray sum(int d) const;  
+	TMultiDimArray sum(int d0, int d1) const; 
+	TMultiDimArray sum(int d0, int d1, int d2) const; 
+	TMultiDimArray sum(int d0, int d1, int d2, int d3) const; 
+	TMultiDimArray sum(int d0, int d1, int d2, int d3, int d4) const; 
+	TMultiDimArray sum(int d0, int d1, int d2, int d3, int d4, int d5) const; 
+	TMultiDimArray sum(int d0, int d1, int d2, int d3, int d4, int d5, int d6) const; 
+	
 
 	// Others 
 	void Clear(); 
-	void Resize(int ); */
 }; 
 #endif
