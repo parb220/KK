@@ -73,6 +73,7 @@ int main(int argc, char **argv)
 	TMultiDimArray sum_1(array.sum(0)); 
 	TMultiDimArray sum_2(array.sum(2)); 
 	TMultiDimArray sum_3(array.sum(1,3));
+	TMultiDimArray sum_4(array.sum(0,1,2,3,4)); 
 
 	cout << array.sum() << endl; 
 	 

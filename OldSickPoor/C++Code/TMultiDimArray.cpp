@@ -401,19 +401,24 @@ void TMultiDimArray::Reshape(int _n0, int _n1, int _n2, int _n3, int _n4, int _n
 
 void TMultiDimArray::Reshape(const std::vector<int> & _size_spec)
 {
-	size_along_dim = _size_spec; 
-	int total_length = 1; 
-	for (int i=0; i<(int)size_along_dim.size(); i++)
-		total_length *= size_along_dim[i]; 
-	if (dim != total_length)
+	if (_size_spec.empty() && dim)
+		size_along_dim=std::vector<int>(dim); 
+	else 
 	{
-		TDenseVector original;
-                original.CopyContent(*this);
-                Resize(total_length);
-                if (dim >= original.dim)
-                        Insert(0,original);
-                else
-                        Insert(0,original.SubVector(0,dim-1));
+		size_along_dim = _size_spec; 
+		int total_length = 1; 
+		for (int i=0; i<(int)size_along_dim.size(); i++)
+			total_length *= size_along_dim[i]; 
+		if (dim != total_length)
+		{
+			TDenseVector original;
+                	original.CopyContent(*this);
+                	Resize(total_length);
+                	if (dim >= original.dim)
+                        	Insert(0,original);
+                	else
+                        	Insert(0,original.SubVector(0,dim-1));
+		}
 	}
 }
 
@@ -3749,8 +3754,8 @@ TMultiDimArray TMultiDimArray::sum(int d) const
 			sum_result_index.push_back(TIndex(0,size_along_dim[n]-1)); 
 	}  
 	
-	TMultiDimArray sum_result(ExtractSubMatrix(sum_result_index)); 
-	for (int n=1; n<size_along_dim[d]; n++)
+	TMultiDimArray sum_result(dim/size_along_dim[d],0.0); 
+	for (int n=0; n<size_along_dim[d]; n++)
 	{
 		sum_result_index[d] = TIndex(n); 
 		sum_result += ExtractSubMatrix(sum_result_index); 
@@ -3777,11 +3782,11 @@ TMultiDimArray TMultiDimArray::sum(int d0, int d1) const
 		else 
 			sum_result_index.push_back(TIndex(0,size_along_dim[n]-1)); 
 	}
-	TMultiDimArray sum_result(ExtractSubMatrix(sum_result_index)); 
-	for (int n1=1; n1<size_along_dim[d1]; n1++)
+	TMultiDimArray sum_result(dim/(size_along_dim[d0]*size_along_dim[d1]),0.0); 
+	for (int n1=0; n1<size_along_dim[d1]; n1++)
 	{
 		sum_result_index[d1] = TIndex(n1); 
-		for (int n0=1; n0<size_along_dim[d0]; n0++)
+		for (int n0=0; n0<size_along_dim[d0]; n0++)
 		{
 			sum_result_index[d0] = TIndex(n0); 
 			sum_result += ExtractSubMatrix(sum_result_index); 
@@ -3789,4 +3794,236 @@ TMultiDimArray TMultiDimArray::sum(int d0, int d1) const
 	}
 	sum_result.Reshape(sum_result_size); 
 	return sum_result; 
+}
+
+TMultiDimArray TMultiDimArray::sum(int d0, int d1, int d2) const
+{
+	if (d0<0 || d0>=Dim() || d1<0 || d1>=Dim() || d2<0 || d2>=Dim())
+		throw dw_exception("TMultiDimArray::sum() : indices exceed limits");
+
+	std::vector<int> sum_result_size;
+        for (int n=0; n<Dim(); n++)
+                if (n!=d0 && n!=d1 && n!=d2)
+                        sum_result_size.push_back(size_along_dim[n]);
+
+	std::vector<TIndex>sum_result_index;
+        for (int n=0; n<Dim(); n++)
+        {
+                if (n==d0 || n==d1 || n==d2)
+                        sum_result_index.push_back(TIndex(0));
+                else
+                        sum_result_index.push_back(TIndex(0,size_along_dim[n]-1));
+        }
+        TMultiDimArray sum_result(dim/(size_along_dim[d0]*size_along_dim[d1]*size_along_dim[d2]),0.0);
+	for (int n2=0; n2<size_along_dim[d2]; n2++)
+	{
+		sum_result_index[d2] = TIndex(n2); 
+        	for (int n1=0; n1<size_along_dim[d1]; n1++)
+        	{
+                	sum_result_index[d1] = TIndex(n1);
+                	for (int n0=0; n0<size_along_dim[d0]; n0++)
+                	{
+                        	sum_result_index[d0] = TIndex(n0);
+                        	sum_result += ExtractSubMatrix(sum_result_index);
+                	}
+        	}
+	}
+       	sum_result.Reshape(sum_result_size);
+	
+        return sum_result;
+}
+
+TMultiDimArray TMultiDimArray::sum(int d0, int d1, int d2, int d3) const
+{
+	if (d0<0 || d0>=Dim() || d1<0 || d1>=Dim() || d2<0 || d2>=Dim() || d3<0 || d3>=Dim())
+		throw dw_exception("TMultiDimArray::sum() : indices exceed limits");
+
+	std::vector<int> sum_result_size;
+        for (int n=0; n<Dim(); n++)
+                if (n!=d0 && n!=d1 && n!=d2 && n!=d3)
+                        sum_result_size.push_back(size_along_dim[n]);
+
+	std::vector<TIndex>sum_result_index;
+        for (int n=0; n<Dim(); n++)
+        {
+                if (n==d0 || n==d1 || n==d2 || n==d3)
+                        sum_result_index.push_back(TIndex(0));
+                else
+                        sum_result_index.push_back(TIndex(0,size_along_dim[n]-1));
+        }
+        TMultiDimArray sum_result(dim/(size_along_dim[d0]*size_along_dim[d1]*size_along_dim[d2]*size_along_dim[d3]),0.0);
+	for (int n3=0; n3<size_along_dim[d3]; n3++)
+	{
+		sum_result_index[d3] = TIndex(n3);
+		for (int n2=0; n2<size_along_dim[d2]; n2++)
+		{
+			sum_result_index[d2] = TIndex(n2); 
+        		for (int n1=0; n1<size_along_dim[d1]; n1++)
+        		{
+                		sum_result_index[d1] = TIndex(n1);
+                		for (int n0=0; n0<size_along_dim[d0]; n0++)
+                		{
+                        		sum_result_index[d0] = TIndex(n0);
+                        		sum_result += ExtractSubMatrix(sum_result_index);
+                		}
+        		}
+		}
+	}
+       	sum_result.Reshape(sum_result_size);
+	
+        return sum_result;
+}
+
+TMultiDimArray TMultiDimArray::sum(int d0, int d1, int d2, int d3, int d4) const
+{
+	if (d0<0 || d0>=Dim() || d1<0 || d1>=Dim() || d2<0 || d2>=Dim() || d3<0 || d3>=Dim() || d4<0 || d4>=Dim() )
+		throw dw_exception("TMultiDimArray::sum() : indices exceed limits");
+
+	std::vector<int> sum_result_size;
+        for (int n=0; n<Dim(); n++)
+                if (n!=d0 && n!=d1 && n!=d2 && n!=d3 && n!=d4)
+                        sum_result_size.push_back(size_along_dim[n]);
+
+	std::vector<TIndex>sum_result_index;
+        for (int n=0; n<Dim(); n++)
+        {
+                if (n==d0 || n==d1 || n==d2 || n==d3 || n==d4)
+                        sum_result_index.push_back(TIndex(0));
+                else
+                        sum_result_index.push_back(TIndex(0,size_along_dim[n]-1));
+        }
+        TMultiDimArray sum_result(dim/(size_along_dim[d0]*size_along_dim[d1]*size_along_dim[d2]*size_along_dim[d3]*size_along_dim[d4]),0.0);
+	for (int n4=0; n4<size_along_dim[d4]; n4++)
+	{
+		sum_result_index[d4] = TIndex(n4); 
+		for (int n3=0; n3<size_along_dim[d3]; n3++)
+		{
+			sum_result_index[d3] = TIndex(n3); 
+			for (int n2=0; n2<size_along_dim[d2]; n2++)
+			{
+				sum_result_index[d2] = TIndex(n2); 
+        			for (int n1=0; n1<size_along_dim[d1]; n1++)
+        			{
+                			sum_result_index[d1] = TIndex(n1);
+                			for (int n0=0; n0<size_along_dim[d0]; n0++)
+                			{
+                        			sum_result_index[d0] = TIndex(n0);
+                        			sum_result += ExtractSubMatrix(sum_result_index);
+                			}
+        			}	
+			}
+		}
+	}
+       	sum_result.Reshape(sum_result_size);
+	
+        return sum_result;
+}
+
+TMultiDimArray TMultiDimArray::sum(int d0, int d1, int d2, int d3, int d4, int d5) const
+{
+	if (d0<0 || d0>=Dim() || d1<0 || d1>=Dim() || d2<0 || d2>=Dim() || d3<0 || d3>=Dim() || d4<0 || d4>=Dim() || d5<0 || d5>=Dim() )
+		throw dw_exception("TMultiDimArray::sum() : indices exceed limits");
+
+	std::vector<int> sum_result_size;
+        for (int n=0; n<Dim(); n++)
+                if (n!=d0 && n!=d1 && n!=d2 && n!=d3 && n!=d4 && n!=d5)
+                        sum_result_size.push_back(size_along_dim[n]);
+
+	std::vector<TIndex>sum_result_index;
+        for (int n=0; n<Dim(); n++)
+        {
+                if (n==d0 || n==d1 || n==d2 || n==d3 || n==d4 || n==d5)
+                        sum_result_index.push_back(TIndex(0));
+                else
+                        sum_result_index.push_back(TIndex(0,size_along_dim[n]-1));
+        }
+        TMultiDimArray sum_result(dim/(size_along_dim[d0]*size_along_dim[d1]*size_along_dim[d2]*size_along_dim[d3]*size_along_dim[d4]*size_along_dim[d5]),0.0);
+	for (int n5=0; n5<size_along_dim[d5]; n5++)
+	{
+		sum_result_index[d5] = TIndex(n5); 
+		for (int n4=0; n4<size_along_dim[d4]; n4++)
+		{
+			sum_result_index[d4] = TIndex(n4); 
+			for (int n3=0; n3<size_along_dim[d3]; n3++)
+			{
+				sum_result_index[d3] = TIndex(n3); 
+				for (int n2=0; n2<size_along_dim[d2]; n2++)
+				{
+					sum_result_index[d2] = TIndex(n2); 
+        				for (int n1=0; n1<size_along_dim[d1]; n1++)
+        				{
+                				sum_result_index[d1] = TIndex(n1);
+                				for (int n0=0; n0<size_along_dim[d0]; n0++)
+                				{
+                        				sum_result_index[d0] = TIndex(n0);
+                        				sum_result += ExtractSubMatrix(sum_result_index);
+                				}
+        				}	
+				}
+			}
+		}
+	}
+       	sum_result.Reshape(sum_result_size);
+	
+        return sum_result;
+}
+
+TMultiDimArray TMultiDimArray::sum(int d0, int d1, int d2, int d3, int d4, int d5, int d6) const
+{
+	if (d0<0 || d0>=Dim() || d1<0 || d1>=Dim() || d2<0 || d2>=Dim() || d3<0 || d3>=Dim() || d4<0 || d4>=Dim() || d5<0 || d5>=Dim() || d6<0 || d6>=Dim() )
+		throw dw_exception("TMultiDimArray::sum() : indices exceed limits");
+
+	std::vector<int> sum_result_size;
+        for (int n=0; n<Dim(); n++)
+                if (n!=d0 && n!=d1 && n!=d2 && n!=d3 && n!=d4 && n!=d5 && n!=d6)
+                        sum_result_size.push_back(size_along_dim[n]);
+
+	std::vector<TIndex>sum_result_index;
+        for (int n=0; n<Dim(); n++)
+        {
+                if (n==d0 || n==d1 || n==d2 || n==d3 || n==d4 || n==d5 || n==d6)
+                        sum_result_index.push_back(TIndex(0));
+                else
+                        sum_result_index.push_back(TIndex(0,size_along_dim[n]-1));
+        }
+        TMultiDimArray sum_result(dim/(size_along_dim[d0]*size_along_dim[d1]*size_along_dim[d2]*size_along_dim[d3]*size_along_dim[d4]*size_along_dim[d5]*size_along_dim[d6]),0.0);
+	for (int n6=0; n6<size_along_dim[d6]; n6++)
+	{
+		sum_result_index[d6] = TIndex(n6); 
+		for (int n5=0; n5<size_along_dim[d5]; n5++)
+		{
+			sum_result_index[d5] = TIndex(n5); 
+			for (int n4=0; n4<size_along_dim[d4]; n4++)
+			{
+				sum_result_index[d4] = TIndex(n4); 
+				for (int n3=0; n3<size_along_dim[d3]; n3++)
+				{
+					sum_result_index[d3] = TIndex(n3); 
+					for (int n2=0; n2<size_along_dim[d2]; n2++)
+					{
+						sum_result_index[d2] = TIndex(n2); 
+        					for (int n1=0; n1<size_along_dim[d1]; n1++)
+        					{
+                					sum_result_index[d1] = TIndex(n1);
+                					for (int n0=0; n0<size_along_dim[d0]; n0++)
+                					{
+                        					sum_result_index[d0] = TIndex(n0);
+                        					sum_result += ExtractSubMatrix(sum_result_index);
+                					}
+        					}	
+					}
+				}
+			}
+		}
+	}
+       	sum_result.Reshape(sum_result_size);
+	
+        return sum_result;
+}
+
+// Others
+void TMultiDimArray::Clear()
+{
+	TDenseVector::Resize(0); 
+	size_along_dim.clear(); 
 }
