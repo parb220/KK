@@ -21,7 +21,7 @@ DW_ARRAY_DIR = $(DW_UTILITIES_BASE)/arrays
 DW_ERROR_DIR = $(DW_UTILITIES_BASE)/error
 VPATH := $(VPATH) $(DW_MATRIX_DIR) $(DW_STAT_DIR) $(DW_ARRAY_DIR) $(DW_ERROR_DIR)
 OBJS := $(OBJS) dw_matrix_rand.o dw_dense_matrix.o dw_matrix.o bmatrix.o dw_matrix_array.o dw_array.o dw_error.o dw_matrix_rand.o dw_rand_gsl.o
-INCLUDE_DIR := $(INCLUDE_DIR) -I$(DW_UTILITIES_BASE)/include
+INCLUDE_DIR := $(INCLUDE_DIR) -I$(DW_UTILITIES_BASE)/include 
 
 FC = gfortran
 CC = gcc
